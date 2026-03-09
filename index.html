@@ -73,7 +73,7 @@
 
         /* --- Admin Panel --- */
         #adminPanel { display: none; background: #222; color: #fff; padding: 40px 50px; }
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .admin-tabs button { padding: 10px 20px; background: #444; border: none; color: white; cursor: pointer; border-radius: 5px; }
         .admin-tabs button.active { background: #a17c52; }
         .admin-form { display: none; flex-direction: column; gap: 15px; max-width: 600px; background: #333; padding: 25px; border-radius: 8px; }
@@ -109,6 +109,7 @@
             <button onclick="switchAdminTab('formLink')" class="tab-btn active" id="tab-formLink">Add Link</button>
             <button onclick="switchAdminTab('formNote')" class="tab-btn" id="tab-formNote">Upload Note</button>
             <button onclick="switchAdminTab('formMcq')" class="tab-btn" id="tab-formMcq">Add MCQ Question</button>
+            <button onclick="switchAdminTab('formImage')" class="tab-btn" id="tab-formImage">Update Photo</button>
         </div>
 
         <form class="admin-form active" id="formLink" onsubmit="addLinkData(event)">
@@ -142,6 +143,12 @@
             </select>
             <button type="submit"><i class="fas fa-plus"></i> प्रश्न जोड़ें</button>
         </form>
+
+        <form class="admin-form" id="formImage" onsubmit="updateHeroImage(event)">
+            <label style="color: #fff; font-size: 0.9em;">प्रिंसिपल की नई फोटो सेलेक्ट करें (Max 2MB):</label>
+            <input type="file" id="heroImageFile" accept="image/*" required>
+            <button type="submit"><i class="fas fa-image"></i> फोटो अपडेट करें</button>
+        </form>
     </div>
 
     <div id="home" class="hero">
@@ -151,7 +158,7 @@
             <a href="#admission-section" style="display: inline-block; padding: 15px 30px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 5px; font-size: 1.1em; font-weight: bold;">अभी एडमिशन लें</a>
         </div>
         <div class="hero-image">
-            <img src="principal.jpg" alt="AR RAQEEB">
+            <img src="principal.jpg" alt="AR RAQEEB" id="mainHeroImage">
         </div>
     </div>
 
@@ -165,7 +172,7 @@
         <p style="text-align: center; color: #555; margin-bottom: 30px;">अपने ज्ञान की जाँच करें। नीचे दिए गए सवालों के जवाब दें और अपना स्कोर जानें।</p>
         <div class="quiz-container">
             <div id="quizArea">
-                <p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें।</p>
+                <p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें。</p>
             </div>
             <button id="submitQuizBtn" class="submit-test-btn" style="display:none;" onclick="calculateScore()">टेस्ट सबमिट करें</button>
             <div id="resultArea" style="margin-top: 20px; font-size: 1.5em; font-weight: bold; text-align: center; color: #a17c52; display: none;"></div>
@@ -215,7 +222,8 @@
 
     <script>
         let isAdmin = false;
-        let siteData = JSON.parse(localStorage.getItem('coachingProData')) || { links: [], notes: [], mcqs: [] };
+        // Modified siteData to hold image url
+        let siteData = JSON.parse(localStorage.getItem('coachingProData')) || { links: [], notes: [], mcqs: [], heroImage: '' };
 
         function toggleAdmin() {
             const pass = prompt("Enter Admin Password (hint: admin):");
@@ -266,6 +274,32 @@
                 ans: document.getElementById('correctOpt').value
             });
             saveData(); document.getElementById('formMcq').reset(); alert("Question Added!"); renderMcqTest();
+        }
+
+        // --- NEW IMAGE UPLOAD FUNCTION ---
+        function updateHeroImage(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('heroImageFile');
+            const file = fileInput.files[0];
+            
+            if(file.size > 2 * 1024 * 1024) { alert("File is too large! Max 2MB allowed."); return; }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                siteData.heroImage = event.target.result; // Data URL set karo
+                saveData(); 
+                document.getElementById('mainHeroImage').src = siteData.heroImage; // Live update karo
+                document.getElementById('formImage').reset(); 
+                alert("प्रिंसिपल की फोटो अपडेट हो गई है!"); 
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // --- LOAD IMAGE FUNCTION ---
+        function loadHeroImage() {
+            if (siteData.heroImage && siteData.heroImage !== "") {
+                document.getElementById('mainHeroImage').src = siteData.heroImage;
+            }
         }
 
         function saveData() { localStorage.setItem('coachingProData', JSON.stringify(siteData)); }
@@ -335,6 +369,7 @@
         }
 
         // Initialize Data on Load
+        loadHeroImage(); // Pehle se upload ki gayi image show karne ke liye
         renderMaterials();
         renderMcqTest();
     </script>
