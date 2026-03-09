@@ -3,72 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUCCESS COACHING CENTER</title>
+    <title>SUCCESS COACHING CENTER - AR RAQEEB</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: #f8f9fa; color: #333; overflow-x: hidden; scroll-behavior: smooth; }
         
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes textFadeIn { to { opacity: 1; transform: translateY(0); } }
+
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 1.6em; font-weight: 800; color: #a17c52; }
-        .nav-links a { margin: 0 10px; font-size: 0.9em; color: #555; text-decoration: none; font-weight: 600; }
+        .logo { font-size: 1.8em; font-weight: 800; color: #a17c52; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a { position: relative; margin: 0 15px; font-size: 1.05em; color: #555; font-weight: 600; text-decoration: none; padding: 5px 0; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #a17c52; }
 
-        .hero { display: flex; align-items: center; justify-content: space-between; padding: 60px 50px; background: linear-gradient(135deg, #fdfaf5 0%, #f4eee1 100%); }
-        .hero-text { flex: 1.5; padding-right: 20px; }
-        .tagline { font-size: 2.2em; font-weight: 800; line-height: 1.2; margin-bottom: 15px; }
-        .tagline .line-2 { color: #a17c52; }
-        .hero-image img { width: 300px; height: 300px; border-radius: 50%; object-fit: cover; border: 6px solid #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .hero { display: flex; align-items: center; justify-content: space-between; padding: 100px 50px; background: linear-gradient(135deg, #fdfaf5 0%, #f4eee1 100%); border-bottom: 1px solid #e8dec9; }
+        .hero-text { flex: 1.2; padding-right: 40px; }
+        .tagline { font-size: 2.8em; color: #111; line-height: 1.3; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; }
+        .tagline span { display: block; opacity: 0; transform: translateY(20px); animation: textFadeIn 0.6s ease forwards; }
+        .tagline .line-1 { animation-delay: 0.2s; }
+        .tagline .line-2 { animation-delay: 0.6s; color: #a17c52; } 
+        .tagline .line-3 { animation-delay: 1.0s; }
+        .hero-text p { font-size: 1.1em; margin-bottom: 25px; color: #555; line-height: 1.5; animation: fadeInUp 0.8s ease forwards; animation-delay: 1.3s; opacity: 0; }
+        .hero-btn { display: inline-block; padding: 12px 28px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 6px; font-size: 1.05em; font-weight: 600; animation: fadeInUp 0.8s ease forwards; animation-delay: 1.5s; opacity: 0; }
+        
+        .hero-image { flex: 0.8; display: flex; justify-content: flex-end; align-items: center; animation: scaleIn 1s ease-out forwards; animation-delay: 0.4s; opacity: 0; }
+        .hero-image img { width: 340px; height: 340px; border-radius: 50%; object-fit: cover; object-position: top center; background-color: #B2967D; padding: 10px; border: 6px solid #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); }
 
-        .section-wrapper { padding: 60px 20px; text-align: center; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid #a17c52; }
-        .card a { display: inline-block; padding: 8px 20px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+        .section-wrapper { padding: 80px 20px; border-bottom: 1px solid #eaeaea; }
+        .section-title { text-align: center; font-size: 2.2em; color: #222; margin-bottom: 35px; font-weight: 800; text-transform: uppercase; position: relative; }
+        .section-title::after { content: ''; width: 60px; height: 4px; background: #a17c52; display: block; margin: 12px auto 0; border-radius: 2px; }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+        .card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid #ccc; transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+        .card.link-card { border-top-color: #4285F4; }
+        .card.note-card { border-top-color: #E65100; }
+        .card h3 { font-size: 1.3em; margin-bottom: 8px; color: #222; font-weight: 600; }
+        .card p { color: #666; margin-bottom: 20px; font-size: 0.95em; line-height: 1.4; }
+        .card a { display: inline-block; padding: 8px 20px; border-radius: 5px; text-decoration: none; color: white; font-weight: 600; font-size: 0.95em; }
+        .link-card a { background: #4285F4; }
+        .note-card a { background: #E65100; }
+
+        .quiz-container { max-width: 750px; margin: 0 auto; background: #fff; padding: 35px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+        .question-box { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+        .options-list label { display: block; background: #fdfdfd; padding: 12px 15px; margin-bottom: 10px; border-radius: 6px; cursor: pointer; border: 1px solid #e0e0e0; }
+        .submit-test-btn { background: #28a745; color: white; padding: 12px 25px; border: none; border-radius: 6px; font-size: 1.1em; font-weight: 600; cursor: pointer; width: 100%; }
+
+        .info-block { max-width: 800px; margin: 0 auto; padding: 35px; text-align: center; background: #fff; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.04); }
+        .footer { background: #111; color: #ddd; text-align: center; padding: 30px 20px; border-top: 3px solid #a17c52; }
+        #loader { text-align: center; font-size: 1.1em; color: #a17c52; display: none; margin: 20px; font-weight: bold; }
 
         @media (max-width: 768px) {
-            .navbar { padding: 15px; }
-            .hero { flex-direction: row; padding: 30px 15px; align-items: center; }
-            .tagline { font-size: 1.2em; }
-            .hero-image img { width: 110px; height: 110px; }
-            .hero-text p { font-size: 0.8em; }
+            .navbar { flex-direction: column; padding: 12px; text-align: center; }
+            .nav-links { flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+            .hero { flex-direction: row; padding: 40px 15px; align-items: center; }
+            .hero-text { flex: 1.5; padding-right: 15px; }
+            .tagline { font-size: 1.35em; line-height: 1.3; }
+            .hero-text p { font-size: 0.85em; }
+            .hero-image { flex: 1; justify-content: flex-end; }
+            .hero-image img { width: 130px; height: 130px; border-width: 4px; }
+            .grid-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+
     <div class="navbar">
         <div class="logo">SUCCESS COACHING</div>
         <div class="nav-links">
+            <a href="#home">होम</a>
             <a href="#links-section">लिंक्स</a>
             <a href="#mcq-section">टेस्ट</a>
             <a href="#notes-section">नोट्स</a>
+            <a href="#contact-section">संपर्क</a>
         </div>
     </div>
 
-    <div class="hero">
+    <div id="home" class="hero">
         <div class="hero-text">
             <h1 class="tagline">
-                <span>चीते की चाल, बाज़ की नज़र,</span>
+                <span class="line-1">चीते की चाल, बाज़ की नज़र,</span>
                 <span class="line-2">और AR RAQEEB के कॉन्सेप्ट पर</span>
-                <span>संदेह नहीं करते!</span>
+                <span class="line-3">कोई संदेह नहीं करते!</span>
             </h1>
-            <p>Quality Education for Better Future.</p>
+            <p>प्राथमिक और उच्च माध्यमिक शिक्षा में उत्कृष्टता का केंद्र। <br><strong>COME TO LEARN, GO TO BRILLIANCE.</strong></p>
+            <a href="#admission-section" class="hero-btn">अभी एडमिशन लें</a>
         </div>
-        <div class="hero-image"><img src="principal.jpg" id="mainHeroImage"></div>
+        <div class="hero-image">
+            <img src="principal.jpg" alt="AR RAQEEB" id="mainHeroImage">
+        </div>
     </div>
 
+    <div id="loader">डेटा लोड हो रहा है...</div>
+
     <div id="links-section" class="section-wrapper">
-        <h2>जरूरी लिंक्स</h2>
+        <h2 class="section-title"><i class="fas fa-link" style="color:#4285F4;"></i> ज़रूरी लिंक्स</h2>
         <div class="grid-container" id="linksContainer"></div>
     </div>
 
+    <div id="mcq-section" class="section-wrapper" style="background: #fdfaf5;">
+        <h2 class="section-title"><i class="fas fa-laptop-code"></i> लाइव ऑनलाइन टेस्ट</h2>
+        <div class="quiz-container">
+            <div id="quizArea"><p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है।</p></div>
+            <button id="submitQuizBtn" class="submit-test-btn" style="display:none;" onclick="calculateScore()">टेस्ट सबमिट करें</button>
+            <div id="resultArea" style="margin-top: 25px; font-size: 1.3em; font-weight: 800; text-align: center; color: #a17c52; display: none;"></div>
+        </div>
+    </div>
+
     <div id="notes-section" class="section-wrapper">
-        <h2>क्लास नोट्स</h2>
+        <h2 class="section-title"><i class="fas fa-file-pdf" style="color:#E65100;"></i> क्लास नोट्स</h2>
         <div class="grid-container" id="notesContainer"></div>
     </div>
 
+    <div id="contact-section" class="section-wrapper">
+        <h2 class="section-title">संपर्क करें</h2>
+        <div class="info-block" style="max-width: 600px;">
+            <i class="fas fa-map-marker-alt" style="font-size: 2.5em; color: #a17c52; margin-bottom: 15px;"></i>
+            <h3 style="font-size: 1.6em; margin-bottom: 10px; font-weight: 800;">SUCCESS COACHING CENTER</h3>
+            <p style="font-size: 1em; color: #555; margin-bottom: 5px;">प्राथमिक विद्यालय बर के पूरब में</p>
+            <p style="font-size: 1em; color: #555; margin-bottom: 25px;">सोनाइली, बौराचौक, कटिहार, बिहार</p>
+            <p style="font-size: 1.2em; font-weight: 800; margin-bottom: 20px;"><i class="fas fa-phone-alt"></i> 7404920092, 9507090056</p>
+            <a href="https://wa.me/917404920092" target="_blank" style="display: inline-block; padding: 10px 20px; background: #25D366; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 8px;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p style="margin-bottom: 8px; font-size: 0.95em;">© 2026 SUCCESS COACHING CENTER. All Rights Reserved.</p>
+        <p style="text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">GUIDED BY: <strong style="color: #a17c52;">AR RAQEEB</strong></p>
+    </div>
+
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKA0U_XD_Txbfes-E-ZUDFPHjmswEV_KA",
+            authDomain: "success-coaching-8230b.firebaseapp.com",
+            projectId: "success-coaching-8230b",
+            storageBucket: "success-coaching-8230b.firebasestorage.app",
+            messagingSenderId: "1086069647096",
+            appId: "1:1086069647096:web:9f66a46f30eaba89a9bd0d"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref('coachingProData');
+
+        let siteData = { links: [], notes: [], mcqs: [], heroImage: '' };
+
+        document.getElementById('loader').style.display = 'block';
+        dbRef.on('value', (snapshot) => {
+            document.getElementById('loader').style.display = 'none';
+            const data = snapshot.val();
+            if (data) {
+                siteData = data;
+                if(!siteData.links) siteData.links = [];
+                if(!siteData.notes) siteData.notes = [];
+                if(!siteData.mcqs) siteData.mcqs = [];
+                if(siteData.heroImage) document.getElementById('mainHeroImage').src = siteData.heroImage;
+                renderMaterials();
+                renderMcqTest();
+            }
+        });
+
+        function renderMaterials() {
+            document.getElementById('linksContainer').innerHTML = siteData.links.map(l => `
+                <div class="card link-card">
+                    <div style="font-size:2em; color:#4285F4; margin-bottom:10px;"><i class="fas fa-external-link-alt"></i></div>
+                    <h3>${l.title}</h3><p>${l.desc}</p><a href="${l.url}" target="_blank">क्लिक करें</a>
+                </div>`).join('') || "<p>अभी कोई लिंक नहीं है।</p>";
+
+            document.getElementById('notesContainer').innerHTML = siteData.notes.map(n => `
+                <div class="card note-card">
+                    <div style="font-size:2em; color:#E65100; margin-bottom:10px;"><i class="fas fa-file-download"></i></div>
+                    <h3>${n.title}</h3><p>${n.desc}</p><a href="${n.fileUrl}" download="${n.fileName}">डाउनलोड करें</a>
+                </div>`).join('') || "<p>अभी कोई नोट्स नहीं हैं।</p>";
+        }
+
+        function renderMcqTest() {
+            const area = document.getElementById('quizArea');
+            const btn = document.getElementById('submitQuizBtn');
+            if(siteData.mcqs.length === 0) {
+                area.innerHTML = "<p>अभी कोई टेस्ट उपलब्ध नहीं है।</p>"; btn.style.display = 'none'; return;
+            }
+            area.innerHTML = siteData.mcqs.map((m, index) => `
+                <div class="question-box">
+                    <h4 style="color: #a17c52;">${m.subject}</h4>
+                    <h3>Q${index + 1}. ${m.q}</h3>
+                    <div class="options-list">
+                        <label><input type="radio" name="ans_${m.id}" value="A"> A. ${m.opts.A}</label>
+                        <label><input type="radio" name="ans_${m.id}" value="B"> B. ${m.opts.B}</label>
+                        <label><input type="radio" name="ans_${m.id}" value="C"> C. ${m.opts.C}</label>
+                        <label><input type="radio" name="ans_${m.id}" value="D"> D. ${m.opts.D}</label>
+                    </div>
+                </div>`).join('');
+            btn.style.display = 'block';
+        }
+
+        function calculateScore() {
+            let score = 0;
+            siteData.mcqs.forEach(m => {
+                const selected = document.querySelector(`input[name="ans_${m.id}"]:checked`);
+                if(selected && selected.value === m.ans) { score++; }
+            });
+            const res = document.getElementById('resultArea');
+            res.innerHTML = `आपका रिजल्ट: <span style="color: #28a745;">${score}</span> / ${siteData.mcqs.length} सही जवाब! 🎉`;
+            res.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
         const firebaseConfig = {
             apiKey: "AIzaSyAKA0U_XD_Txbfes-E-ZUDFPHjmswEV_KA",
             authDomain: "success-coaching-8230b.firebaseapp.com",
