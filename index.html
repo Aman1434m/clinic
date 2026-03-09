@@ -3,301 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUCCESS COACHING CENTER - AR RAQEEB</title>
+    <title>SUCCESS COACHING CENTER</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
     <style>
-        /* --- Basic Reset & Typography --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: #f8f9fa; color: #333; overflow-x: hidden; scroll-behavior: smooth; }
         
-        /* --- Keyframe Animations --- */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        @keyframes textFadeIn { to { opacity: 1; transform: translateY(0); } }
-
-        /* --- Navbar --- */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 1.8em; font-weight: 800; color: #a17c52; text-transform: uppercase; letter-spacing: 1px; }
-        .nav-links { display: flex; align-items: center; }
-        .nav-links a { position: relative; margin: 0 15px; font-size: 1.05em; color: #555; font-weight: 600; text-decoration: none; padding: 5px 0; transition: color 0.3s ease; }
-        .nav-links a::after { content: ''; position: absolute; width: 0; height: 3px; bottom: -5px; left: 50%; background-color: #a17c52; transition: all 0.3s ease; transform: translateX(-50%); border-radius: 2px; }
-        .nav-links a:hover { color: #a17c52; }
-        .nav-links a:hover::after { width: 100%; }
-        
-        .admin-btn { background: #222; color: #fff; border: none; margin-left: 20px; font-size: 0.9em; font-weight: 600; cursor: pointer; padding: 8px 18px; border-radius: 6px; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .admin-btn:hover { background: #a17c52; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(161, 124, 82, 0.4); }
+        .logo { font-size: 1.6em; font-weight: 800; color: #a17c52; }
+        .nav-links a { margin: 0 10px; font-size: 0.9em; color: #555; text-decoration: none; font-weight: 600; }
 
-        /* --- Hero Section (Premium Layout) --- */
-        .hero { display: flex; align-items: center; justify-content: space-between; padding: 100px 50px; background: linear-gradient(135deg, #fdfaf5 0%, #f4eee1 100%); border-bottom: 1px solid #e8dec9; }
-        .hero-text { flex: 1.2; padding-right: 40px; }
-        
-        /* Animated Tagline */
-        .tagline { font-size: 2.8em; color: #111; line-height: 1.3; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
-        .tagline span { display: block; opacity: 0; transform: translateY(20px); animation: textFadeIn 0.6s ease forwards; }
-        .tagline .line-1 { animation-delay: 0.2s; }
-        .tagline .line-2 { animation-delay: 0.6s; color: #a17c52; } 
-        .tagline .line-3 { animation-delay: 1.0s; }
+        .hero { display: flex; align-items: center; justify-content: space-between; padding: 60px 50px; background: linear-gradient(135deg, #fdfaf5 0%, #f4eee1 100%); }
+        .hero-text { flex: 1.5; padding-right: 20px; }
+        .tagline { font-size: 2.2em; font-weight: 800; line-height: 1.2; margin-bottom: 15px; }
+        .tagline .line-2 { color: #a17c52; }
+        .hero-image img { width: 300px; height: 300px; border-radius: 50%; object-fit: cover; border: 6px solid #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
 
-        .hero-text p { font-size: 1.1em; margin-bottom: 25px; color: #555; line-height: 1.5; animation: fadeInUp 0.8s ease forwards; animation-delay: 1.3s; opacity: 0; }
-        .hero-btn { display: inline-block; padding: 12px 28px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 6px; font-size: 1.05em; font-weight: 600; box-shadow: 0 5px 15px rgba(161, 124, 82, 0.4); transition: all 0.3s ease; animation: fadeInUp 0.8s ease forwards; animation-delay: 1.5s; opacity: 0; }
-        .hero-btn:hover { background: #8e6c46; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(161, 124, 82, 0.6); }
-        
-        .hero-image { flex: 0.8; display: flex; justify-content: flex-end; align-items: center; animation: scaleIn 1s ease-out forwards; animation-delay: 0.4s; opacity: 0; }
-        .hero-image img { width: 340px; height: 340px; border-radius: 50%; object-fit: cover; object-position: top center; background-color: #B2967D; padding: 10px; border: 6px solid #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); transition: transform 0.3s ease-out; }
-        .hero-image img:hover { transform: scale(1.03); }
+        .section-wrapper { padding: 60px 20px; text-align: center; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid #a17c52; }
+        .card a { display: inline-block; padding: 8px 20px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px; }
 
-        /* --- Sections Formatting --- */
-        .section-wrapper { padding: 80px 20px; border-bottom: 1px solid #eaeaea; }
-        .section-title { text-align: center; font-size: 2.2em; color: #222; margin-bottom: 35px; font-weight: 800; text-transform: uppercase; position: relative; }
-        .section-title::after { content: ''; width: 60px; height: 4px; background: #a17c52; display: block; margin: 12px auto 0; border-radius: 2px; }
-
-        /* --- Animated Cards --- */
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
-        .card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid #ccc; transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
-        .card.link-card { border-top-color: #4285F4; }
-        .card.note-card { border-top-color: #E65100; }
-        .card-icon { font-size: 2.2em; margin-bottom: 12px; transition: transform 0.3s ease; }
-        .card:hover .card-icon { transform: scale(1.1) rotate(5deg); }
-        .link-card .card-icon { color: #4285F4; }
-        .note-card .card-icon { color: #E65100; }
-        .card h3 { font-size: 1.3em; margin-bottom: 8px; color: #222; font-weight: 600; }
-        .card p { color: #666; margin-bottom: 20px; font-size: 0.95em; line-height: 1.4; }
-        .card a { display: inline-block; padding: 8px 20px; border-radius: 5px; text-decoration: none; color: white; font-weight: 600; font-size: 0.95em; transition: all 0.3s ease; }
-        .link-card a { background: #4285F4; box-shadow: 0 4px 8px rgba(66, 133, 244, 0.25); }
-        .note-card a { background: #E65100; box-shadow: 0 4px 8px rgba(230, 81, 0, 0.25); }
-
-        /* --- Internal MCQ Test UI --- */
-        .quiz-container { max-width: 750px; margin: 0 auto; background: #fff; padding: 35px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
-        .question-box { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
-        .question-box h3 { font-size: 1.2em; margin-bottom: 15px; color: #222; }
-        .options-list label { display: block; background: #fdfdfd; padding: 12px 15px; margin-bottom: 10px; border-radius: 6px; cursor: pointer; border: 1px solid #e0e0e0; transition: all 0.2s ease; font-size: 0.95em; }
-        .options-list label:hover { background: #fdfaf5; border-color: #a17c52; transform: translateX(3px); }
-        .options-list input { margin-right: 12px; }
-        .submit-test-btn { background: #28a745; color: white; padding: 12px 25px; border: none; border-radius: 6px; font-size: 1.1em; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s ease; }
-
-        /* --- Information Blocks --- */
-        .info-block { max-width: 800px; margin: 0 auto; padding: 35px; text-align: center; background: #fff; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.04); transition: transform 0.3s ease; }
-        .info-block p { font-size: 1.05em; color: #555; line-height: 1.7; margin-bottom: 15px; }
-
-        /* --- Admin Panel --- */
-        #adminPanel { display: none; background: #1a1a1a; color: #fff; padding: 40px; }
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .admin-tabs button { padding: 10px 20px; background: #333; border: none; color: white; cursor: pointer; border-radius: 5px; font-weight: 600; }
-        .admin-tabs button.active { background: #a17c52; }
-        .admin-form { display: none; flex-direction: column; gap: 12px; max-width: 600px; background: #2a2a2a; padding: 25px; border-radius: 8px; }
-        .admin-form.active { display: flex; animation: fadeInUp 0.4s ease-out forwards; }
-        .admin-form input, .admin-form textarea, .admin-form select { padding: 12px; border-radius: 5px; border: 1px solid #444; width: 100%; background: #1a1a1a; color: #fff; }
-        .admin-form button[type="submit"] { background: #28a745; color: white; padding: 12px; font-weight: bold; border: none; cursor: pointer; border-radius: 5px; }
-
-        /* --- Footer & Extras --- */
-        .footer { background: #111; color: #ddd; text-align: center; padding: 30px 20px; border-top: 3px solid #a17c52; }
-        .delete-btn { position: absolute; top: 10px; right: 10px; background: #ff4d4d; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; display: none; }
-        .admin-mode .delete-btn { display: block; }
-        #loader { text-align: center; font-size: 1.1em; color: #a17c52; display: none; margin: 20px; font-weight: bold; }
-
-        /* ========================================= */
-        /* --- MOBILE RESPONSIVENESS (SUPER PREMIUM) --- */
-        /* ========================================= */
         @media (max-width: 768px) {
-            /* Navbar adjustment */
-            .navbar { flex-direction: column; padding: 12px; text-align: center; }
-            .logo { font-size: 1.4em; }
-            .nav-links { flex-wrap: wrap; justify-content: center; margin-top: 10px; }
-            .nav-links a { margin: 4px 6px; font-size: 0.85em; }
-            .admin-btn { margin-top: 10px; padding: 6px 15px; font-size: 0.8em; display: none; /* Mobile par admin button hide kar sakte hain ya rakhein */ }
-            
-            /* HERO SECTION: TEXT AUR IMAGE DONO SIDE-BY-SIDE RAHENGE */
-            .hero { 
-                flex-direction: row; /* Image ko text ki side me fix karne ke liye */
-                padding: 40px 15px; 
-                align-items: center; 
-            }
-            .hero-text { 
-                flex: 1.5; /* Text ko zyada space */
-                padding-right: 15px; /* Thoda gap image ke liye */
-            }
-            .tagline { 
-                font-size: 1.35em; /* Text chota kiya taaki fit ho jaye */
-                line-height: 1.3; 
-                margin-bottom: 12px;
-            }
-            .hero-text p { 
-                font-size: 0.85em; 
-                margin-bottom: 15px; 
-                line-height: 1.4;
-            }
-            .hero-btn { 
-                padding: 8px 18px; 
-                font-size: 0.85em; 
-            }
-            
-            .hero-image { 
-                flex: 1; /* Image ko side mein fit karne ke liye */
-                justify-content: flex-end; 
-            }
-            .hero-image img { 
-                width: 130px; /* Mobile ke liye perfect chota size */
-                height: 130px; 
-                border-width: 4px; /* Border choti ki */
-                padding: 4px;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            }
-
-            /* Adjust other sections for mobile */
-            .section-wrapper { padding: 40px 15px; }
-            .section-title { font-size: 1.6em; margin-bottom: 25px; }
-            .info-block { padding: 20px; }
-            .info-block p { font-size: 0.9em; }
-            .grid-container { grid-template-columns: 1fr; } /* Mobile me cards ek ke niche ek */
+            .navbar { padding: 15px; }
+            .hero { flex-direction: row; padding: 30px 15px; align-items: center; }
+            .tagline { font-size: 1.2em; }
+            .hero-image img { width: 110px; height: 110px; }
+            .hero-text p { font-size: 0.8em; }
         }
     </style>
 </head>
 <body>
-
     <div class="navbar">
         <div class="logo">SUCCESS COACHING</div>
         <div class="nav-links">
-            <a href="#home"><i class="fas fa-home"></i> होम</a>
-            <a href="#links-section"><i class="fas fa-link"></i> लिंक्स</a>
-            <a href="#mcq-section"><i class="fas fa-laptop-code"></i> MCQ टेस्ट</a>
-            <a href="#notes-section"><i class="fas fa-book"></i> नोट्स</a>
-            <a href="#contact-section"><i class="fas fa-address-card"></i> संपर्क</a>
-            <button onclick="toggleAdmin()" class="admin-btn"><i class="fas fa-user-shield"></i> ADMIN</button>
+            <a href="#links-section">लिंक्स</a>
+            <a href="#mcq-section">टेस्ट</a>
+            <a href="#notes-section">नोट्स</a>
         </div>
     </div>
 
-    <div id="adminPanel">
-        <h2><i class="fas fa-cogs"></i> एडमिन डैशबोर्ड</h2>
-        <p style="margin-bottom: 20px; color: #888;">यहाँ से आप वेबसाइट में नया डेटा और फोटो जोड़ सकते हैं (Live Database).</p>
-        
-        <div class="admin-tabs">
-            <button onclick="switchAdminTab('formLink')" class="tab-btn active" id="tab-formLink"><i class="fas fa-link"></i> Add Link</button>
-            <button onclick="switchAdminTab('formNote')" class="tab-btn" id="tab-formNote"><i class="fas fa-file-pdf"></i> Upload Note</button>
-            <button onclick="switchAdminTab('formMcq')" class="tab-btn" id="tab-formMcq"><i class="fas fa-question-circle"></i> Add MCQ</button>
-            <button onclick="switchAdminTab('formImage')" class="tab-btn" id="tab-formImage" style="background-color: #007bff;"><i class="fas fa-camera"></i> Update Photo</button>
-        </div>
-
-        <form class="admin-form active" id="formLink" onsubmit="addLinkData(event)">
-            <input type="text" id="linkTitle" placeholder="लिंक का नाम (उदा. BSEB 10th Result)" required>
-            <input type="text" id="linkDesc" placeholder="छोटी जानकारी" required>
-            <input type="url" id="linkUrl" placeholder="URL डालें (http://...)" required>
-            <button type="submit"><i class="fas fa-plus"></i> लिंक ऐड करें</button>
-        </form>
-
-        <form class="admin-form" id="formNote" onsubmit="addNoteData(event)">
-            <input type="text" id="noteTitle" placeholder="नोट्स का नाम (उदा. 10th Math Chapter 1)" required>
-            <input type="text" id="noteDesc" placeholder="नोट्स के बारे में लिखें" required>
-            <label style="color: #aaa; font-size: 0.9em;">PDF/Image सेलेक्ट करें (Max 2MB):</label>
-            <input type="file" id="noteFile" accept=".pdf, image/*" required style="background: #2a2a2a; border: none; padding: 0;">
-            <button type="submit"><i class="fas fa-upload"></i> नोट्स अपलोड करें</button>
-        </form>
-
-        <form class="admin-form" id="formMcq" onsubmit="addMcqData(event)">
-            <input type="text" id="mcqSubject" placeholder="विषय का नाम (उदा. Science Test 1)" required>
-            <textarea id="mcqQues" rows="3" placeholder="सवाल (Question)" required></textarea>
-            <input type="text" id="optA" placeholder="Option A" required>
-            <input type="text" id="optB" placeholder="Option B" required>
-            <input type="text" id="optC" placeholder="Option C" required>
-            <input type="text" id="optD" placeholder="Option D" required>
-            <select id="correctOpt" required>
-                <option value="">सही जवाब चुनें</option>
-                <option value="A">Option A</option>
-                <option value="B">Option B</option>
-                <option value="C">Option C</option>
-                <option value="D">Option D</option>
-            </select>
-            <button type="submit"><i class="fas fa-plus"></i> प्रश्न जोड़ें</button>
-        </form>
-
-        <form class="admin-form" id="formImage" onsubmit="updateHeroImage(event)">
-            <label style="color: #aaa; font-size: 1em; margin-bottom: 5px;">प्रिंसिपल की नई फोटो सेलेक्ट करें (Max 2MB):</label>
-            <input type="file" id="heroImageFile" accept="image/*" required style="background: #2a2a2a; border: none; padding: 0; color: #fff; cursor: pointer;">
-            <button type="submit"><i class="fas fa-image"></i> नई फोटो सेट करें</button>
-        </form>
-    </div>
-
-    <div id="home" class="hero">
+    <div class="hero">
         <div class="hero-text">
             <h1 class="tagline">
-                <span class="line-1">चीते की चाल, बाज़ की नज़र,</span>
+                <span>चीते की चाल, बाज़ की नज़र,</span>
                 <span class="line-2">और AR RAQEEB के कॉन्सेप्ट पर</span>
-                <span class="line-3">कोई संदेह नहीं करते!</span>
+                <span>संदेह नहीं करते!</span>
             </h1>
-            <p>प्राथमिक और उच्च माध्यमिक शिक्षा में उत्कृष्टता का केंद्र। <br><strong>COME TO LEARN, GO TO BRILLIANCE.</strong></p>
-            <a href="#admission-section" class="hero-btn">अभी एडमिशन लें</a>
+            <p>Quality Education for Better Future.</p>
         </div>
-        <div class="hero-image">
-            <img src="principal.jpg" alt="AR RAQEEB" id="mainHeroImage">
-        </div>
+        <div class="hero-image"><img src="principal.jpg" id="mainHeroImage"></div>
     </div>
 
-    <div id="loader">डेटा लोड हो रहा है...</div>
-
     <div id="links-section" class="section-wrapper">
-        <h2 class="section-title"><i class="fas fa-link" style="color:#4285F4;"></i> ज़रूरी लिंक्स</h2>
+        <h2>जरूरी लिंक्स</h2>
         <div class="grid-container" id="linksContainer"></div>
     </div>
 
-    <div id="mcq-section" class="section-wrapper" style="background: #fdfaf5;">
-        <h2 class="section-title"><i class="fas fa-laptop-code"></i> लाइव ऑनलाइन टेस्ट</h2>
-        <p style="text-align: center; color: #555; margin-bottom: 30px; font-size: 1em;">अपने ज्ञान की जाँच करें। नीचे दिए गए सवालों के जवाब दें और अपना स्कोर जानें।</p>
-        <div class="quiz-container">
-            <div id="quizArea">
-                <p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है।</p>
-            </div>
-            <button id="submitQuizBtn" class="submit-test-btn" style="display:none;" onclick="calculateScore()">टेस्ट सबमिट करें</button>
-            <div id="resultArea" style="margin-top: 25px; font-size: 1.3em; font-weight: 800; text-align: center; color: #a17c52; display: none;"></div>
-        </div>
-    </div>
-
     <div id="notes-section" class="section-wrapper">
-        <h2 class="section-title"><i class="fas fa-file-pdf" style="color:#E65100;"></i> क्लास नोट्स</h2>
+        <h2>क्लास नोट्स</h2>
         <div class="grid-container" id="notesContainer"></div>
     </div>
 
-    <div id="about-section" class="section-wrapper">
-        <h2 class="section-title">हमारे बारे में</h2>
-        <div class="info-block">
-            <p>हमारा उद्देश्य छात्रों को केवल रटवाना नहीं, बल्कि उनके बुनियादी कॉन्सेप्ट्स को इतना मजबूत करना है कि वे हर परीक्षा में अव्वल आएं।</p>
-            <p><strong>प्रिंसिपल का संदेश:</strong> हमारे संस्थान में आपका स्वागत है। हमारा मिशन छात्रों में मजबूत बुनियादी ज्ञान का निर्माण करना और उन्हें एक सफल करियर की ओर मार्गदर्शन करना है। हम गुणवत्तापूर्ण शिक्षा और कड़े अनुशासन में विश्वास करते हैं।</p>
-        </div>
-    </div>
-
-    <div id="admission-section" class="section-wrapper" style="background: #fdfaf5;">
-        <h2 class="section-title">एडमिशन डिटेल्स</h2>
-        <div class="info-block" style="background: transparent; box-shadow: none;">
-            <p>नए बैच के लिए रजिस्ट्रेशन अब खुला है! आज ही अपनी सीट सुरक्षित करें और शहर के सर्वश्रेष्ठ शिक्षकों से सीखें।</p>
-            <p><strong>ज़रूरी दस्तावेज़:</strong> आधार कार्ड, अंतिम योग्यता की मार्कशीट, और 2 पासपोर्ट साइज फोटो।</p>
-            <p><strong>समय:</strong> सुबह 10:00 बजे से शाम 5:00 बजे तक (सोमवार से शनिवार)</p>
-        </div>
-    </div>
-
-    <div id="contact-section" class="section-wrapper">
-        <h2 class="section-title">संपर्क करें</h2>
-        <div class="info-block" style="max-width: 600px;">
-            <i class="fas fa-map-marker-alt" style="font-size: 2.5em; color: #a17c52; margin-bottom: 15px;"></i>
-            <h3 style="font-size: 1.6em; margin-bottom: 10px; font-weight: 800;">SUCCESS COACHING CENTER</h3>
-            <p style="font-size: 1em; color: #555; margin-bottom: 5px;">प्राथमिक विद्यालय बर के पूरब में</p>
-            <p style="font-size: 1em; color: #555; margin-bottom: 25px;">सोनाइली, बौराचौक, कटिहार, बिहार</p>
-            <p style="font-size: 1.2em; font-weight: 800; margin-bottom: 20px;"><i class="fas fa-phone-alt"></i> 7404920092, 9507090056</p>
-            <a href="https://wa.me/917404920092" target="_blank" style="display: inline-block; padding: 10px 20px; background: #25D366; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); font-size: 0.9em;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=Baurachawk,+Sonaili,+Katihar,+Bihar" target="_blank" style="display: inline-block; padding: 10px 20px; background: #4285F4; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 8px; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3); font-size: 0.9em;"><i class="fas fa-directions"></i> Location</a>
-        </div>
-    </div>
-
-    <div class="footer">
-        <p style="margin-bottom: 8px; font-size: 0.95em;">© 2026 SUCCESS COACHING CENTER. All Rights Reserved.</p>
-        <p style="text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">GUIDED BY: <strong style="color: #a17c52;">AR RAQEEB</strong></p>
-    </div>
-
     <script>
-        // 1. Firebase Initialization
         const firebaseConfig = {
             apiKey: "AIzaSyAKA0U_XD_Txbfes-E-ZUDFPHjmswEV_KA",
             authDomain: "success-coaching-8230b.firebaseapp.com",
@@ -307,165 +78,22 @@
             appId: "1:1086069647096:web:9f66a46f30eaba89a9bd0d"
         };
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const dbRef = database.ref('coachingProData');
+        const dbRef = firebase.database().ref('coachingProData');
 
-        let isAdmin = false;
-        let siteData = { links: [], notes: [], mcqs: [], heroImage: '' };
-
-        // 2. Fetch Data in Realtime
-        document.getElementById('loader').style.display = 'block';
-        dbRef.on('value', (snapshot) => {
-            document.getElementById('loader').style.display = 'none';
-            const data = snapshot.val();
-            if (data) {
-                siteData = data;
-                if(!siteData.links) siteData.links = [];
-                if(!siteData.notes) siteData.notes = [];
-                if(!siteData.mcqs) siteData.mcqs = [];
-                if(!siteData.heroImage) siteData.heroImage = '';
+        dbRef.on('value', (snap) => {
+            const data = snap.val();
+            if(data) {
+                if(data.heroImage) document.getElementById('mainHeroImage').src = data.heroImage;
+                renderData(data);
             }
-            loadHeroImage();
-            renderMaterials();
-            renderMcqTest();
         });
 
-        // Save Data to Firebase
-        function saveData() { dbRef.set(siteData); }
-
-        function toggleAdmin() {
-            const pass = prompt("Enter Admin Password (hint: admin):");
-            if (pass === 'admin') {
-                isAdmin = !isAdmin;
-                document.getElementById('adminPanel').style.display = isAdmin ? 'block' : 'none';
-                document.body.classList.toggle('admin-mode', isAdmin);
-                renderMaterials();
-                renderMcqTest();
-                window.scrollTo(0,0);
-            } else if (pass !== null) {
-                alert("Wrong Password!");
-            }
-        }
-
-        function switchAdminTab(formId) {
-            document.querySelectorAll('.admin-form').forEach(f => f.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(formId).classList.add('active');
-            document.getElementById('tab-' + formId).classList.add('active');
-        }
-
-        function addLinkData(e) {
-            e.preventDefault();
-            siteData.links.push({ id: Date.now(), title: document.getElementById('linkTitle').value, desc: document.getElementById('linkDesc').value, url: document.getElementById('linkUrl').value });
-            saveData(); document.getElementById('formLink').reset(); alert("Link Added on Internet!"); 
-        }
-
-        function addNoteData(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('noteFile');
-            const file = fileInput.files[0];
-            if(file.size > 2 * 1024 * 1024) { alert("File is too large! Max 2MB allowed."); return; }
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                siteData.notes.push({ id: Date.now(), title: document.getElementById('noteTitle').value, desc: document.getElementById('noteDesc').value, fileUrl: event.target.result, fileName: file.name });
-                saveData(); document.getElementById('formNote').reset(); alert("Note Uploaded on Internet!"); 
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function addMcqData(e) {
-            e.preventDefault();
-            siteData.mcqs.push({
-                id: Date.now(), subject: document.getElementById('mcqSubject').value, q: document.getElementById('mcqQues').value,
-                opts: { A: document.getElementById('optA').value, B: document.getElementById('optB').value, C: document.getElementById('optC').value, D: document.getElementById('optD').value },
-                ans: document.getElementById('correctOpt').value
-            });
-            saveData(); document.getElementById('formMcq').reset(); alert("Question Added on Internet!"); 
-        }
-
-        function updateHeroImage(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('heroImageFile');
-            const file = fileInput.files[0];
-            if(file.size > 2 * 1024 * 1024) { alert("File is too large! Max 2MB allowed."); return; }
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                siteData.heroImage = event.target.result; 
-                saveData(); 
-                document.getElementById('formImage').reset(); 
-                alert("प्रिंसिपल की फोटो इंटरनेट पर अपडेट हो गई है!"); 
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        function loadHeroImage() {
-            if (siteData.heroImage && siteData.heroImage !== "") {
-                document.getElementById('mainHeroImage').src = siteData.heroImage;
-            }
-        }
-
-        function deleteItem(type, id) {
-            if(confirm("Delete this from Database?")) {
-                siteData[type] = siteData[type].filter(item => item.id !== id);
-                saveData(); 
-            }
-        }
-
-        function renderMaterials() {
-            const linkDiv = document.getElementById('linksContainer');
-            linkDiv.innerHTML = siteData.links.map(l => `
-                <div class="card link-card">
-                    <button class="delete-btn" onclick="deleteItem('links', ${l.id})"><i class="fas fa-trash"></i></button>
-                    <div class="card-icon"><i class="fas fa-external-link-alt"></i></div>
-                    <h3>${l.title}</h3><p>${l.desc}</p>
-                    <a href="${l.url}" target="_blank">क्लिक करें</a>
-                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888; font-size: 0.95em;'>अभी कोई लिंक नहीं है।</p>";
-
-            const noteDiv = document.getElementById('notesContainer');
-            noteDiv.innerHTML = siteData.notes.map(n => `
-                <div class="card note-card">
-                    <button class="delete-btn" onclick="deleteItem('notes', ${n.id})"><i class="fas fa-trash"></i></button>
-                    <div class="card-icon"><i class="fas fa-file-download"></i></div>
-                    <h3>${n.title}</h3><p>${n.desc}</p>
-                    <a href="${n.fileUrl}" download="${n.fileName}">डाउनलोड करें</a>
-                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888; font-size: 0.95em;'>अभी कोई नोट्स नहीं हैं।</p>";
-        }
-
-        function renderMcqTest() {
-            const area = document.getElementById('quizArea');
-            const btn = document.getElementById('submitQuizBtn');
-            document.getElementById('resultArea').style.display = 'none';
+        function renderData(data) {
+            const lCon = document.getElementById('linksContainer');
+            lCon.innerHTML = (data.links || []).map(l => `<div class="card"><h3>${l.title}</h3><a href="${l.url}" target="_blank">Open Link</a></div>`).join('');
             
-            if(siteData.mcqs.length === 0) {
-                area.innerHTML = "<p style='text-align:center; color:#888; font-size: 0.95em;'>अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें।</p>";
-                btn.style.display = 'none'; return;
-            }
-
-            area.innerHTML = siteData.mcqs.map((m, index) => `
-                <div class="question-box" id="qbox-${m.id}">
-                    ${isAdmin ? `<button onclick="deleteItem('mcqs', ${m.id})" style="float:right; background:red; color:white; border:none; padding:6px 10px; border-radius: 4px; cursor: pointer; transition: 0.3s; font-size: 0.85em;" onmouseover="this.style.background='#cc0000'" onmouseout="this.style.background='red'">Delete</button>` : ''}
-                    <h4 style="color: #a17c52; margin-bottom: 8px; font-weight: 600; font-size: 0.95em;">${m.subject}</h4>
-                    <h3 style="line-height: 1.4; font-size: 1.1em;">Q${index + 1}. ${m.q}</h3>
-                    <div class="options-list">
-                        <label><input type="radio" name="ans_${m.id}" value="A"> A. ${m.opts.A}</label>
-                        <label><input type="radio" name="ans_${m.id}" value="B"> B. ${m.opts.B}</label>
-                        <label><input type="radio" name="ans_${m.id}" value="C"> C. ${m.opts.C}</label>
-                        <label><input type="radio" name="ans_${m.id}" value="D"> D. ${m.opts.D}</label>
-                    </div>
-                </div>
-            `).join('');
-            btn.style.display = 'block';
-        }
-
-        function calculateScore() {
-            let score = 0;
-            siteData.mcqs.forEach(m => {
-                const selected = document.querySelector(`input[name="ans_${m.id}"]:checked`);
-                if(selected && selected.value === m.ans) { score++; }
-            });
-            const res = document.getElementById('resultArea');
-            res.innerHTML = `आपका रिजल्ट: <span style="color: #28a745;">${score}</span> / ${siteData.mcqs.length} सही जवाब! 🎉`;
-            res.style.display = 'block';
+            const nCon = document.getElementById('notesContainer');
+            nCon.innerHTML = (data.notes || []).map(n => `<div class="card"><h3>${n.title}</h3><a href="${n.fileUrl}" download>Download</a></div>`).join('');
         }
     </script>
 </body>
