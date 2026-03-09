@@ -16,8 +16,8 @@
         body { background-color: #f8f9fa; color: #333; overflow-x: hidden; scroll-behavior: smooth; }
         
         /* --- Keyframe Animations --- */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
         @keyframes textFadeIn { to { opacity: 1; transform: translateY(0); } }
 
         /* --- Navbar --- */
@@ -29,105 +29,132 @@
         .nav-links a:hover { color: #a17c52; }
         .nav-links a:hover::after { width: 100%; }
         
-        .admin-btn { background: #222; color: #fff; border: none; margin-left: 20px; font-size: 1em; font-weight: 600; cursor: pointer; padding: 10px 20px; border-radius: 8px; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .admin-btn { background: #222; color: #fff; border: none; margin-left: 20px; font-size: 0.9em; font-weight: 600; cursor: pointer; padding: 8px 18px; border-radius: 6px; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .admin-btn:hover { background: #a17c52; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(161, 124, 82, 0.4); }
+
+        /* --- Hero Section (Premium Layout) --- */
+        .hero { display: flex; align-items: center; justify-content: space-between; padding: 100px 50px; background: linear-gradient(135deg, #fdfaf5 0%, #f4eee1 100%); border-bottom: 1px solid #e8dec9; }
+        .hero-text { flex: 1.2; padding-right: 40px; }
+        
+        /* Animated Tagline */
+        .tagline { font-size: 2.8em; color: #111; line-height: 1.3; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+        .tagline span { display: block; opacity: 0; transform: translateY(20px); animation: textFadeIn 0.6s ease forwards; }
+        .tagline .line-1 { animation-delay: 0.2s; }
+        .tagline .line-2 { animation-delay: 0.6s; color: #a17c52; } 
+        .tagline .line-3 { animation-delay: 1.0s; }
+
+        .hero-text p { font-size: 1.1em; margin-bottom: 25px; color: #555; line-height: 1.5; animation: fadeInUp 0.8s ease forwards; animation-delay: 1.3s; opacity: 0; }
+        .hero-btn { display: inline-block; padding: 12px 28px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 6px; font-size: 1.05em; font-weight: 600; box-shadow: 0 5px 15px rgba(161, 124, 82, 0.4); transition: all 0.3s ease; animation: fadeInUp 0.8s ease forwards; animation-delay: 1.5s; opacity: 0; }
+        .hero-btn:hover { background: #8e6c46; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(161, 124, 82, 0.6); }
+        
+        .hero-image { flex: 0.8; display: flex; justify-content: flex-end; align-items: center; animation: scaleIn 1s ease-out forwards; animation-delay: 0.4s; opacity: 0; }
+        .hero-image img { width: 340px; height: 340px; border-radius: 50%; object-fit: cover; object-position: top center; background-color: #B2967D; padding: 10px; border: 6px solid #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); transition: transform 0.3s ease-out; }
+        .hero-image img:hover { transform: scale(1.03); }
 
         /* --- Sections Formatting --- */
         .section-wrapper { padding: 80px 20px; border-bottom: 1px solid #eaeaea; }
-        .section-title { text-align: center; font-size: 2.5em; color: #222; margin-bottom: 40px; font-weight: 800; text-transform: uppercase; position: relative; }
-        .section-title::after { content: ''; width: 60px; height: 4px; background: #a17c52; display: block; margin: 15px auto 0; border-radius: 2px; }
-
-        /* --- Hero Section --- */
-        .hero { display: flex; align-items: center; padding: 100px 50px; background: linear-gradient(135deg, #fdfaf5 0%, #f4eee1 100%); border-bottom: 1px solid #e8dec9; }
-        .hero-text { flex: 1; padding-right: 50px; }
-        
-        /* New Animated Tagline */
-        .tagline { font-size: 2.8em; color: #111; line-height: 1.4; font-weight: 800; margin-bottom: 25px; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
-        .tagline span { display: block; opacity: 0; transform: translateY(20px); animation: textFadeIn 0.6s ease forwards; }
-        .tagline .line-1 { animation-delay: 0.2s; }
-        .tagline .line-2 { animation-delay: 0.7s; color: #a17c52; } /* Highlight second line */
-        .tagline .line-3 { animation-delay: 1.2s; }
-
-        .hero-text p { font-size: 1.2em; margin-bottom: 30px; color: #555; line-height: 1.6; animation: fadeInUp 1s ease forwards; animation-delay: 1.5s; opacity: 0; }
-        .hero-btn { display: inline-block; padding: 15px 35px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; box-shadow: 0 5px 15px rgba(161, 124, 82, 0.4); transition: all 0.3s ease; animation: fadeInUp 1s ease forwards; animation-delay: 1.8s; opacity: 0; }
-        .hero-btn:hover { background: #8e6c46; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(161, 124, 82, 0.6); }
-        
-        .hero-image { flex: 1; display: flex; justify-content: center; align-items: center; animation: scaleIn 1s ease-out forwards; animation-delay: 0.5s; opacity: 0; }
-        .hero-image img { width: 350px; height: 350px; border-radius: 50%; object-fit: cover; object-position: top center; background-color: #B2967D; padding: 10px; border: 8px solid #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.15); transition: transform 0.3s ease-out; }
-        .hero-image img:hover { transform: scale(1.05); }
-        
-        /* --- Information Blocks --- */
-        .info-block { max-width: 900px; margin: 0 auto; padding: 40px; text-align: center; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease; }
-        .info-block:hover { transform: translateY(-5px); }
-        .info-block p { font-size: 1.15em; color: #555; line-height: 1.8; margin-bottom: 15px; }
+        .section-title { text-align: center; font-size: 2.2em; color: #222; margin-bottom: 35px; font-weight: 800; text-transform: uppercase; position: relative; }
+        .section-title::after { content: ''; width: 60px; height: 4px; background: #a17c52; display: block; margin: 12px auto 0; border-radius: 2px; }
 
         /* --- Animated Cards --- */
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid #ccc; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
-        .card:hover { transform: translateY(-12px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+        .card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid #ccc; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
         .card.link-card { border-top-color: #4285F4; }
         .card.note-card { border-top-color: #E65100; }
-        .card-icon { font-size: 2.8em; margin-bottom: 15px; transition: transform 0.3s ease; }
-        .card:hover .card-icon { transform: scale(1.2) rotate(5deg); }
+        .card-icon { font-size: 2.2em; margin-bottom: 12px; transition: transform 0.3s ease; }
+        .card:hover .card-icon { transform: scale(1.1) rotate(5deg); }
         .link-card .card-icon { color: #4285F4; }
         .note-card .card-icon { color: #E65100; }
-        .card h3 { font-size: 1.4em; margin-bottom: 10px; color: #222; font-weight: 600; }
-        .card p { color: #666; margin-bottom: 25px; line-height: 1.5; }
-        .card a { display: inline-block; padding: 10px 25px; border-radius: 6px; text-decoration: none; color: white; font-weight: 600; transition: all 0.3s ease; }
-        .link-card a { background: #4285F4; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3); }
-        .note-card a { background: #E65100; box-shadow: 0 4px 10px rgba(230, 81, 0, 0.3); }
-        .card a:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .card h3 { font-size: 1.3em; margin-bottom: 8px; color: #222; font-weight: 600; }
+        .card p { color: #666; margin-bottom: 20px; font-size: 0.95em; line-height: 1.4; }
+        .card a { display: inline-block; padding: 8px 20px; border-radius: 5px; text-decoration: none; color: white; font-weight: 600; font-size: 0.95em; transition: all 0.3s ease; }
+        .link-card a { background: #4285F4; box-shadow: 0 4px 8px rgba(66, 133, 244, 0.25); }
+        .note-card a { background: #E65100; box-shadow: 0 4px 8px rgba(230, 81, 0, 0.25); }
 
         /* --- Internal MCQ Test UI --- */
-        .quiz-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .question-box { margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid #f0f0f0; }
-        .question-box h3 { font-size: 1.3em; margin-bottom: 20px; color: #222; }
-        .options-list label { display: block; background: #fdfdfd; padding: 15px 20px; margin-bottom: 12px; border-radius: 8px; cursor: pointer; border: 1px solid #e0e0e0; transition: all 0.2s ease; }
-        .options-list label:hover { background: #fdfaf5; border-color: #a17c52; transform: translateX(5px); }
-        .options-list input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
-        .submit-test-btn { background: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.2em; font-weight: 600; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); }
-        .submit-test-btn:hover { background: #218838; transform: translateY(-2px); }
+        .quiz-container { max-width: 750px; margin: 0 auto; background: #fff; padding: 35px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+        .question-box { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+        .question-box h3 { font-size: 1.2em; margin-bottom: 15px; color: #222; }
+        .options-list label { display: block; background: #fdfdfd; padding: 12px 15px; margin-bottom: 10px; border-radius: 6px; cursor: pointer; border: 1px solid #e0e0e0; transition: all 0.2s ease; font-size: 0.95em; }
+        .options-list label:hover { background: #fdfaf5; border-color: #a17c52; transform: translateX(3px); }
+        .options-list input { margin-right: 12px; }
+        .submit-test-btn { background: #28a745; color: white; padding: 12px 25px; border: none; border-radius: 6px; font-size: 1.1em; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s ease; }
+
+        /* --- Information Blocks --- */
+        .info-block { max-width: 800px; margin: 0 auto; padding: 35px; text-align: center; background: #fff; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.04); transition: transform 0.3s ease; }
+        .info-block p { font-size: 1.05em; color: #555; line-height: 1.7; margin-bottom: 15px; }
 
         /* --- Admin Panel --- */
-        #adminPanel { display: none; background: #1a1a1a; color: #fff; padding: 50px; }
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
-        .admin-tabs button { padding: 12px 25px; background: #333; border: none; color: white; cursor: pointer; border-radius: 6px; font-weight: 600; transition: 0.3s; }
-        .admin-tabs button:hover { background: #555; }
+        #adminPanel { display: none; background: #1a1a1a; color: #fff; padding: 40px; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .admin-tabs button { padding: 10px 20px; background: #333; border: none; color: white; cursor: pointer; border-radius: 5px; font-weight: 600; }
         .admin-tabs button.active { background: #a17c52; }
-        .admin-form { display: none; flex-direction: column; gap: 15px; max-width: 600px; background: #2a2a2a; padding: 30px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .admin-form { display: none; flex-direction: column; gap: 12px; max-width: 600px; background: #2a2a2a; padding: 25px; border-radius: 8px; }
         .admin-form.active { display: flex; animation: fadeInUp 0.4s ease-out forwards; }
-        .admin-form input, .admin-form textarea, .admin-form select { padding: 15px; border-radius: 6px; border: 1px solid #444; width: 100%; font-size: 1em; background: #1a1a1a; color: #fff; }
-        .admin-form button[type="submit"] { background: #28a745; color: white; padding: 15px; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; font-size: 1.1em; transition: 0.3s; }
-        .admin-form button[type="submit"]:hover { background: #218838; }
+        .admin-form input, .admin-form textarea, .admin-form select { padding: 12px; border-radius: 5px; border: 1px solid #444; width: 100%; background: #1a1a1a; color: #fff; }
+        .admin-form button[type="submit"] { background: #28a745; color: white; padding: 12px; font-weight: bold; border: none; cursor: pointer; border-radius: 5px; }
 
         /* --- Footer & Extras --- */
-        .footer { background: #111; color: #ddd; text-align: center; padding: 40px 20px; border-top: 4px solid #a17c52; }
-        .delete-btn { position: absolute; top: 15px; right: 15px; background: #ff4d4d; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; display: none; transition: 0.3s; }
-        .delete-btn:hover { background: #cc0000; transform: scale(1.1); }
+        .footer { background: #111; color: #ddd; text-align: center; padding: 30px 20px; border-top: 3px solid #a17c52; }
+        .delete-btn { position: absolute; top: 10px; right: 10px; background: #ff4d4d; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; display: none; }
         .admin-mode .delete-btn { display: block; }
-        #loader { text-align: center; font-size: 1.2em; color: #a17c52; display: none; margin: 20px; font-weight: bold; }
+        #loader { text-align: center; font-size: 1.1em; color: #a17c52; display: none; margin: 20px; font-weight: bold; }
 
         /* ========================================= */
-        /* --- MOBILE RESPONSIVENESS (Jadu Yahan Hai) --- */
+        /* --- MOBILE RESPONSIVENESS (SUPER PREMIUM) --- */
         /* ========================================= */
         @media (max-width: 768px) {
-            .navbar { flex-direction: column; padding: 15px 20px; text-align: center; }
-            .nav-links { flex-wrap: wrap; justify-content: center; margin-top: 15px; }
-            .nav-links a { margin: 5px 8px; font-size: 0.95em; }
-            .admin-btn { margin: 15px auto 0; display: block; }
+            /* Navbar adjustment */
+            .navbar { flex-direction: column; padding: 12px; text-align: center; }
+            .logo { font-size: 1.4em; }
+            .nav-links { flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+            .nav-links a { margin: 4px 6px; font-size: 0.85em; }
+            .admin-btn { margin-top: 10px; padding: 6px 15px; font-size: 0.8em; display: none; /* Mobile par admin button hide kar sakte hain ya rakhein */ }
             
-            .hero { flex-direction: column; padding: 40px 20px; text-align: center; }
-            .hero-text { padding-right: 0; margin-bottom: 40px; }
+            /* HERO SECTION: TEXT AUR IMAGE DONO SIDE-BY-SIDE RAHENGE */
+            .hero { 
+                flex-direction: row; /* Image ko text ki side me fix karne ke liye */
+                padding: 40px 15px; 
+                align-items: center; 
+            }
+            .hero-text { 
+                flex: 1.5; /* Text ko zyada space */
+                padding-right: 15px; /* Thoda gap image ke liye */
+            }
+            .tagline { 
+                font-size: 1.35em; /* Text chota kiya taaki fit ho jaye */
+                line-height: 1.3; 
+                margin-bottom: 12px;
+            }
+            .hero-text p { 
+                font-size: 0.85em; 
+                margin-bottom: 15px; 
+                line-height: 1.4;
+            }
+            .hero-btn { 
+                padding: 8px 18px; 
+                font-size: 0.85em; 
+            }
             
-            /* Text mobile ke liye fit kiya gaya */
-            .tagline { font-size: 1.8em; } 
-            
-            /* Photo mobile ke liye set ki gayi */
-            .hero-image img { width: 260px; height: 260px; border-width: 5px; }
-            
-            .section-wrapper { padding: 50px 15px; }
-            .section-title { font-size: 2em; margin-bottom: 30px; }
+            .hero-image { 
+                flex: 1; /* Image ko side mein fit karne ke liye */
+                justify-content: flex-end; 
+            }
+            .hero-image img { 
+                width: 130px; /* Mobile ke liye perfect chota size */
+                height: 130px; 
+                border-width: 4px; /* Border choti ki */
+                padding: 4px;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            }
+
+            /* Adjust other sections for mobile */
+            .section-wrapper { padding: 40px 15px; }
+            .section-title { font-size: 1.6em; margin-bottom: 25px; }
             .info-block { padding: 20px; }
+            .info-block p { font-size: 0.9em; }
+            .grid-container { grid-template-columns: 1fr; } /* Mobile me cards ek ke niche ek */
         }
     </style>
 </head>
@@ -219,13 +246,13 @@
 
     <div id="mcq-section" class="section-wrapper" style="background: #fdfaf5;">
         <h2 class="section-title"><i class="fas fa-laptop-code"></i> लाइव ऑनलाइन टेस्ट</h2>
-        <p style="text-align: center; color: #555; margin-bottom: 30px; font-size: 1.1em;">अपने ज्ञान की जाँच करें। नीचे दिए गए सवालों के जवाब दें और अपना स्कोर जानें।</p>
+        <p style="text-align: center; color: #555; margin-bottom: 30px; font-size: 1em;">अपने ज्ञान की जाँच करें। नीचे दिए गए सवालों के जवाब दें और अपना स्कोर जानें।</p>
         <div class="quiz-container">
             <div id="quizArea">
                 <p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है।</p>
             </div>
             <button id="submitQuizBtn" class="submit-test-btn" style="display:none;" onclick="calculateScore()">टेस्ट सबमिट करें</button>
-            <div id="resultArea" style="margin-top: 25px; font-size: 1.5em; font-weight: 800; text-align: center; color: #a17c52; display: none;"></div>
+            <div id="resultArea" style="margin-top: 25px; font-size: 1.3em; font-weight: 800; text-align: center; color: #a17c52; display: none;"></div>
         </div>
     </div>
 
@@ -254,19 +281,19 @@
     <div id="contact-section" class="section-wrapper">
         <h2 class="section-title">संपर्क करें</h2>
         <div class="info-block" style="max-width: 600px;">
-            <i class="fas fa-map-marker-alt" style="font-size: 3em; color: #a17c52; margin-bottom: 20px;"></i>
-            <h3 style="font-size: 1.8em; margin-bottom: 15px; font-weight: 800;">SUCCESS COACHING CENTER</h3>
-            <p style="font-size: 1.2em; color: #555; margin-bottom: 10px;">प्राथमिक विद्यालय बर के पूरब में</p>
-            <p style="font-size: 1.2em; color: #555; margin-bottom: 30px;">सोनाइली, बौराचौक, कटिहार, बिहार</p>
-            <p style="font-size: 1.3em; font-weight: 800; margin-bottom: 25px;"><i class="fas fa-phone-alt"></i> 7404920092, 9507090056</p>
-            <a href="https://wa.me/917404920092" target="_blank" style="display: inline-block; padding: 12px 25px; background: #25D366; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=Baurachawk,+Sonaili,+Katihar,+Bihar" target="_blank" style="display: inline-block; padding: 12px 25px; background: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);"><i class="fas fa-directions"></i> Location</a>
+            <i class="fas fa-map-marker-alt" style="font-size: 2.5em; color: #a17c52; margin-bottom: 15px;"></i>
+            <h3 style="font-size: 1.6em; margin-bottom: 10px; font-weight: 800;">SUCCESS COACHING CENTER</h3>
+            <p style="font-size: 1em; color: #555; margin-bottom: 5px;">प्राथमिक विद्यालय बर के पूरब में</p>
+            <p style="font-size: 1em; color: #555; margin-bottom: 25px;">सोनाइली, बौराचौक, कटिहार, बिहार</p>
+            <p style="font-size: 1.2em; font-weight: 800; margin-bottom: 20px;"><i class="fas fa-phone-alt"></i> 7404920092, 9507090056</p>
+            <a href="https://wa.me/917404920092" target="_blank" style="display: inline-block; padding: 10px 20px; background: #25D366; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); font-size: 0.9em;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Baurachawk,+Sonaili,+Katihar,+Bihar" target="_blank" style="display: inline-block; padding: 10px 20px; background: #4285F4; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 8px; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3); font-size: 0.9em;"><i class="fas fa-directions"></i> Location</a>
         </div>
     </div>
 
     <div class="footer">
-        <p style="margin-bottom: 10px; font-size: 1.1em;">© 2026 SUCCESS COACHING CENTER. All Rights Reserved.</p>
-        <p style="text-transform: uppercase; font-size: 0.9em; letter-spacing: 1px;">GUIDED BY: <strong style="color: #a17c52;">AR RAQEEB</strong></p>
+        <p style="margin-bottom: 8px; font-size: 0.95em;">© 2026 SUCCESS COACHING CENTER. All Rights Reserved.</p>
+        <p style="text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px;">GUIDED BY: <strong style="color: #a17c52;">AR RAQEEB</strong></p>
     </div>
 
     <script>
@@ -304,9 +331,7 @@
         });
 
         // Save Data to Firebase
-        function saveData() { 
-            dbRef.set(siteData); 
-        }
+        function saveData() { dbRef.set(siteData); }
 
         function toggleAdmin() {
             const pass = prompt("Enter Admin Password (hint: admin):");
@@ -394,7 +419,7 @@
                     <div class="card-icon"><i class="fas fa-external-link-alt"></i></div>
                     <h3>${l.title}</h3><p>${l.desc}</p>
                     <a href="${l.url}" target="_blank">क्लिक करें</a>
-                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888; font-size: 1.1em;'>अभी कोई लिंक नहीं है।</p>";
+                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888; font-size: 0.95em;'>अभी कोई लिंक नहीं है।</p>";
 
             const noteDiv = document.getElementById('notesContainer');
             noteDiv.innerHTML = siteData.notes.map(n => `
@@ -403,7 +428,7 @@
                     <div class="card-icon"><i class="fas fa-file-download"></i></div>
                     <h3>${n.title}</h3><p>${n.desc}</p>
                     <a href="${n.fileUrl}" download="${n.fileName}">डाउनलोड करें</a>
-                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888; font-size: 1.1em;'>अभी कोई नोट्स नहीं हैं।</p>";
+                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888; font-size: 0.95em;'>अभी कोई नोट्स नहीं हैं।</p>";
         }
 
         function renderMcqTest() {
@@ -412,15 +437,15 @@
             document.getElementById('resultArea').style.display = 'none';
             
             if(siteData.mcqs.length === 0) {
-                area.innerHTML = "<p style='text-align:center; color:#888; font-size: 1.1em;'>अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें।</p>";
+                area.innerHTML = "<p style='text-align:center; color:#888; font-size: 0.95em;'>अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें।</p>";
                 btn.style.display = 'none'; return;
             }
 
             area.innerHTML = siteData.mcqs.map((m, index) => `
                 <div class="question-box" id="qbox-${m.id}">
-                    ${isAdmin ? `<button onclick="deleteItem('mcqs', ${m.id})" style="float:right; background:red; color:white; border:none; padding:8px 12px; border-radius: 6px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='#cc0000'" onmouseout="this.style.background='red'">Delete</button>` : ''}
-                    <h4 style="color: #a17c52; margin-bottom: 8px; font-weight: 600;">${m.subject}</h4>
-                    <h3 style="line-height: 1.4;">Q${index + 1}. ${m.q}</h3>
+                    ${isAdmin ? `<button onclick="deleteItem('mcqs', ${m.id})" style="float:right; background:red; color:white; border:none; padding:6px 10px; border-radius: 4px; cursor: pointer; transition: 0.3s; font-size: 0.85em;" onmouseover="this.style.background='#cc0000'" onmouseout="this.style.background='red'">Delete</button>` : ''}
+                    <h4 style="color: #a17c52; margin-bottom: 8px; font-weight: 600; font-size: 0.95em;">${m.subject}</h4>
+                    <h3 style="line-height: 1.4; font-size: 1.1em;">Q${index + 1}. ${m.q}</h3>
                     <div class="options-list">
                         <label><input type="radio" name="ans_${m.id}" value="A"> A. ${m.opts.A}</label>
                         <label><input type="radio" name="ans_${m.id}" value="B"> B. ${m.opts.B}</label>
