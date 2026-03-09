@@ -6,33 +6,25 @@
     <title>SUCCESS COACHING CENTER - AR RAQEEB</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <style>
         /* --- Basic Reset & Typography --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background-color: #f8f9fa; color: #333; overflow-x: hidden; scroll-behavior: smooth; }
         
         /* --- Keyframe Animations --- */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
         /* --- Navbar --- */
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 1000; }
         .logo { font-size: 1.8em; font-weight: 800; color: #a17c52; text-transform: uppercase; letter-spacing: 1px; }
-        
         .nav-links { display: flex; align-items: center; }
-        /* Animated Nav Links */
         .nav-links a { position: relative; margin: 0 15px; font-size: 1.05em; color: #555; font-weight: 600; text-decoration: none; padding: 5px 0; transition: color 0.3s ease; }
-        .nav-links a::after {
-            content: ''; position: absolute; width: 0; height: 3px;
-            bottom: -5px; left: 50%; background-color: #a17c52;
-            transition: all 0.3s ease; transform: translateX(-50%); border-radius: 2px;
-        }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 3px; bottom: -5px; left: 50%; background-color: #a17c52; transition: all 0.3s ease; transform: translateX(-50%); border-radius: 2px; }
         .nav-links a:hover { color: #a17c52; }
         .nav-links a:hover::after { width: 100%; }
         
@@ -52,35 +44,34 @@
         .hero-btn { display: inline-block; padding: 15px 35px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; box-shadow: 0 5px 15px rgba(161, 124, 82, 0.4); transition: all 0.3s ease; }
         .hero-btn:hover { background: #8e6c46; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(161, 124, 82, 0.6); }
         
-        .hero-image { flex: 1; text-align: center; animation: scaleIn 1s ease-out forwards; }
-        /* Circle Principal Image */
+        /* --- Updated Image with Taupe Background --- */
+        .hero-image { flex: 1; display: flex; justify-content: center; align-items: center; animation: scaleIn 1s ease-out forwards; }
         .hero-image img { 
-            width: 320px; height: 320px; 
+            width: 350px; height: 350px; 
             border-radius: 50%; object-fit: cover; object-position: top center; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 10px solid #fff; 
-            transition: transform 0.5s ease;
+            background-color: #B2967D; /* Taupe/Brown Background */
+            padding: 10px; /* Space inside background */
+            border: 8px solid #fff; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15); 
+            transition: transform 0.3s ease-out;
         }
-        .hero-image img:hover { transform: scale(1.03); } /* Halki si badi hogi hover pe */
+        .hero-image img:hover { transform: scale(1.05); }
         
         /* --- Information Blocks --- */
         .info-block { max-width: 900px; margin: 0 auto; padding: 40px; text-align: center; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease; }
         .info-block:hover { transform: translateY(-5px); }
         .info-block p { font-size: 1.15em; color: #555; line-height: 1.8; margin-bottom: 15px; }
 
-        /* --- Animated Cards (Links & Notes) --- */
+        /* --- Animated Cards --- */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
         .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid #ccc; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
-        /* 3D Lift effect */
         .card:hover { transform: translateY(-12px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
         .card.link-card { border-top-color: #4285F4; }
         .card.note-card { border-top-color: #E65100; }
-        
         .card-icon { font-size: 2.8em; margin-bottom: 15px; transition: transform 0.3s ease; }
-        /* Icon Bounce Effect */
         .card:hover .card-icon { transform: scale(1.2) rotate(5deg); }
         .link-card .card-icon { color: #4285F4; }
         .note-card .card-icon { color: #E65100; }
-        
         .card h3 { font-size: 1.4em; margin-bottom: 10px; color: #222; font-weight: 600; }
         .card p { color: #666; margin-bottom: 25px; line-height: 1.5; }
         .card a { display: inline-block; padding: 10px 25px; border-radius: 6px; text-decoration: none; color: white; font-weight: 600; transition: all 0.3s ease; }
@@ -115,6 +106,7 @@
         .delete-btn { position: absolute; top: 15px; right: 15px; background: #ff4d4d; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; display: none; transition: 0.3s; }
         .delete-btn:hover { background: #cc0000; transform: scale(1.1); }
         .admin-mode .delete-btn { display: block; }
+        #loader { text-align: center; font-size: 1.2em; color: #a17c52; display: none; margin: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -133,12 +125,12 @@
 
     <div id="adminPanel">
         <h2><i class="fas fa-cogs"></i> एडमिन डैशबोर्ड</h2>
-        <p style="margin-bottom: 20px; color: #888;">यहाँ से आप वेबसाइट में नया डेटा और फोटो जोड़ सकते हैं।</p>
+        <p style="margin-bottom: 20px; color: #888;">यहाँ से आप वेबसाइट में नया डेटा और फोटो जोड़ सकते हैं (Live Database).</p>
         
         <div class="admin-tabs">
             <button onclick="switchAdminTab('formLink')" class="tab-btn active" id="tab-formLink"><i class="fas fa-link"></i> Add Link</button>
             <button onclick="switchAdminTab('formNote')" class="tab-btn" id="tab-formNote"><i class="fas fa-file-pdf"></i> Upload Note</button>
-            <button onclick="switchAdminTab('formMcq')" class="tab-btn" id="tab-formMcq"><i class="fas fa-question-circle"></i> Add MCQ Question</button>
+            <button onclick="switchAdminTab('formMcq')" class="tab-btn" id="tab-formMcq"><i class="fas fa-question-circle"></i> Add MCQ</button>
             <button onclick="switchAdminTab('formImage')" class="tab-btn" id="tab-formImage" style="background-color: #007bff;"><i class="fas fa-camera"></i> Update Photo</button>
         </div>
 
@@ -192,6 +184,8 @@
         </div>
     </div>
 
+    <div id="loader">डेटा लोड हो रहा है...</div>
+
     <div id="links-section" class="section-wrapper">
         <h2 class="section-title"><i class="fas fa-link" style="color:#4285F4;"></i> ज़रूरी लिंक्स</h2>
         <div class="grid-container" id="linksContainer"></div>
@@ -202,7 +196,7 @@
         <p style="text-align: center; color: #555; margin-bottom: 30px; font-size: 1.1em;">अपने ज्ञान की जाँच करें। नीचे दिए गए सवालों के जवाब दें और अपना स्कोर जानें।</p>
         <div class="quiz-container">
             <div id="quizArea">
-                <p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें।</p>
+                <p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है।</p>
             </div>
             <button id="submitQuizBtn" class="submit-test-btn" style="display:none;" onclick="calculateScore()">टेस्ट सबमिट करें</button>
             <div id="resultArea" style="margin-top: 25px; font-size: 1.5em; font-weight: 800; text-align: center; color: #a17c52; display: none;"></div>
@@ -239,9 +233,8 @@
             <p style="font-size: 1.2em; color: #555; margin-bottom: 10px;">प्राथमिक विद्यालय बर के पूरब में</p>
             <p style="font-size: 1.2em; color: #555; margin-bottom: 30px;">सोनाइली, बौराचौक, कटिहार, बिहार</p>
             <p style="font-size: 1.3em; font-weight: 800; margin-bottom: 25px;"><i class="fas fa-phone-alt"></i> 7404920092, 9507090056</p>
-            
-            <a href="https://wa.me/917404920092" target="_blank" style="display: inline-block; padding: 12px 25px; background: #25D366; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px; transition: transform 0.3s; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=Baurachawk,+Sonaili,+Katihar,+Bihar" target="_blank" style="display: inline-block; padding: 12px 25px; background: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px; transition: transform 0.3s; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);"><i class="fas fa-directions"></i> Location</a>
+            <a href="https://wa.me/917404920092" target="_blank" style="display: inline-block; padding: 12px 25px; background: #25D366; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Baurachawk,+Sonaili,+Katihar,+Bihar" target="_blank" style="display: inline-block; padding: 12px 25px; background: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);"><i class="fas fa-directions"></i> Location</a>
         </div>
     </div>
 
@@ -251,8 +244,44 @@
     </div>
 
     <script>
+        // 1. Firebase Initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKA0U_XD_Txbfes-E-ZUDFPHjmswEV_KA",
+            authDomain: "success-coaching-8230b.firebaseapp.com",
+            projectId: "success-coaching-8230b",
+            storageBucket: "success-coaching-8230b.firebasestorage.app",
+            messagingSenderId: "1086069647096",
+            appId: "1:1086069647096:web:9f66a46f30eaba89a9bd0d"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const dbRef = database.ref('coachingProData');
+
         let isAdmin = false;
-        let siteData = JSON.parse(localStorage.getItem('coachingProData')) || { links: [], notes: [], mcqs: [], heroImage: '' };
+        let siteData = { links: [], notes: [], mcqs: [], heroImage: '' };
+
+        // 2. Fetch Data in Realtime
+        document.getElementById('loader').style.display = 'block';
+        dbRef.on('value', (snapshot) => {
+            document.getElementById('loader').style.display = 'none';
+            const data = snapshot.val();
+            if (data) {
+                siteData = data;
+                // Ensure arrays exist
+                if(!siteData.links) siteData.links = [];
+                if(!siteData.notes) siteData.notes = [];
+                if(!siteData.mcqs) siteData.mcqs = [];
+                if(!siteData.heroImage) siteData.heroImage = '';
+            }
+            loadHeroImage();
+            renderMaterials();
+            renderMcqTest();
+        });
+
+        // Save Data to Firebase
+        function saveData() { 
+            dbRef.set(siteData); 
+        }
 
         function toggleAdmin() {
             const pass = prompt("Enter Admin Password (hint: admin):");
@@ -278,20 +307,18 @@
         function addLinkData(e) {
             e.preventDefault();
             siteData.links.push({ id: Date.now(), title: document.getElementById('linkTitle').value, desc: document.getElementById('linkDesc').value, url: document.getElementById('linkUrl').value });
-            saveData(); document.getElementById('formLink').reset(); alert("Link Added!"); renderMaterials();
+            saveData(); document.getElementById('formLink').reset(); alert("Link Added on Internet!"); 
         }
 
         function addNoteData(e) {
             e.preventDefault();
             const fileInput = document.getElementById('noteFile');
             const file = fileInput.files[0];
-            
             if(file.size > 2 * 1024 * 1024) { alert("File is too large! Max 2MB allowed."); return; }
-
             const reader = new FileReader();
             reader.onload = function(event) {
                 siteData.notes.push({ id: Date.now(), title: document.getElementById('noteTitle').value, desc: document.getElementById('noteDesc').value, fileUrl: event.target.result, fileName: file.name });
-                saveData(); document.getElementById('formNote').reset(); alert("Note Uploaded!"); renderMaterials();
+                saveData(); document.getElementById('formNote').reset(); alert("Note Uploaded on Internet!"); 
             };
             reader.readAsDataURL(file);
         }
@@ -303,24 +330,20 @@
                 opts: { A: document.getElementById('optA').value, B: document.getElementById('optB').value, C: document.getElementById('optC').value, D: document.getElementById('optD').value },
                 ans: document.getElementById('correctOpt').value
             });
-            saveData(); document.getElementById('formMcq').reset(); alert("Question Added!"); renderMcqTest();
+            saveData(); document.getElementById('formMcq').reset(); alert("Question Added on Internet!"); 
         }
 
-        // --- IMAGE UPLOAD SCRIPT ---
         function updateHeroImage(e) {
             e.preventDefault();
             const fileInput = document.getElementById('heroImageFile');
             const file = fileInput.files[0];
-            
             if(file.size > 2 * 1024 * 1024) { alert("File is too large! Max 2MB allowed."); return; }
-
             const reader = new FileReader();
             reader.onload = function(event) {
                 siteData.heroImage = event.target.result; 
                 saveData(); 
-                document.getElementById('mainHeroImage').src = siteData.heroImage; 
                 document.getElementById('formImage').reset(); 
-                alert("प्रिंसिपल की फोटो अपडेट हो गई है!"); 
+                alert("प्रिंसिपल की फोटो इंटरनेट पर अपडेट हो गई है!"); 
             };
             reader.readAsDataURL(file);
         }
@@ -331,12 +354,10 @@
             }
         }
 
-        function saveData() { localStorage.setItem('coachingProData', JSON.stringify(siteData)); }
-
         function deleteItem(type, id) {
-            if(confirm("Delete this?")) {
+            if(confirm("Delete this from Database?")) {
                 siteData[type] = siteData[type].filter(item => item.id !== id);
-                saveData(); renderMaterials(); renderMcqTest();
+                saveData(); 
             }
         }
 
@@ -396,11 +417,6 @@
             res.innerHTML = `आपका रिजल्ट: <span style="color: #28a745;">${score}</span> / ${siteData.mcqs.length} सही जवाब! 🎉`;
             res.style.display = 'block';
         }
-
-        // Initialize Data on Load
-        loadHeroImage(); 
-        renderMaterials();
-        renderMcqTest();
     </script>
 </body>
 </html>
