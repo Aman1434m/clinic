@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Admin Control</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; padding: 20px; display: none; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .box { background: #2a2a2a; padding: 25px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #a17c52; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #444; background: #111; color: white; box-sizing: border-box; }
+        button { background: #28a745; color: white; padding: 12px 20px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; width: 100%; font-size: 1em; }
+        button:hover { background: #218838; }
+        .list-item { background: #333; padding: 15px; margin: 10px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .del-btn { background: #dc3545; width: auto; padding: 8px 15px; font-size: 0.9em; }
+        .del-btn:hover { background: #c82333; }
+        h1, h2 { color: #a17c52; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Control Dashboard</h1>
+        <p style="text-align: center; color: #aaa; margin-bottom: 30px;">Ye page kisi student ke sath share na karein.</p>
+
+        <div class="box">
+            <h3><span style="color: #4285F4;">●</span> Update Principal Photo</h3>
+            <input type="file" id="heroImg" accept="image/*">
+            <button onclick="updatePhoto()" style="background: #007bff;">Upload New Photo</button>
+        </div>
+
+        <div class="box">
+            <h3><span style="color: #28a745;">●</span> Add New Link</h3>
+            <input type="text" id="lTitle" placeholder="Link Title (e.g. BSEB 10th Result)">
+            <input type="text" id="lDesc" placeholder="Description">
+            <input type="url" id="lUrl" placeholder="Paste Full URL (http://...)">
+            <button onclick="addLink()">Save Link to Website</button>
+            <div id="linksList" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="box">
+            <h3><span style="color: #ffc107;">●</span> Upload Note/PDF</h3>
+            <input type="text" id="nTitle" placeholder="Note Title (e.g. Math Chapter 1)">
+            <input type="text" id="nDesc" placeholder="Description">
+            <input type="file" id="nFile" accept=".pdf, image/*">
+            <button onclick="addNote()">Upload Note</button>
+            <div id="notesList" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="box">
+            <h3><span style="color: #dc3545;">●</span> Add MCQ Question</h3>
+            <input type="text" id="mSub" placeholder="Subject Name">
+            <textarea id="mQ" placeholder="Question Text" rows="2"></textarea>
+            <input type="text" id="oA" placeholder="Option A">
+            <input type="text" id="oB" placeholder="Option B">
+            <input type="text" id="oC" placeholder="Option C">
+            <input type="text" id="oD" placeholder="Option D">
+            <select id="mAns">
+                <option value="">Select Correct Option</option>
+                <option value="A">A</option><option value="B">B</option>
+                <option value="C">C</option><option value="D">D</option>
+            </select>
+            <button onclick="addMcq()">Add Question</button>
+            <div id="mcqList" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Security Prompt
+        const pass = prompt("Enter Admin Password:");
+        if(pass === "admin123") {
+            document.body.style.display = "block"; // Password sahi toh dikhao
+        } else {
+            alert("Wrong Password! Redirecting...");
+            window.location.href = "index.html"; // Galat toh bhaga do
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKA0U_XD_Txbfes-E-ZUDFPHjmswEV_KA",
+            authDomain: "success-coaching-8230b.firebaseapp.com",
+            projectId: "success-coaching-8230b",
+            storageBucket: "success-coaching-8230b.firebasestorage.app",
+            messagingSenderId: "1086069647096",
+            appId: "1:1086069647096:web:9f66a46f30eaba89a9bd0d"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref('coachingProData');
+        
+        let siteData = { links: [], notes: [], mcqs: [], heroImage: '' };
+
+        // Fetch Data
+        dbRef.on('value', (snap) => {
+            if(snap.val()) {
+                siteData = snap.val();
+                if(!siteData.links) siteData.links = [];
+                if(!siteData.notes) siteData.notes = [];
+                if(!siteData.mcqs) siteData.mcqs = [];
+                renderAdminLists();
+            }
+        });
+
+        // 1. Photo
+        function updatePhoto() {
+            const file = document.getElementById('heroImg').files[0];
+            if(!file) return alert("Select a file first");
+            if(file.size > 2 * 1024 * 1024) return alert("File too large (Max 2MB)");
+            const reader = new FileReader();
+            reader.onload = (e) => { siteData.heroImage = e.target.result; saveDB("Photo Updated!"); document.getElementById('heroImg').value = ''; };
+            reader.readAsDataURL(file);
+        }
+
+        // 2. Link
+        function addLink() {
+            const title = document.getElementById('lTitle').value;
+            const desc = document.getElementById('lDesc').value;
+            const url = document.getElementById('lUrl').value;
+            if(!title || !url) return alert("Title and URL required");
+            siteData.links.push({ id: Date.now(), title, desc, url });
+            saveDB("Link Added!");
+            document.getElementById('lTitle').value = ''; document.getElementById('lDesc').value = ''; document.getElementById('lUrl').value = '';
+        }
+
+        // 3. Note
+        function addNote() {
+            const file = document.getElementById('nFile').files[0];
+            const title = document.getElementById('nTitle').value;
+            const desc = document.getElementById('nDesc').value;
+            if(!file || !title) return alert("Title and File required");
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                siteData.notes.push({ id: Date.now(), title, desc, fileUrl: e.target.result, fileName: file.name });
+                saveDB("Note Uploaded!");
+                document.getElementById('nTitle').value = ''; document.getElementById('nDesc').value = ''; document.getElementById('nFile').value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 4. MCQ
+        function addMcq() {
+            const subject = document.getElementById('mSub').value;
+            const q = document.getElementById('mQ').value;
+            const ans = document.getElementById('mAns').value;
+            if(!q || !ans) return alert("Question and Correct Answer required");
+            siteData.mcqs.push({
+                id: Date.now(), subject, q,
+                opts: { A: document.getElementById('oA').value, B: document.getElementById('oB').value, C: document.getElementById('oC').value, D: document.getElementById('oD').value },
+                ans
+            });
+            saveDB("MCQ Added!");
+            document.getElementById('mSub').value=''; document.getElementById('mQ').value=''; 
+            document.getElementById('oA').value=''; document.getElementById('oB').value=''; document.getElementById('oC').value=''; document.getElementById('oD').value=''; document.getElementById('mAns').value='';
+        }
+
+        function deleteItem(type, id) {
+            if(confirm("Confirm Delete?")) {
+                siteData[type] = siteData[type].filter(item => item.id !== id);
+                saveDB("Deleted successfully");
+            }
+        }
+
+        function saveDB(msg) {
+            dbRef.set(siteData).then(() => alert(msg)).catch(e => alert("Error: " + e));
+        }
+
+        function renderAdminLists() {
+            document.getElementById('linksList').innerHTML = siteData.links.map(l => `<div class="list-item"><b>${l.title}</b> <button class="del-btn" onclick="deleteItem('links', ${l.id})">Delete</button></div>`).join('');
+            document.getElementById('notesList').innerHTML = siteData.notes.map(n => `<div class="list-item"><b>${n.title}</b> <button class="del-btn" onclick="deleteItem('notes', ${n.id})">Delete</button></div>`).join('');
+            document.getElementById('mcqList').innerHTML = siteData.mcqs.map(m => `<div class="list-item"><b>${m.q}</b> <button class="del-btn" onclick="deleteItem('mcqs', ${m.id})">Delete</button></div>`).join('');
+        }
+    </script>
+</body>
+</html>
