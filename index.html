@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sajida Chiro Cupping Therapy Center</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #00796b;
+            --primary-dark: #004d40;
+            --secondary-color: #ff9800;
+            --secondary-hover: #e65100;
+            --bg-light: #f8fcfb;
+            --text-dark: #333;
+            --text-light: #666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Header & Navbar */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 121, 107, 0.85), rgba(0, 77, 64, 0.9)), 
+                        url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero h2 {
+            font-size: 55px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            max-width: 800px;
+            line-height: 1.6;
+            color: #e0f2f1;
+            animation: fadeInUp 1s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            animation: fadeInUp 1s ease 0.6s forwards;
+            opacity: 0;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-hover);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.6);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 80px 5%;
+            text-align: center;
+        }
+
+        .services h2 {
+            font-size: 38px;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+
+        .services .subtitle {
+            color: var(--text-light);
+            margin-bottom: 50px;
+            font-size: 18px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            border-bottom: 6px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background-color: rgba(0, 121, 107, 0.05);
+            transition: height 0.4s ease;
+            z-index: 0;
+        }
+
+        .card:hover::before {
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .card * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card i {
+            font-size: 45px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover i {
+            transform: scale(1.2);
+        }
+
+        .card h3 {
+            font-size: 22px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--text-light);
+            font-size: 15px;
+        }
+
+        /* Info & Contact Section */
+        .contact-info {
+            background-color: #e0f2f1;
+            padding: 80px 5%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .info-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            flex: 1;
+            min-width: 320px;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .info-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-box h3 {
+            color: var(--primary-dark);
+            margin-bottom: 25px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px solid #e0f2f1;
+            padding-bottom: 15px;
+        }
+
+        .info-box h3 i {
+            color: var(--secondary-color);
+            font-size: 28px;
+        }
+
+        .info-box p {
+            margin-bottom: 18px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-dark);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .info-box p i {
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+
+        .social-links {
+            margin-top: 25px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            background-color: var(--primary-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+        }
+
+        /* Map Button Specific */
+        .map-btn {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            background-color: #4285F4; /* Google Maps Blue */
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        
+        .map-btn:hover {
+            background-color: #3367d6;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            padding: 25px;
+            font-size: 15px;
+        }
+
+        /* Custom Keyframes */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+            .hero h2 { font-size: 35px; }
+            .hero p { font-size: 16px; }
+            .hero-buttons { flex-direction: column; width: 100%; }
+            .hero-buttons .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>साजिदा थेरेपी सेंटर</h1>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <h2>साजिदा कायरो कपिंग थेरेपी सेंटर</h2>
+        <p>बिना दवाइयों के प्राकृतिक तरीके से अपने शरीर के हर दर्द से छुटकारा पाएं। एक्यूप्रेशर और कायरो कपिंग थेरेपी के विशेषज्ञ।</p>
+        
+        <div class="hero-buttons">
+            <a href="tel:8102285924" class="btn"><i class="fas fa-phone-alt"></i> अभी कॉल करें</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Mahmood+Chowk,+D.S.+College+Road,+Katihar+854105" target="_blank" class="btn btn-outline"><i class="fas fa-map-marker-alt"></i> रास्ता देखें (Location)</a>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+        <h2 data-aos="fade-up">हमारा सफल इलाज</h2>
+        <p class="subtitle" data-aos="fade-up" data-aos-delay="100">Our Specialised Treatments</p>
+        
+        <div class="grid">
+            <div class="card" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-bone"></i>
+                <h3>जोड़ों व घुटनों का दर्द</h3>
+                <p>Joint and Knee Pain Relief</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-child"></i>
+                <h3>पीठ, कमर व गर्दन का दर्द</h3>
+                <p>Back, Waist and Neck Pain</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="300">
+                <i class="fas fa-user-md"></i>
+                <h3>सर्वाइकल व साइटिका</h3>
+                <p>Cervical and Sciatica Treatment</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="400">
+                <i class="fas fa-wheelchair"></i>
+                <h3>लकवा व नसों की कमजोरी</h3>
+                <p>Paralysis and Nerve Weakness</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="500">
+                <i class="fas fa-stomach"></i>
+                <h3>गैस, कब्ज व पेट रोग</h3>
+                <p>Gastric, Constipation & Stomach Issues</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="600">
+                <i class="fas fa-head-side-virus"></i>
+                <h3>सिर दर्द व भारीपन</h3>
+                <p>Headache & Heavy Nerves</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-info" id="contact">
+        <div class="info-box" data-aos="fade-right">
+            <h3><i class="fas fa-map-marker-alt"></i> हमारा पता (Address)</h3>
+            <p><i class="fas fa-location-dot"></i> <span><strong>स्थान:</strong> महमूद चौक, डी. एस. कॉलेज रोड, कटिहार - 854105</span></p>
+            <p><i class="fas fa-clock"></i> <span><strong>समय:</strong> सुबह 8:00 बजे से लेकर शाम 6:00 बजे तक</span></p>
+            <p><i class="fas fa-briefcase-medical"></i> <span><strong>सुविधा:</strong> Open 24 Hours (Emergencies)</span></p>
+            
+            <a href="https://www.google.com/maps/search/?api=1&query=Mahmood+Chowk,+D.S.+College+Road,+Katihar+854105" target="_blank" class="map-btn">
+                <i class="fas fa-directions"></i> Google Maps पर रास्ता देखें
+            </a>
+        </div>
+        
+        <div class="info-box" data-aos="fade-left">
+            <h3><i class="fas fa-user-md"></i> डॉक्टर से मिलें</h3>
+            <p><i class="fas fa-user-tie"></i> <span><strong>Dr. Kamrul Hoda (डॉ. कमरूल होदा)</strong><br>M.D CUP D.ch. T | Acupressure Therapy Expert</span></p>
+            <p><i class="fas fa-phone"></i> <span>8102285924, 8797981395</span></p>
+            <p><i class="fas fa-envelope"></i> <span>hodakamrul156@gmail.com</span></p>
+            
+            <div class="social-links">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://wa.me/918102285924?text=Hello%20Dr.%20Kamrul," target="_blank"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Sajida Chiro Cupping Therapy Center. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize Animations
+        AOS.init({
+            duration: 800, // Animation speed
+            once: true     // Animate only once while scrolling down
+        });
+    </script>
+</body>
+</html>
