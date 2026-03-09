@@ -4,86 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SUCCESS COACHING CENTER - AR RAQEEB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* --- Basic Reset & Typography --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #fcfcfc; color: #333; overflow-x: hidden; scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f8f9fa; color: #333; overflow-x: hidden; scroll-behavior: smooth; }
         
+        /* --- Keyframe Animations --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
         /* --- Navbar --- */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 1.8em; font-weight: 900; color: #a17c52; text-transform: uppercase; letter-spacing: 1px; }
-        .nav-links a, .nav-links button { background: none; border: none; margin: 0 12px; font-size: 1.05em; color: #555; font-weight: 600; cursor: pointer; transition: 0.3s; padding: 8px 12px; border-radius: 5px; text-decoration: none; display: inline-block; }
-        .nav-links a:hover, .nav-links button:hover { color: #fff; background-color: #a17c52; }
-        .admin-btn { background: #222 !important; color: #fff !important; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.8em; font-weight: 800; color: #a17c52; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .nav-links { display: flex; align-items: center; }
+        /* Animated Nav Links */
+        .nav-links a { position: relative; margin: 0 15px; font-size: 1.05em; color: #555; font-weight: 600; text-decoration: none; padding: 5px 0; transition: color 0.3s ease; }
+        .nav-links a::after {
+            content: ''; position: absolute; width: 0; height: 3px;
+            bottom: -5px; left: 50%; background-color: #a17c52;
+            transition: all 0.3s ease; transform: translateX(-50%); border-radius: 2px;
+        }
+        .nav-links a:hover { color: #a17c52; }
+        .nav-links a:hover::after { width: 100%; }
+        
+        .admin-btn { background: #222; color: #fff; border: none; margin-left: 20px; font-size: 1em; font-weight: 600; cursor: pointer; padding: 10px 20px; border-radius: 8px; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .admin-btn:hover { background: #a17c52; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(161, 124, 82, 0.4); }
 
         /* --- Sections Formatting --- */
-        .section-wrapper { padding: 60px 20px; border-bottom: 2px solid #f0e5d1; }
-        .section-title { text-align: center; font-size: 2.5em; color: #222; margin-bottom: 30px; font-weight: 800; text-transform: uppercase; }
-        .section-title::after { content: ''; width: 80px; height: 4px; background: #a17c52; display: block; margin: 15px auto 0; }
+        .section-wrapper { padding: 80px 20px; border-bottom: 1px solid #eaeaea; }
+        .section-title { text-align: center; font-size: 2.5em; color: #222; margin-bottom: 40px; font-weight: 800; text-transform: uppercase; position: relative; }
+        .section-title::after { content: ''; width: 60px; height: 4px; background: #a17c52; display: block; margin: 15px auto 0; border-radius: 2px; }
 
         /* --- Hero Section --- */
-        .hero { display: flex; align-items: center; padding: 80px 50px; background-color: #fdfaf5; border-bottom: 2px solid #f0e5d1; }
-        .hero-text { flex: 1; padding-right: 50px; }
-        .tagline { font-size: 2.8em; color: #111; line-height: 1.3; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; }
-        .hero-text p { font-size: 1.2em; margin-bottom: 20px; color: #444; }
-        .hero-image { flex: 1; text-align: center; }
+        .hero { display: flex; align-items: center; padding: 100px 50px; background: linear-gradient(135deg, #fdfaf5 0%, #f4eee1 100%); border-bottom: 1px solid #e8dec9; }
+        .hero-text { flex: 1; padding-right: 50px; animation: fadeInUp 1s ease-out forwards; }
+        .tagline { font-size: 3em; color: #111; line-height: 1.2; font-weight: 800; margin-bottom: 25px; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+        .hero-text p { font-size: 1.2em; margin-bottom: 30px; color: #555; line-height: 1.6; }
+        .hero-btn { display: inline-block; padding: 15px 35px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; box-shadow: 0 5px 15px rgba(161, 124, 82, 0.4); transition: all 0.3s ease; }
+        .hero-btn:hover { background: #8e6c46; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(161, 124, 82, 0.6); }
         
-        /* --- NEW: Updated Principal Image CSS (Circle & Smaller) --- */
+        .hero-image { flex: 1; text-align: center; animation: scaleIn 1s ease-out forwards; }
+        /* Circle Principal Image */
         .hero-image img { 
-            width: 300px; /* Chota size (Was 450px) */
-            height: 300px; /* Square rakhna zaroori hai gol karne ke liye */
-            border-radius: 50%; /* Pura Circle (Was 30px) */
-            object-fit: cover; /* Image fit rahegi */
-            object-position: top center; /* Mundi/Chehra cut nahi hoga */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Shadow thodi compact */
-            border: 8px solid #fff; /* White border */
+            width: 320px; height: 320px; 
+            border-radius: 50%; object-fit: cover; object-position: top center; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 10px solid #fff; 
+            transition: transform 0.5s ease;
         }
+        .hero-image img:hover { transform: scale(1.03); } /* Halki si badi hogi hover pe */
         
-        /* --- Information Blocks (About & Admission) --- */
-        .info-block { max-width: 1000px; margin: 0 auto; padding: 30px; text-align: center; background: #fff; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .info-block p { font-size: 1.15em; color: #555; line-height: 1.7; margin-bottom: 15px; }
+        /* --- Information Blocks --- */
+        .info-block { max-width: 900px; margin: 0 auto; padding: 40px; text-align: center; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease; }
+        .info-block:hover { transform: translateY(-5px); }
+        .info-block p { font-size: 1.15em; color: #555; line-height: 1.8; margin-bottom: 15px; }
 
-        /* --- Custom Cards for Links & Notes --- */
+        /* --- Animated Cards (Links & Notes) --- */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        
-        .card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid #ccc; transition: 0.3s; position: relative; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid #ccc; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+        /* 3D Lift effect */
+        .card:hover { transform: translateY(-12px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
         .card.link-card { border-top-color: #4285F4; }
         .card.note-card { border-top-color: #E65100; }
         
-        .card-icon { font-size: 2.5em; margin-bottom: 15px; }
+        .card-icon { font-size: 2.8em; margin-bottom: 15px; transition: transform 0.3s ease; }
+        /* Icon Bounce Effect */
+        .card:hover .card-icon { transform: scale(1.2) rotate(5deg); }
         .link-card .card-icon { color: #4285F4; }
         .note-card .card-icon { color: #E65100; }
         
-        .card h3 { font-size: 1.4em; margin-bottom: 10px; color: #222; }
-        .card p { color: #666; margin-bottom: 20px; }
-        .card a { display: inline-block; padding: 10px 20px; border-radius: 5px; text-decoration: none; color: white; font-weight: bold; }
-        .link-card a { background: #4285F4; }
-        .note-card a { background: #E65100; }
+        .card h3 { font-size: 1.4em; margin-bottom: 10px; color: #222; font-weight: 600; }
+        .card p { color: #666; margin-bottom: 25px; line-height: 1.5; }
+        .card a { display: inline-block; padding: 10px 25px; border-radius: 6px; text-decoration: none; color: white; font-weight: 600; transition: all 0.3s ease; }
+        .link-card a { background: #4285F4; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3); }
+        .note-card a { background: #E65100; box-shadow: 0 4px 10px rgba(230, 81, 0, 0.3); }
+        .card a:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         /* --- Internal MCQ Test UI --- */
-        .quiz-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
-        .question-box { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
-        .question-box h3 { font-size: 1.3em; margin-bottom: 15px; color: #222; }
-        .options-list label { display: block; background: #f9f9f9; padding: 12px 20px; margin-bottom: 10px; border-radius: 5px; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
-        .options-list label:hover { background: #f0e5d1; }
-        .options-list input { margin-right: 10px; }
-        .submit-test-btn { background: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 1.2em; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
+        .quiz-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .question-box { margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid #f0f0f0; }
+        .question-box h3 { font-size: 1.3em; margin-bottom: 20px; color: #222; }
+        .options-list label { display: block; background: #fdfdfd; padding: 15px 20px; margin-bottom: 12px; border-radius: 8px; cursor: pointer; border: 1px solid #e0e0e0; transition: all 0.2s ease; }
+        .options-list label:hover { background: #fdfaf5; border-color: #a17c52; transform: translateX(5px); }
+        .options-list input { margin-right: 15px; transform: scale(1.2); cursor: pointer; }
+        .submit-test-btn { background: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.2em; font-weight: 600; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); }
+        .submit-test-btn:hover { background: #218838; transform: translateY(-2px); }
 
         /* --- Admin Panel --- */
-        #adminPanel { display: none; background: #222; color: #fff; padding: 40px 50px; }
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .admin-tabs button { padding: 10px 20px; background: #444; border: none; color: white; cursor: pointer; border-radius: 5px; }
+        #adminPanel { display: none; background: #1a1a1a; color: #fff; padding: 50px; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .admin-tabs button { padding: 12px 25px; background: #333; border: none; color: white; cursor: pointer; border-radius: 6px; font-weight: 600; transition: 0.3s; }
+        .admin-tabs button:hover { background: #555; }
         .admin-tabs button.active { background: #a17c52; }
-        .admin-form { display: none; flex-direction: column; gap: 15px; max-width: 600px; background: #333; padding: 25px; border-radius: 8px; }
-        .admin-form.active { display: flex; }
-        .admin-form input, .admin-form textarea, .admin-form select { padding: 12px; border-radius: 5px; border: none; width: 100%; }
-        .admin-form button[type="submit"] { background: #28a745; color: white; padding: 12px; font-weight: bold; border: none; cursor: pointer; border-radius: 5px; }
+        .admin-form { display: none; flex-direction: column; gap: 15px; max-width: 600px; background: #2a2a2a; padding: 30px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .admin-form.active { display: flex; animation: fadeInUp 0.4s ease-out forwards; }
+        .admin-form input, .admin-form textarea, .admin-form select { padding: 15px; border-radius: 6px; border: 1px solid #444; width: 100%; font-size: 1em; background: #1a1a1a; color: #fff; }
+        .admin-form button[type="submit"] { background: #28a745; color: white; padding: 15px; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; font-size: 1.1em; transition: 0.3s; }
+        .admin-form button[type="submit"]:hover { background: #218838; }
 
         /* --- Footer & Extras --- */
-        .footer { background: #111; color: #ddd; text-align: center; padding: 30px; }
-        .delete-btn { position: absolute; top: 10px; right: 10px; background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: none; }
+        .footer { background: #111; color: #ddd; text-align: center; padding: 40px 20px; border-top: 4px solid #a17c52; }
+        .delete-btn { position: absolute; top: 15px; right: 15px; background: #ff4d4d; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; display: none; transition: 0.3s; }
+        .delete-btn:hover { background: #cc0000; transform: scale(1.1); }
         .admin-mode .delete-btn { display: block; }
     </style>
 </head>
@@ -103,13 +133,13 @@
 
     <div id="adminPanel">
         <h2><i class="fas fa-cogs"></i> एडमिन डैशबोर्ड</h2>
-        <p style="margin-bottom: 20px; color: #aaa;">यहाँ से आप वेबसाइट में नया डेटा जोड़ सकते हैं।</p>
+        <p style="margin-bottom: 20px; color: #888;">यहाँ से आप वेबसाइट में नया डेटा और फोटो जोड़ सकते हैं।</p>
         
         <div class="admin-tabs">
-            <button onclick="switchAdminTab('formLink')" class="tab-btn active" id="tab-formLink">Add Link</button>
-            <button onclick="switchAdminTab('formNote')" class="tab-btn" id="tab-formNote">Upload Note</button>
-            <button onclick="switchAdminTab('formMcq')" class="tab-btn" id="tab-formMcq">Add MCQ Question</button>
-            <button onclick="switchAdminTab('formImage')" class="tab-btn" id="tab-formImage">Update Photo</button>
+            <button onclick="switchAdminTab('formLink')" class="tab-btn active" id="tab-formLink"><i class="fas fa-link"></i> Add Link</button>
+            <button onclick="switchAdminTab('formNote')" class="tab-btn" id="tab-formNote"><i class="fas fa-file-pdf"></i> Upload Note</button>
+            <button onclick="switchAdminTab('formMcq')" class="tab-btn" id="tab-formMcq"><i class="fas fa-question-circle"></i> Add MCQ Question</button>
+            <button onclick="switchAdminTab('formImage')" class="tab-btn" id="tab-formImage" style="background-color: #007bff;"><i class="fas fa-camera"></i> Update Photo</button>
         </div>
 
         <form class="admin-form active" id="formLink" onsubmit="addLinkData(event)">
@@ -122,14 +152,14 @@
         <form class="admin-form" id="formNote" onsubmit="addNoteData(event)">
             <input type="text" id="noteTitle" placeholder="नोट्स का नाम (उदा. 10th Math Chapter 1)" required>
             <input type="text" id="noteDesc" placeholder="नोट्स के बारे में लिखें" required>
-            <label style="color: #fff; font-size: 0.9em;">PDF/Image सेलेक्ट करें (Max 2MB):</label>
-            <input type="file" id="noteFile" accept=".pdf, image/*" required>
+            <label style="color: #aaa; font-size: 0.9em;">PDF/Image सेलेक्ट करें (Max 2MB):</label>
+            <input type="file" id="noteFile" accept=".pdf, image/*" required style="background: #2a2a2a; border: none; padding: 0;">
             <button type="submit"><i class="fas fa-upload"></i> नोट्स अपलोड करें</button>
         </form>
 
         <form class="admin-form" id="formMcq" onsubmit="addMcqData(event)">
             <input type="text" id="mcqSubject" placeholder="विषय का नाम (उदा. Science Test 1)" required>
-            <textarea id="mcqQues" rows="2" placeholder="सवाल (Question)" required></textarea>
+            <textarea id="mcqQues" rows="3" placeholder="सवाल (Question)" required></textarea>
             <input type="text" id="optA" placeholder="Option A" required>
             <input type="text" id="optB" placeholder="Option B" required>
             <input type="text" id="optC" placeholder="Option C" required>
@@ -145,9 +175,9 @@
         </form>
 
         <form class="admin-form" id="formImage" onsubmit="updateHeroImage(event)">
-            <label style="color: #fff; font-size: 0.9em;">प्रिंसिपल की नई फोटो सेलेक्ट करें (Max 2MB):</label>
-            <input type="file" id="heroImageFile" accept="image/*" required>
-            <button type="submit"><i class="fas fa-image"></i> फोटो अपडेट करें</button>
+            <label style="color: #aaa; font-size: 1em; margin-bottom: 5px;">प्रिंसिपल की नई फोटो सेलेक्ट करें (Max 2MB):</label>
+            <input type="file" id="heroImageFile" accept="image/*" required style="background: #2a2a2a; border: none; padding: 0; color: #fff; cursor: pointer;">
+            <button type="submit"><i class="fas fa-image"></i> नई फोटो सेट करें</button>
         </form>
     </div>
 
@@ -155,7 +185,7 @@
         <div class="hero-text">
             <h1 class="tagline">चीते की चाल, बाज़ की नज़र<br>और AR RAQEEB के कॉन्सेप्ट पर कोई संदेह नहीं करते!</h1>
             <p>प्राथमिक और उच्च माध्यमिक शिक्षा में उत्कृष्टता का केंद्र। <br><strong>COME TO LEARN, GO TO BRILLIANCE.</strong></p>
-            <a href="#admission-section" style="display: inline-block; padding: 15px 30px; background: #a17c52; color: #fff; text-decoration: none; border-radius: 5px; font-size: 1.1em; font-weight: bold;">अभी एडमिशन लें</a>
+            <a href="#admission-section" class="hero-btn">अभी एडमिशन लें</a>
         </div>
         <div class="hero-image">
             <img src="principal.jpg" alt="AR RAQEEB" id="mainHeroImage">
@@ -167,15 +197,15 @@
         <div class="grid-container" id="linksContainer"></div>
     </div>
 
-    <div id="mcq-section" class="section-wrapper" style="background: #f4f7f6;">
+    <div id="mcq-section" class="section-wrapper" style="background: #fdfaf5;">
         <h2 class="section-title"><i class="fas fa-laptop-code"></i> लाइव ऑनलाइन टेस्ट</h2>
-        <p style="text-align: center; color: #555; margin-bottom: 30px;">अपने ज्ञान की जाँच करें। नीचे दिए गए सवालों के जवाब दें और अपना स्कोर जानें।</p>
+        <p style="text-align: center; color: #555; margin-bottom: 30px; font-size: 1.1em;">अपने ज्ञान की जाँच करें। नीचे दिए गए सवालों के जवाब दें और अपना स्कोर जानें।</p>
         <div class="quiz-container">
             <div id="quizArea">
-                <p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें。</p>
+                <p style="text-align:center; color:#888;">अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें।</p>
             </div>
             <button id="submitQuizBtn" class="submit-test-btn" style="display:none;" onclick="calculateScore()">टेस्ट सबमिट करें</button>
-            <div id="resultArea" style="margin-top: 20px; font-size: 1.5em; font-weight: bold; text-align: center; color: #a17c52; display: none;"></div>
+            <div id="resultArea" style="margin-top: 25px; font-size: 1.5em; font-weight: 800; text-align: center; color: #a17c52; display: none;"></div>
         </div>
     </div>
 
@@ -203,26 +233,25 @@
 
     <div id="contact-section" class="section-wrapper">
         <h2 class="section-title">संपर्क करें</h2>
-        <div style="max-width: 600px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+        <div class="info-block" style="max-width: 600px;">
             <i class="fas fa-map-marker-alt" style="font-size: 3em; color: #a17c52; margin-bottom: 20px;"></i>
-            <h3 style="font-size: 1.8em; margin-bottom: 15px;">SUCCESS COACHING CENTER</h3>
+            <h3 style="font-size: 1.8em; margin-bottom: 15px; font-weight: 800;">SUCCESS COACHING CENTER</h3>
             <p style="font-size: 1.2em; color: #555; margin-bottom: 10px;">प्राथमिक विद्यालय बर के पूरब में</p>
             <p style="font-size: 1.2em; color: #555; margin-bottom: 30px;">सोनाइली, बौराचौक, कटिहार, बिहार</p>
-            <p style="font-size: 1.3em; font-weight: bold; margin-bottom: 20px;"><i class="fas fa-phone-alt"></i> 7404920092, 9507090056</p>
+            <p style="font-size: 1.3em; font-weight: 800; margin-bottom: 25px;"><i class="fas fa-phone-alt"></i> 7404920092, 9507090056</p>
             
-            <a href="https://wa.me/917404920092" target="_blank" style="display: inline-block; padding: 12px 25px; background: #25D366; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 10px;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=Baurachawk,+Sonaili,+Katihar,+Bihar" target="_blank" style="display: inline-block; padding: 12px 25px; background: #4285F4; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 10px;"><i class="fas fa-directions"></i> Location</a>
+            <a href="https://wa.me/917404920092" target="_blank" style="display: inline-block; padding: 12px 25px; background: #25D366; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px; transition: transform 0.3s; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Baurachawk,+Sonaili,+Katihar,+Bihar" target="_blank" style="display: inline-block; padding: 12px 25px; background: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px; transition: transform 0.3s; box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);"><i class="fas fa-directions"></i> Location</a>
         </div>
     </div>
 
     <div class="footer">
-        <p>© 2026 SUCCESS COACHING CENTER. All Rights Reserved.</p>
-        <p style="text-transform: uppercase;">GUIDED BY: <strong style="color: #a17c52;">AR RAQEEB</strong></p>
+        <p style="margin-bottom: 10px; font-size: 1.1em;">© 2026 SUCCESS COACHING CENTER. All Rights Reserved.</p>
+        <p style="text-transform: uppercase; font-size: 0.9em; letter-spacing: 1px;">GUIDED BY: <strong style="color: #a17c52;">AR RAQEEB</strong></p>
     </div>
 
     <script>
         let isAdmin = false;
-        // Hold image url in siteData
         let siteData = JSON.parse(localStorage.getItem('coachingProData')) || { links: [], notes: [], mcqs: [], heroImage: '' };
 
         function toggleAdmin() {
@@ -233,6 +262,7 @@
                 document.body.classList.toggle('admin-mode', isAdmin);
                 renderMaterials();
                 renderMcqTest();
+                window.scrollTo(0,0);
             } else if (pass !== null) {
                 alert("Wrong Password!");
             }
@@ -256,7 +286,7 @@
             const fileInput = document.getElementById('noteFile');
             const file = fileInput.files[0];
             
-            if(file.size > 2 * 1024 * 1024) { alert("File is too large! Max 2MB allowed for local demo."); return; }
+            if(file.size > 2 * 1024 * 1024) { alert("File is too large! Max 2MB allowed."); return; }
 
             const reader = new FileReader();
             reader.onload = function(event) {
@@ -276,7 +306,7 @@
             saveData(); document.getElementById('formMcq').reset(); alert("Question Added!"); renderMcqTest();
         }
 
-        // --- IMAGE UPLOAD FUNCTION ---
+        // --- IMAGE UPLOAD SCRIPT ---
         function updateHeroImage(e) {
             e.preventDefault();
             const fileInput = document.getElementById('heroImageFile');
@@ -286,16 +316,15 @@
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                siteData.heroImage = event.target.result; // Data URL set karo
+                siteData.heroImage = event.target.result; 
                 saveData(); 
-                document.getElementById('mainHeroImage').src = siteData.heroImage; // Live update karo
+                document.getElementById('mainHeroImage').src = siteData.heroImage; 
                 document.getElementById('formImage').reset(); 
                 alert("प्रिंसिपल की फोटो अपडेट हो गई है!"); 
             };
             reader.readAsDataURL(file);
         }
         
-        // --- LOAD IMAGE FUNCTION ---
         function loadHeroImage() {
             if (siteData.heroImage && siteData.heroImage !== "") {
                 document.getElementById('mainHeroImage').src = siteData.heroImage;
@@ -319,7 +348,7 @@
                     <div class="card-icon"><i class="fas fa-external-link-alt"></i></div>
                     <h3>${l.title}</h3><p>${l.desc}</p>
                     <a href="${l.url}" target="_blank">क्लिक करें</a>
-                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888;'>अभी कोई लिंक नहीं है।</p>";
+                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888; font-size: 1.1em;'>अभी कोई लिंक नहीं है।</p>";
 
             const noteDiv = document.getElementById('notesContainer');
             noteDiv.innerHTML = siteData.notes.map(n => `
@@ -328,7 +357,7 @@
                     <div class="card-icon"><i class="fas fa-file-download"></i></div>
                     <h3>${n.title}</h3><p>${n.desc}</p>
                     <a href="${n.fileUrl}" download="${n.fileName}">डाउनलोड करें</a>
-                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888;'>अभी कोई नोट्स नहीं हैं।</p>";
+                </div>`).join('') || "<p style='grid-column: 1 / -1; text-align:center; color:#888; font-size: 1.1em;'>अभी कोई नोट्स नहीं हैं।</p>";
         }
 
         function renderMcqTest() {
@@ -337,15 +366,15 @@
             document.getElementById('resultArea').style.display = 'none';
             
             if(siteData.mcqs.length === 0) {
-                area.innerHTML = "<p style='text-align:center; color:#888;'>अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें。</p>";
+                area.innerHTML = "<p style='text-align:center; color:#888; font-size: 1.1em;'>अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें।</p>";
                 btn.style.display = 'none'; return;
             }
 
             area.innerHTML = siteData.mcqs.map((m, index) => `
                 <div class="question-box" id="qbox-${m.id}">
-                    ${isAdmin ? `<button onclick="deleteItem('mcqs', ${m.id})" style="float:right; background:red; color:white; border:none; padding:5px; border-radius: 3px; cursor: pointer;">Delete</button>` : ''}
-                    <h4 style="color: #a17c52; margin-bottom: 5px;">${m.subject}</h4>
-                    <h3>Q${index + 1}. ${m.q}</h3>
+                    ${isAdmin ? `<button onclick="deleteItem('mcqs', ${m.id})" style="float:right; background:red; color:white; border:none; padding:8px 12px; border-radius: 6px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='#cc0000'" onmouseout="this.style.background='red'">Delete</button>` : ''}
+                    <h4 style="color: #a17c52; margin-bottom: 8px; font-weight: 600;">${m.subject}</h4>
+                    <h3 style="line-height: 1.4;">Q${index + 1}. ${m.q}</h3>
                     <div class="options-list">
                         <label><input type="radio" name="ans_${m.id}" value="A"> A. ${m.opts.A}</label>
                         <label><input type="radio" name="ans_${m.id}" value="B"> B. ${m.opts.B}</label>
@@ -364,12 +393,12 @@
                 if(selected && selected.value === m.ans) { score++; }
             });
             const res = document.getElementById('resultArea');
-            res.innerHTML = `आपका रिजल्ट: ${score} / ${siteData.mcqs.length} सही जवाब! 🎉`;
+            res.innerHTML = `आपका रिजल्ट: <span style="color: #28a745;">${score}</span> / ${siteData.mcqs.length} सही जवाब! 🎉`;
             res.style.display = 'block';
         }
 
         // Initialize Data on Load
-        loadHeroImage(); // Pehle se upload ki gayi image show karne ke liye
+        loadHeroImage(); 
         renderMaterials();
         renderMcqTest();
     </script>
