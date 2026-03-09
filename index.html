@@ -29,15 +29,15 @@
         .hero-text p { font-size: 1.2em; margin-bottom: 20px; color: #444; }
         .hero-image { flex: 1; text-align: center; }
         
-        /* --- Updated Principal Image CSS --- */
+        /* --- NEW: Updated Principal Image CSS (Circle & Smaller) --- */
         .hero-image img { 
-            width: 450px; /* Bada size */
-            height: 450px; /* Bada size */
-            border-radius: 30px; /* Curved edges (gol kone) */
+            width: 300px; /* Chota size (Was 450px) */
+            height: 300px; /* Square rakhna zaroori hai gol karne ke liye */
+            border-radius: 50%; /* Pura Circle (Was 30px) */
             object-fit: cover; /* Image fit rahegi */
             object-position: top center; /* Mundi/Chehra cut nahi hoga */
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15); 
-            border: 8px solid #fff; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Shadow thodi compact */
+            border: 8px solid #fff; /* White border */
         }
         
         /* --- Information Blocks (About & Admission) --- */
@@ -222,7 +222,7 @@
 
     <script>
         let isAdmin = false;
-        // Modified siteData to hold image url
+        // Hold image url in siteData
         let siteData = JSON.parse(localStorage.getItem('coachingProData')) || { links: [], notes: [], mcqs: [], heroImage: '' };
 
         function toggleAdmin() {
@@ -276,7 +276,7 @@
             saveData(); document.getElementById('formMcq').reset(); alert("Question Added!"); renderMcqTest();
         }
 
-        // --- NEW IMAGE UPLOAD FUNCTION ---
+        // --- IMAGE UPLOAD FUNCTION ---
         function updateHeroImage(e) {
             e.preventDefault();
             const fileInput = document.getElementById('heroImageFile');
@@ -337,7 +337,7 @@
             document.getElementById('resultArea').style.display = 'none';
             
             if(siteData.mcqs.length === 0) {
-                area.innerHTML = "<p style='text-align:center; color:#888;'>अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें।</p>";
+                area.innerHTML = "<p style='text-align:center; color:#888;'>अभी कोई टेस्ट उपलब्ध नहीं है। एडमिन पैनल से प्रश्न जोड़ें。</p>";
                 btn.style.display = 'none'; return;
             }
 
