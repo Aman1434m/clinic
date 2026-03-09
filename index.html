@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sajida Therapy Center | Expert Chiro & Cupping</title>
+    <title>SANJEEDA CHAIRO CUPPING THERAPY CENTER</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -13,11 +13,12 @@
 
     <style>
         :root {
-            --primary-dark: #0f172a; /* Navy Blue */
-            --accent-gold: #d4af37;  /* Classic Gold */
-            --text-dark: #334155;
-            --text-light: #64748b;
-            --bg-light: #f8fafc;
+            --primary: #00796b; /* Original Teal Green */
+            --primary-dark: #004d40;
+            --accent: #ff9800; /* Original Orange/Gold */
+            --text-main: #333333;
+            --text-muted: #666666;
+            --bg-light: #f8fcfb;
             --white: #ffffff;
         }
 
@@ -25,80 +26,76 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
             scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Lato', sans-serif;
-            color: var(--text-dark);
             background-color: var(--bg-light);
-            line-height: 1.6;
+            color: var(--text-main);
+            overflow-x: hidden;
         }
 
-        h1, h2, h3, h4 {
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-dark);
-        }
-
-        /* 1. Header & Navigation */
+        /* 1. Navbar */
         header {
             background-color: var(--white);
             padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
         .logo {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--primary-dark);
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 10px;
+            text-transform: uppercase;
         }
 
-        .logo i { color: var(--accent-gold); }
+        .logo i { color: var(--primary); font-size: 28px; }
 
         nav { display: flex; gap: 20px; flex-wrap: wrap; }
         
         nav a {
-            color: var(--text-dark);
+            color: var(--text-main);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 15px;
             text-transform: uppercase;
-            letter-spacing: 1px;
             transition: color 0.3s;
         }
 
-        nav a:hover { color: var(--accent-gold); }
+        nav a:hover { color: var(--primary); }
 
-        /* Shared Section Styles */
+        /* Shared Styles */
         section { padding: 80px 5%; }
-        .section-title {
+        .sec-title {
             text-align: center;
-            font-size: 40px;
-            margin-bottom: 15px;
+            font-size: 36px;
+            font-weight: 700;
             color: var(--primary-dark);
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
-        .section-subtitle {
+        .sec-subtitle {
             text-align: center;
-            color: var(--accent-gold);
+            color: var(--text-muted);
             font-size: 18px;
             margin-bottom: 50px;
-            font-style: italic;
         }
 
-        /* 2. Hero Section (Home) */
+        /* 2. Hero Section (First Page Original Colors) */
         .hero {
-            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), 
-                        url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+            background: linear-gradient(rgba(0, 121, 107, 0.85), rgba(0, 77, 64, 0.9)), 
+                        url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover;
             height: 90vh;
             display: flex;
             flex-direction: column;
@@ -106,360 +103,346 @@
             align-items: center;
             text-align: center;
             color: var(--white);
+            padding: 0 20px;
         }
 
         .hero h1 {
-            color: var(--white);
-            font-size: 60px;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
+            font-size: 45px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero h2 {
+            font-size: 26px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            color: #b2dfdb;
         }
 
         .hero p {
-            font-size: 22px;
+            font-size: 20px;
             max-width: 800px;
             margin-bottom: 40px;
-            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .btn-gold {
-            background-color: var(--accent-gold);
+        .btn-main {
+            background-color: var(--accent);
             color: var(--white);
             padding: 15px 35px;
             text-decoration: none;
             font-size: 18px;
-            font-weight: bold;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-            border: 2px solid var(--accent-gold);
-            display: inline-block;
-            margin: 10px;
-        }
-
-        .btn-gold:hover {
-            background-color: transparent;
-            color: var(--accent-gold);
-        }
-
-        /* 3. About Section */
-        .about-grid {
-            display: flex;
-            gap: 50px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-flex;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+            margin: 10px;
+            text-transform: uppercase;
         }
-        .about-img {
-            flex: 1;
-            min-width: 300px;
-            border-radius: 10px;
-            box-shadow: -15px 15px 0px var(--accent-gold);
-        }
-        .about-text { flex: 1; min-width: 300px; }
-        .about-text h3 { font-size: 30px; margin-bottom: 20px; }
-        .about-text p { margin-bottom: 15px; font-size: 17px; }
 
-        /* 4. Therapies (Services) Grid */
-        .grid-4 {
+        .btn-main:hover {
+            transform: translateY(-5px);
+            background-color: #e65100;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            box-shadow: none;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
+        /* 3. About Doctor */
+        .about-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-left: 8px solid var(--primary);
+        }
+
+        .about-text { flex: 1; min-width: 300px; }
+        .about-text h3 { font-size: 32px; color: var(--primary-dark); margin-bottom: 5px; text-transform: uppercase; }
+        .about-text h4 { font-size: 18px; color: var(--accent); margin-bottom: 20px; }
+        .about-text p { font-size: 17px; color: var(--text-muted); line-height: 1.8; margin-bottom: 15px; }
+
+        /* 4. Treatments Grid */
+        .treatments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .t-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: 0.3s;
+            border: 1px solid #e0f2f1;
+        }
+
+        .t-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(0, 121, 107, 0.1);
+        }
+
+        .t-card i {
+            font-size: 30px;
+            color: var(--accent);
+            background: #e0f2f1;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .t-card div h4 { font-size: 18px; color: var(--text-main); margin-bottom: 5px; }
+        .t-card div p { font-size: 15px; color: var(--text-muted); }
+
+        /* 5. Feature Banner */
+        .feature-banner {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            text-align: center;
+            padding: 60px 5%;
+            border-radius: 20px;
+            margin: 0 5%;
+        }
+        .feature-banner h3 { font-size: 28px; margin-bottom: 20px; color: var(--accent); text-transform: uppercase; }
+        .feature-banner p { font-size: 20px; line-height: 1.6; }
+
+        /* 6. Therapies Section */
+        .therapy-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 30px;
+            margin-top: 40px;
         }
-        .therapy-card {
-            background: var(--white);
-            padding: 40px 20px;
+        .therapy-box {
             text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            transition: 0.3s;
-            border-top: 4px solid var(--accent-gold);
-        }
-        .therapy-card:hover { transform: translateY(-10px); }
-        .therapy-card i { font-size: 40px; color: var(--primary-dark); margin-bottom: 20px; }
-        .therapy-card h3 { font-size: 22px; margin-bottom: 15px; }
-
-        /* 5. Treatments (Diseases) */
-        .bg-dark { background-color: var(--primary-dark); color: var(--white); }
-        .bg-dark .section-title { color: var(--white); }
-        .treatment-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .treatment-item {
-            background: rgba(255,255,255,0.05);
-            padding: 20px;
-            border-left: 3px solid var(--accent-gold);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .treatment-item i { color: var(--accent-gold); font-size: 24px; }
-        .treatment-item h4 { color: var(--white); font-size: 18px; margin: 0; font-family: 'Lato', sans-serif;}
-
-        /* 6. Why Choose Us */
-        .feature-box { text-align: center; padding: 20px; }
-        .feature-box i { font-size: 50px; color: var(--accent-gold); margin-bottom: 15px; }
-
-        /* 7. Patient Reviews */
-        .review-card {
             background: var(--white);
             padding: 30px;
-            border-radius: 8px;
-            font-style: italic;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            position: relative;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         }
-        .review-card::before {
-            content: "\201C";
-            font-size: 60px;
-            color: rgba(212, 175, 55, 0.2);
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            font-family: serif;
+        .therapy-box img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
+        .therapy-box h3 { font-size: 22px; color: var(--primary-dark); text-transform: uppercase; }
 
-        /* 8. FAQ Section */
-        .faq-item {
-            background: var(--white);
-            margin-bottom: 15px;
-            padding: 20px;
-            border-radius: 5px;
-            border-left: 4px solid var(--primary-dark);
-        }
-        .faq-item h4 { font-size: 18px; margin-bottom: 10px; font-family: 'Lato', sans-serif; font-weight: bold; }
-
-        /* 9. Contact & Location */
-        .contact-container {
+        /* 7. Contact Details */
+        .contact-wrap {
             display: flex;
             flex-wrap: wrap;
             gap: 40px;
+        }
+        .contact-info {
+            flex: 1;
+            min-width: 320px;
             background: var(--white);
             padding: 40px;
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
-        .contact-details { flex: 1; min-width: 300px; }
-        .contact-item { display: flex; gap: 15px; margin-bottom: 25px; align-items: flex-start; }
-        .contact-item i { font-size: 24px; color: var(--accent-gold); }
-        .contact-item h4 { margin-bottom: 5px; }
-        .map-btn {
-            background: #25D366; /* WhatsApp Green */
-            color: white;
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 10px;
+        .c-item { display: flex; gap: 20px; margin-bottom: 30px; }
+        .c-item i {
+            font-size: 24px;
+            color: var(--white);
+            background: var(--primary);
+            width: 50px; height: 50px;
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 50%;
         }
-        .dir-btn { background: #4285F4; margin-left: 10px; } /* Map Blue */
+        .c-item h4 { font-size: 18px; margin-bottom: 5px; color: var(--text-main); }
+        .c-item p { font-size: 16px; color: var(--text-muted); line-height: 1.5; }
+
+        .map-container {
+            flex: 1;
+            min-width: 320px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .btn-full {
+            display: block;
+            text-align: center;
+            background: #25D366;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-full:hover { background: #1ebd57; }
 
         /* Footer */
         footer {
-            background: #020617;
-            color: var(--text-light);
+            background: var(--primary-dark);
+            color: rgba(255,255,255,0.8);
             text-align: center;
-            padding: 30px;
+            padding: 25px;
+            font-size: 15px;
         }
 
         @media (max-width: 768px) {
-            nav { justify-content: center; }
-            .hero h1 { font-size: 40px; }
-            .hero p { font-size: 18px; }
+            header { flex-direction: column; gap: 15px; }
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 16px; }
+            .btn-main { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="#home" class="logo"><i class="fas fa-leaf"></i> Sajida Center</a>
+        <a href="#home" class="logo"><i class="fas fa-hand-holding-medical"></i> SANJEEDA CENTER</a>
         <nav>
             <a href="#home">Home</a>
-            <a href="#about">About Dr.</a>
-            <a href="#therapies">Therapies</a>
+            <a href="#about">About</a>
             <a href="#treatments">Treatments</a>
-            <a href="#why-us">Why Us</a>
             <a href="#contact">Location</a>
         </nav>
     </header>
 
     <section class="hero" id="home">
-        <h1 data-aos="fade-down">Natural Healing, Zero Medicines</h1>
-        <p data-aos="fade-up" data-aos-delay="200">Katihar's Premier Chiro & Cupping Therapy Center. We eliminate the root cause of your pain through ancient wisdom and modern techniques.</p>
-        <div data-aos="fade-up" data-aos-delay="400">
-            <a href="tel:8102285924" class="btn-gold"><i class="fas fa-phone"></i> Book Appointment</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=Mahmood+Chowk,+D.S.+College+Road,+Katihar" target="_blank" class="btn-gold" style="background:transparent; color:var(--accent-gold);"><i class="fas fa-map-marker-alt"></i> View on Map</a>
+        <h1 data-aos="fade-down">SANJEEDA CHIRO CUPPING THERAPY CENTER</h1>
+        <h2 data-aos="fade-up" data-aos-delay="100">संजीदा कायरो कपिंग थेरेपी सेंटर</h2>
+        
+        <p data-aos="zoom-in" data-aos-delay="200">
+            <strong>नोट:-</strong> बिना दवाई, बिना साइड इफ़ेक्ट! शरीर के प्राकृतिक हीलिंग पॉइंट को एक्टिवेट करें, दर्द और बीमारी से राहत पाएं।
+        </p>
+
+        <div data-aos="fade-up" data-aos-delay="300">
+            <a href="tel:8102285924" class="btn-main"><i class="fas fa-phone-alt"></i> CALL: 8102285924</a>
+            <a href="http://googleusercontent.com/maps.google.com/7" target="_blank" class="btn-main btn-outline"><i class="fas fa-map-marker-alt"></i> GET DIRECTIONS</a>
         </div>
     </section>
 
     <section id="about">
-        <h2 class="section-title" data-aos="fade-up">Meet The Expert</h2>
-        <p class="section-subtitle" data-aos="fade-up">Decades of experience in natural healing</p>
-        
-        <div class="about-grid">
-            <img src="https://images.unsplash.com/photo-1605684954998-685c79d6a018?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Doctor Room" class="about-img" data-aos="fade-right">
-            <div class="about-text" data-aos="fade-left">
-                <h3>Dr. Kamrul Hoda</h3>
-                <p><strong>M.D CUP D.ch. T | Acupressure Therapy Expert</strong></p>
-                <p>At Sajida Therapy Center, we believe that the human body has an incredible capacity to heal itself if given the right support. Dr. Kamrul Hoda has dedicated his life to mastering Acupressure, Hijama (Cupping), and Chiropractic techniques to help patients live a pain-free life.</p>
-                <p>We do not rely on heavy painkillers or surgeries. Instead, we fix the alignment of your spine, improve blood flow, and stimulate nerve endings to bring permanent relief.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="therapies" style="background: var(--white);">
-        <h2 class="section-title" data-aos="fade-up">Our Healing Therapies</h2>
-        <p class="section-subtitle" data-aos="fade-up">Advanced techniques for maximum relief</p>
-        
-        <div class="grid-4">
-            <div class="therapy-card" data-aos="fade-up" data-aos-delay="100">
-                <i class="fas fa-dot-circle"></i>
-                <h3>Hijama (Cupping)</h3>
-                <p>Removes toxic blood, improves circulation, and provides deep tissue massage to relieve muscle tension.</p>
-            </div>
-            <div class="therapy-card" data-aos="fade-up" data-aos-delay="200">
-                <i class="fas fa-hand-holding-medical"></i>
-                <h3>Acupressure</h3>
-                <p>Stimulating specific pressure points on the body to promote natural healing and relieve stress.</p>
-            </div>
-            <div class="therapy-card" data-aos="fade-up" data-aos-delay="300">
-                <i class="fas fa-bone"></i>
-                <h3>Chiropractic Alignment</h3>
-                <p>Corrects spinal alignment to resolve back pain, neck pain, and nervous system issues.</p>
-            </div>
-            <div class="therapy-card" data-aos="fade-up" data-aos-delay="400">
-                <i class="fas fa-spa"></i>
-                <h3>Dry Needling</h3>
-                <p>Targets trigger points in the muscles to relieve chronic muscular pain and stiffness.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="treatments" class="bg-dark">
-        <h2 class="section-title" data-aos="fade-up">What We Treat</h2>
-        <p class="section-subtitle" data-aos="fade-up" style="color: #e2e8f0;">Successfully curing conditions others give up on</p>
-        
-        <div class="treatment-list">
-            <div class="treatment-item" data-aos="fade-up"><i class="fas fa-check-circle"></i><h4>Joint & Knee Pain (जोड़ों का दर्द)</h4></div>
-            <div class="treatment-item" data-aos="fade-up"><i class="fas fa-check-circle"></i><h4>Back & Waist Pain (कमर दर्द / Slip Disc)</h4></div>
-            <div class="treatment-item" data-aos="fade-up"><i class="fas fa-check-circle"></i><h4>Cervical & Sciatica (सर्वाइकल व साइटिका)</h4></div>
-            <div class="treatment-item" data-aos="fade-up"><i class="fas fa-check-circle"></i><h4>Paralysis Support (लकवा)</h4></div>
-            <div class="treatment-item" data-aos="fade-up"><i class="fas fa-check-circle"></i><h4>Gastric & Constipation (पेट रोग)</h4></div>
-            <div class="treatment-item" data-aos="fade-up"><i class="fas fa-check-circle"></i><h4>Migraine & Headache (माइग्रेन)</h4></div>
-            <div class="treatment-item" data-aos="fade-up"><i class="fas fa-check-circle"></i><h4>Nerve Weakness (नसों की कमजोरी)</h4></div>
-            <div class="treatment-item" data-aos="fade-up"><i class="fas fa-check-circle"></i><h4>Shoulder Freeze (कंधे का जाम होना)</h4></div>
-        </div>
-    </section>
-
-    <section id="why-us">
-        <h2 class="section-title" data-aos="fade-up">Why Choose Sajida Center?</h2>
-        <p class="section-subtitle" data-aos="fade-up">The trusted choice for Katihar</p>
-
-        <div class="grid-4">
-            <div class="feature-box" data-aos="zoom-in">
-                <i class="fas fa-pills" style="color:#e74c3c;"></i>
-                <h3>Zero Medicines</h3>
-                <p>100% natural therapies with no harmful side effects.</p>
-            </div>
-            <div class="feature-box" data-aos="zoom-in" data-aos-delay="100">
-                <i class="fas fa-user-md"></i>
-                <h3>Expert Doctor</h3>
-                <p>Treated thousands of patients successfully.</p>
-            </div>
-            <div class="feature-box" data-aos="zoom-in" data-aos-delay="200">
-                <i class="fas fa-clock"></i>
-                <h3>24/7 Emergency</h3>
-                <p>Always available for severe pain emergencies.</p>
-            </div>
-            <div class="feature-box" data-aos="zoom-in" data-aos-delay="300">
-                <i class="fas fa-rupee-sign"></i>
-                <h3>Affordable Care</h3>
-                <p>Premium healthcare that fits in your budget.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="reviews" style="background: var(--white);">
-        <h2 class="section-title" data-aos="fade-up">Patient Stories</h2>
-        <p class="section-subtitle" data-aos="fade-up">Hear from those who found relief</p>
-
-        <div class="grid-4" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-            <div class="review-card" data-aos="fade-up">
-                <p>"I had severe sciatica pain and couldn't walk properly. After just 3 sessions of Cupping Therapy with Dr. Kamrul, my pain is 90% gone. Highly recommended!"</p>
-                <br><strong>- Md. Arshad, Katihar</strong>
-            </div>
-            <div class="review-card" data-aos="fade-up" data-aos-delay="100">
-                <p>"Mera knee pain salon se tha, bahut doctors ko dikhaya. Sajida Center aane ke baad bina kisi dawa ke mujhe aaram mil gaya. Thank you doctor sahab."</p>
-                <br><strong>- Sunita Devi</strong>
-            </div>
-        </div>
-    </section>
-
-    <section id="faq">
-        <h2 class="section-title" data-aos="fade-up">Frequently Asked Questions</h2>
-        <p class="section-subtitle" data-aos="fade-up">Everything you need to know</p>
-        
-        <div style="max-width: 800px; margin: auto;">
-            <div class="faq-item" data-aos="fade-up">
-                <h4>Is Cupping Therapy painful?</h4>
-                <p>No, it is generally painless. You might feel a slight suction or pressure on the skin, which is actually very relaxing.</p>
-            </div>
-            <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
-                <h4>How many sessions will I need?</h4>
-                <p>It depends on how chronic your condition is. Some patients feel relief in 1 session, while severe cases may require 4-5 sessions.</p>
-            </div>
-            <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
-                <h4>Do I need to book an appointment?</h4>
-                <p>Yes, we highly recommend booking an appointment over phone or WhatsApp to avoid waiting time.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="bg-dark">
-        <h2 class="section-title" data-aos="fade-up">Visit Our Clinic</h2>
-        <p class="section-subtitle" data-aos="fade-up" style="color:#e2e8f0;">Get accurate directions to reach us</p>
-
-        <div class="contact-container" style="color: var(--text-dark);">
-            <div class="contact-details" data-aos="fade-right">
-                <div class="contact-item">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <div>
-                        <h4>Clinic Address</h4>
-                        <p>Mahmood Chowk, D.S. College Road<br>Katihar, Bihar - 854105</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-phone-volume"></i>
-                    <div>
-                        <h4>Call Us (Appointment)</h4>
-                        <p>+91 8102285924<br>+91 8797981395</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-envelope-open-text"></i>
-                    <div>
-                        <h4>Email Us</h4>
-                        <p>hodakamrul156@gmail.com</p>
-                    </div>
-                </div>
+        <div class="about-box" data-aos="fade-up">
+            <div class="about-text">
+                <h3>DR. TH KAMRUL HODA <span style="font-size: 22px; color: #666; text-transform: none;">(TH कमरूल होदा)</span></h3>
+                <h4>M.D CUP D.ch. T | ACUPRESSURE THERAPY EXPERT</h4>
+                <p>हमारे यहाँ एक्यूप्रेशर, कायरोप्रैक्टिक और कपिंग थेरेपी (Hijama) द्वारा शरीर के हर प्रकार के पुराने और जिद्दी दर्द का सफल इलाज किया जाता है। हम दवाइयों पर निर्भर नहीं करते, बल्कि आपके शरीर की प्राकृतिक क्षमता को बढ़ाकर आपको स्वस्थ बनाते हैं।</p>
                 <div style="margin-top: 20px;">
-                    <a href="https://wa.me/918102285924" target="_blank" class="map-btn"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                    <a href="https://www.google.com/maps/search/?api=1&query=Mahmood+Chowk,+D.S.+College+Road,+Katihar" target="_blank" class="map-btn dir-btn"><i class="fas fa-directions"></i> Location On Map</a>
+                    <span style="background: #e0f2f1; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-right: 10px; color: var(--primary-dark);"><i class="fas fa-check-circle" style="color: var(--primary);"></i> No Medicines</span>
+                    <span style="background: #e0f2f1; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--primary-dark);"><i class="fas fa-check-circle" style="color: var(--primary);"></i> No Side Effects</span>
                 </div>
             </div>
-            
-            <div style="flex: 1; min-width: 300px; border-radius: 10px; overflow: hidden;" data-aos="fade-left">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3604.2882586790757!2d87.574441!3d25.5451!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDMyJzQyLjQiTiA4N8KwMzQnMjguMCJF!5e0!3m2!1sen!2sin!4v1650000000000!5m2!1sen!2sin" width="100%" height="100%" style="border:0; min-height: 300px;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <section id="treatments" style="background: var(--bg-light);">
+        <h2 class="sec-title" data-aos="fade-up">OUR TREATMENTS (हमारा इलाज)</h2>
+        <p class="sec-subtitle" data-aos="fade-up">इन सभी बीमारियों का प्राकृतिक तरीके से पक्का इलाज</p>
+
+        <div class="treatments-grid">
+            <div class="t-card" data-aos="fade-up"><i class="fas fa-bone"></i><div><h4>जोड़ों व घुटनों का दर्द</h4><p>Joints & Knee Pain Relief</p></div></div>
+            <div class="t-card" data-aos="fade-up" data-aos-delay="50"><i class="fas fa-child"></i><div><h4>पीठ व गर्दन का दर्द</h4><p>Back & Neck Pain</p></div></div>
+            <div class="t-card" data-aos="fade-up" data-aos-delay="100"><i class="fas fa-user-md"></i><div><h4>सर्वाइकल व कमर दर्द</h4><p>Cervical & Waist Pain</p></div></div>
+            <div class="t-card" data-aos="fade-up" data-aos-delay="150"><i class="fas fa-hands"></i><div><h4>हाथों व कंधा का दर्द</h4><p>Hand & Shoulder Pain (Frozen)</p></div></div>
+            <div class="t-card" data-aos="fade-up" data-aos-delay="200"><i class="fas fa-procedures"></i><div><h4>साईटीका (Sciatica)</h4><p>Complete Sciatica Treatment</p></div></div>
+            <div class="t-card" data-aos="fade-up" data-aos-delay="250"><i class="fas fa-wheelchair"></i><div><h4>लकवा व नसों की कमजोरी</h4><p>Paralysis & Nerve Weakness</p></div></div>
+            <div class="t-card" data-aos="fade-up" data-aos-delay="300"><i class="fas fa-stomach"></i><div><h4>गैस, कब्ज व पेटरोग</h4><p>Gastric, Constipation & Stomach Issues</p></div></div>
+            <div class="t-card" data-aos="fade-up" data-aos-delay="350"><i class="fas fa-crutch"></i><div><h4>गठिया (Arthritis) व एड़ी दर्द</h4><p>Arthritis, Gout & Heel Pain</p></div></div>
+            <div class="t-card" data-aos="fade-up" data-aos-delay="400"><i class="fas fa-head-side-virus"></i><div><h4>सिर दर्द व भारी नसें</h4><p>Headache & Heavy Nerves</p></div></div>
+        </div>
+    </section>
+
+    <div class="feature-banner" data-aos="zoom-in">
+        <h3><i class="fas fa-leaf"></i> 100% NATURAL HEALING</h3>
+        <p>"बिना दवाई, बिना साइड इफ़ेक्ट शरीर के प्राकृतिक हीलिंग पॉइंट को एक्टिवेट करें, दर्द और बीमारी से राहत पाएं।"</p>
+    </div>
+
+    <section id="therapies">
+        <h2 class="sec-title" data-aos="fade-up">THERAPIES WE PROVIDE</h2>
+        <div class="therapy-grid">
+            <div class="therapy-box" data-aos="fade-up">
+                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Cupping Therapy">
+                <h3>CUPPING THERAPY (HIJAMA)</h3>
+            </div>
+            <div class="therapy-box" data-aos="fade-up" data-aos-delay="100">
+                <img src="https://images.unsplash.com/photo-1605684954998-685c79d6a018?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Acupressure">
+                <h3>ACUPRESSURE THERAPY</h3>
+            </div>
+            <div class="therapy-box" data-aos="fade-up" data-aos-delay="200">
+                <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Chiropractic">
+                <h3>CHIROPRACTIC ALIGNMENT</h3>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" style="background: #e0f2f1;">
+        <h2 class="sec-title" data-aos="fade-up">VISIT OUR CLINIC</h2>
+        <p class="sec-subtitle" data-aos="fade-up">Get in touch for appointments and directions</p>
+
+        <div class="contact-wrap">
+            <div class="contact-info" data-aos="fade-right">
+                <div class="c-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h4>Clinic Address (स्थान)</h4>
+                        <p>महमूद चौक, डी. एस. कॉलेज रोड<br>कटिहार - 854105 (Katihar, Bihar)</p>
+                    </div>
+                </div>
+                <div class="c-item">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <h4>Timings (समय)</h4>
+                        <p>सुबह 8:00 बजे से लेकर शाम 6:00 बजे तक<br>(8:00 AM to 6:00 PM)</p>
+                    </div>
+                </div>
+                <div class="c-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <div>
+                        <h4>Contact Numbers (मोबाइल)</h4>
+                        <p>8102285924<br>8797981395</p>
+                    </div>
+                </div>
+                
+                <a href="https://wa.me/918102285924?text=Hello%20Dr.%20Kamrul,%20I%20want%20to%20book%20an%20appointment." target="_blank" class="btn-full"><i class="fab fa-whatsapp"></i> BOOK APPOINTMENT</a>
+            </div>
+
+            <div class="map-container" data-aos="fade-left">
+                <iframe 
+                    src="http://googleusercontent.com/maps.google.com/8" 
+                    width="100%" height="100%" style="border:0; min-height: 400px;" allowfullscreen="" loading="lazy">
+                </iframe>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 Sajida Chiro Cupping Therapy Center. All Rights Reserved.</p>
-        <p style="font-size: 13px; margin-top: 10px; color: #475569;">Developed by LOW BUDGET DEVELOPER</p>
+        <p>© 2026 SANJEEDA CHIRO CUPPING THERAPY CENTER. All Rights Reserved.</p>
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
