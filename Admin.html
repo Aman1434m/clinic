@@ -3,79 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Admin Control</title>
+    <title>Master Admin | Info Partner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Simple Firebase Compatible Setup -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; padding: 20px; display: none; }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; padding: 20px; display: none; }
         .container { max-width: 800px; margin: 0 auto; }
-        .box { background: #2a2a2a; padding: 25px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #a17c52; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #444; background: #111; color: white; box-sizing: border-box; }
-        button { background: #28a745; color: white; padding: 12px 20px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; width: 100%; font-size: 1em; }
-        button:hover { background: #218838; }
-        .list-item { background: #333; padding: 15px; margin: 10px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .del-btn { background: #dc3545; width: auto; padding: 8px 15px; font-size: 0.9em; }
-        .del-btn:hover { background: #c82333; }
-        h1, h2 { color: #a17c52; text-align: center; }
+        .box { background: #1e293b; padding: 30px; border-radius: 12px; margin-bottom: 25px; border-top: 5px solid #2563eb; box-shadow: 0 10px 15px rgba(0,0,0,0.3); }
+        .box.scheme-box { border-top-color: #059669; }
+        
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; font-family: inherit; }
+        button { background: #2563eb; color: white; padding: 12px 20px; border: none; cursor: pointer; border-radius: 6px; font-weight: bold; width: 100%; font-size: 1.1em; transition: 0.3s; }
+        button:hover { background: #1d4ed8; }
+        .scheme-box button { background: #059669; }
+        .scheme-box button:hover { background: #047857; }
+        
+        h1, h2 { text-align: center; margin-bottom: 20px; }
+        h3 { color: #f8fafc; margin-bottom: 15px; }
+        
+        .list-item { background: #334155; padding: 15px; margin: 10px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .del-btn { background: #ef4444; width: auto; padding: 8px 15px; font-size: 0.9em; margin-left: 10px; }
+        .del-btn:hover { background: #dc2626; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Admin Control Dashboard</h1>
-        <p style="text-align: center; color: #aaa; margin-bottom: 30px;">Ye page kisi student ke sath share na karein.</p>
+        <h1><span style="color: #60a5fa;">Info Partner</span> Admin Panel</h1>
+        <p style="text-align: center; color: #94a3b8; margin-bottom: 30px;">Koi bhi item add kariye, wo turant aam public website par dikhega.</p>
 
+        <!-- Scholarship Form -->
         <div class="box">
-            <h3><span style="color: #4285F4;">●</span> Update Principal Photo</h3>
-            <input type="file" id="heroImg" accept="image/*">
-            <button onclick="updatePhoto()" style="background: #007bff;">Upload New Photo</button>
+            <h3>Add New Scholarship</h3>
+            <input type="text" id="schTitle" placeholder="Scholarship Title (e.g. Post Matric SC/ST)">
+            <input type="text" id="schProvider" placeholder="Provider (e.g. Govt of India)">
+            <input type="text" id="schDeadline" placeholder="Last Date (e.g. 30 June 2026)">
+            <textarea id="schDesc" placeholder="Overview / Description..." rows="3"></textarea>
+            <input type="url" id="schUrl" placeholder="Official Apply URL (Link)">
+            <button onclick="addScholarship()">Push Scholarship Live</button>
+            <div id="schList" style="margin-top: 20px;"></div>
         </div>
 
-        <div class="box">
-            <h3><span style="color: #28a745;">●</span> Add New Link</h3>
-            <input type="text" id="lTitle" placeholder="Link Title (e.g. BSEB 10th Result)">
-            <input type="text" id="lDesc" placeholder="Description">
-            <input type="url" id="lUrl" placeholder="Paste Full URL (http://...)">
-            <button onclick="addLink()">Save Link to Website</button>
-            <div id="linksList" style="margin-top: 15px;"></div>
-        </div>
-
-        <div class="box">
-            <h3><span style="color: #ffc107;">●</span> Upload Note/PDF</h3>
-            <input type="text" id="nTitle" placeholder="Note Title (e.g. Math Chapter 1)">
-            <input type="text" id="nDesc" placeholder="Description">
-            <input type="file" id="nFile" accept=".pdf, image/*">
-            <button onclick="addNote()">Upload Note</button>
-            <div id="notesList" style="margin-top: 15px;"></div>
-        </div>
-
-        <div class="box">
-            <h3><span style="color: #dc3545;">●</span> Add MCQ Question</h3>
-            <input type="text" id="mSub" placeholder="Subject Name">
-            <textarea id="mQ" placeholder="Question Text" rows="2"></textarea>
-            <input type="text" id="oA" placeholder="Option A">
-            <input type="text" id="oB" placeholder="Option B">
-            <input type="text" id="oC" placeholder="Option C">
-            <input type="text" id="oD" placeholder="Option D">
-            <select id="mAns">
-                <option value="">Select Correct Option</option>
-                <option value="A">A</option><option value="B">B</option>
-                <option value="C">C</option><option value="D">D</option>
-            </select>
-            <button onclick="addMcq()">Add Question</button>
-            <div id="mcqList" style="margin-top: 15px;"></div>
+        <!-- Scheme Form -->
+        <div class="box scheme-box">
+            <h3>Add New Government Scheme</h3>
+            <input type="text" id="scTitle" placeholder="Scheme Title (e.g. PM-KISAN)">
+            <input type="text" id="scProvider" placeholder="Ministry / State (e.g. Ministry of Agriculture)">
+            <textarea id="scDesc" placeholder="Overview / Benefits..." rows="3"></textarea>
+            <input type="url" id="scUrl" placeholder="Official Website URL (Link)">
+            <button onclick="addScheme()">Push Scheme Live</button>
+            <div id="scList" style="margin-top: 20px;"></div>
         </div>
     </div>
 
     <script>
-        // Security Prompt
+        // Security Prompt (Single File Easy Login)
         const pass = prompt("Enter Admin Password:");
         if(pass === "admin123") {
-            document.body.style.display = "block"; // Password sahi toh dikhao
+            document.body.style.display = "block";
         } else {
-            alert("Wrong Password! Redirecting...");
-            window.location.href = "index.html"; // Galat toh bhaga do
+            alert("Wrong Password! Access Denied.");
+            window.location.href = "index.html"; 
         }
 
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAKA0U_XD_Txbfes-E-ZUDFPHjmswEV_KA",
             authDomain: "success-coaching-8230b.firebaseapp.com",
@@ -85,88 +79,77 @@
             appId: "1:1086069647096:web:9f66a46f30eaba89a9bd0d"
         };
         firebase.initializeApp(firebaseConfig);
-        const dbRef = firebase.database().ref('coachingProData');
+        const dbRef = firebase.database().ref('infoPartnerDb');
         
-        let siteData = { links: [], notes: [], mcqs: [], heroImage: '' };
-
-        // Fetch Data
+        // Load Realtime Data for deletion UI
         dbRef.on('value', (snap) => {
-            if(snap.val()) {
-                siteData = snap.val();
-                if(!siteData.links) siteData.links = [];
-                if(!siteData.notes) siteData.notes = [];
-                if(!siteData.mcqs) siteData.mcqs = [];
-                renderAdminLists();
+            const data = snap.val() || { scholarships: {}, schemes: {} };
+            
+            // Render Scholarship Delete List
+            let schHtml = '';
+            if(data.scholarships) {
+                Object.keys(data.scholarships).forEach(key => {
+                    schHtml += `<div class="list-item"><b>${data.scholarships[key].title}</b> 
+                               <button class="del-btn" onclick="deleteItem('scholarships', '${key}')">Delete</button></div>`;
+                });
             }
+            document.getElementById('schList').innerHTML = schHtml;
+
+            // Render Scheme Delete List
+            let scHtml = '';
+            if(data.schemes) {
+                Object.keys(data.schemes).forEach(key => {
+                    scHtml += `<div class="list-item"><b>${data.schemes[key].title}</b> 
+                               <button class="del-btn" onclick="deleteItem('schemes', '${key}')">Delete</button></div>`;
+                });
+            }
+            document.getElementById('scList').innerHTML = scHtml;
         });
 
-        // 1. Photo
-        function updatePhoto() {
-            const file = document.getElementById('heroImg').files[0];
-            if(!file) return alert("Select a file first");
-            if(file.size > 2 * 1024 * 1024) return alert("File too large (Max 2MB)");
-            const reader = new FileReader();
-            reader.onload = (e) => { siteData.heroImage = e.target.result; saveDB("Photo Updated!"); document.getElementById('heroImg').value = ''; };
-            reader.readAsDataURL(file);
+        // Add Scholarship to DB
+       function addScholarship() {
+            const title = document.getElementById('schTitle').value;
+            const provider = document.getElementById('schProvider').value;
+            const deadline = document.getElementById('schDeadline').value;
+            const desc = document.getElementById('schDesc').value;
+            const link = document.getElementById('schUrl').value;
+            
+            if(!title || !desc) return alert("Title and Description are required");
+            
+            dbRef.child('scholarships').push({ title, provider, deadline, desc, link })
+                .then(() => { alert("Scholarship Added!"); clearSch(); })
+                .catch(e => alert("Error: " + e.message));
         }
 
-        // 2. Link
-        function addLink() {
-            const title = document.getElementById('lTitle').value;
-            const desc = document.getElementById('lDesc').value;
-            const url = document.getElementById('lUrl').value;
-            if(!title || !url) return alert("Title and URL required");
-            siteData.links.push({ id: Date.now(), title, desc, url });
-            saveDB("Link Added!");
-            document.getElementById('lTitle').value = ''; document.getElementById('lDesc').value = ''; document.getElementById('lUrl').value = '';
+        // Add Scheme to DB
+        function addScheme() {
+            const title = document.getElementById('scTitle').value;
+            const provider = document.getElementById('scProvider').value;
+            const desc = document.getElementById('scDesc').value;
+            const link = document.getElementById('scUrl').value;
+            
+            if(!title || !desc) return alert("Title and Description are required");
+            
+            dbRef.child('schemes').push({ title, provider, desc, link })
+                .then(() => { alert("Scheme Added!"); clearSc(); })
+                .catch(e => alert("Error: " + e.message));
         }
 
-        // 3. Note
-        function addNote() {
-            const file = document.getElementById('nFile').files[0];
-            const title = document.getElementById('nTitle').value;
-            const desc = document.getElementById('nDesc').value;
-            if(!file || !title) return alert("Title and File required");
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                siteData.notes.push({ id: Date.now(), title, desc, fileUrl: e.target.result, fileName: file.name });
-                saveDB("Note Uploaded!");
-                document.getElementById('nTitle').value = ''; document.getElementById('nDesc').value = ''; document.getElementById('nFile').value = '';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // 4. MCQ
-        function addMcq() {
-            const subject = document.getElementById('mSub').value;
-            const q = document.getElementById('mQ').value;
-            const ans = document.getElementById('mAns').value;
-            if(!q || !ans) return alert("Question and Correct Answer required");
-            siteData.mcqs.push({
-                id: Date.now(), subject, q,
-                opts: { A: document.getElementById('oA').value, B: document.getElementById('oB').value, C: document.getElementById('oC').value, D: document.getElementById('oD').value },
-                ans
-            });
-            saveDB("MCQ Added!");
-            document.getElementById('mSub').value=''; document.getElementById('mQ').value=''; 
-            document.getElementById('oA').value=''; document.getElementById('oB').value=''; document.getElementById('oC').value=''; document.getElementById('oD').value=''; document.getElementById('mAns').value='';
-        }
-
-        function deleteItem(type, id) {
-            if(confirm("Confirm Delete?")) {
-                siteData[type] = siteData[type].filter(item => item.id !== id);
-                saveDB("Deleted successfully");
+        // Delete any Item
+        function deleteItem(type, key) {
+            if(confirm("Confirm Delete? Yeh action wapas nahi ho sakta!")) {
+                dbRef.child(type).child(key).remove()
+                    .then(() => alert("Deleted successfully"))
+                    .catch(e => alert("Error: " + e.message));
             }
         }
 
-        function saveDB(msg) {
-            dbRef.set(siteData).then(() => alert(msg)).catch(e => alert("Error: " + e));
+        // Clear Form Inputs functions
+        function clearSch() {
+            ['schTitle','schProvider','schDeadline','schDesc','schUrl'].forEach(i => document.getElementById(i).value = '');
         }
-
-        function renderAdminLists() {
-            document.getElementById('linksList').innerHTML = siteData.links.map(l => `<div class="list-item"><b>${l.title}</b> <button class="del-btn" onclick="deleteItem('links', ${l.id})">Delete</button></div>`).join('');
-            document.getElementById('notesList').innerHTML = siteData.notes.map(n => `<div class="list-item"><b>${n.title}</b> <button class="del-btn" onclick="deleteItem('notes', ${n.id})">Delete</button></div>`).join('');
-            document.getElementById('mcqList').innerHTML = siteData.mcqs.map(m => `<div class="list-item"><b>${m.q}</b> <button class="del-btn" onclick="deleteItem('mcqs', ${m.id})">Delete</button></div>`).join('');
+        function clearSc() {
+            ['scTitle','scProvider','scDesc','scUrl'].forEach(i => document.getElementById(i).value = '');
         }
     </script>
 </body>
