@@ -1,35 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinic</title>
+    <title>TapCoin Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        h1, h2, h3 {
+            text-align: center;
+        }
+        .button {
+            background-color: #6200ea;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Clinic</h1>
-    </header>
+    <div class="container">
+        <h1>Welcome to TapCoin!</h1>
+        <div id="invite-section">
+            <h2>Invite Section</h2>
+            <p>Invite your friends to earn coins!</p>
+            <button class="button" onclick="inviteFriend()">Invite a Friend</button>
+        </div>
+        <div id="mine-section">
+            <h2>Mine Section</h2>
+            <p>Your coins are being generated automatically!</p>
+            <div id="coin-display">Coins: 0</div>
+            <button class="button" onclick="startMining()">Start Mining</button>
+        </div>
+        <div id="feature-unlock">
+            <h3>Purchase Features</h3>
+            <p>Unlock super fast mining by inviting 1 friend!</p>
+            <button class="button" onclick="purchaseFeature('super-fast')">Purchase Super Fast Mining</button>
+            <p>Unlock fast mining by inviting 1 friend!</p>
+            <button class="button" onclick="purchaseFeature('fast')">Purchase Fast Mining</button>
+        </div>
+    </div>
+    <script>
+        let coins = 0;
+        let miningInterval;
 
-    <section id="invite">
-        <h2>Invite Your Friends</h2>
-        <p>Invite your friends to join the clinic and earn rewards!</p>
-    </section>
+        function inviteFriend() {
+            alert('Friend Invited! You can now unlock features.');
+        }
 
-    <section id="mine">
-        <h2>Auto-Coin Generation</h2>
-        <p>Generate coins automatically by participating in clinic activities.</p>
-    </section>
+        function startMining() {
+            if (!miningInterval) {
+                let miningTier = 'Basic'; // Example tier
+                let coinRate = 1; // Basic rate
 
-    <section id="features">
-        <h2>Features</h2>
-        <ul>
-            <li>Super Fast friend invitations</li>
-            <li>Fast friend invitations</li>
-        </ul>
-    </section>
+                miningInterval = setInterval(function() {
+                    coins += coinRate;
+                    document.getElementById('coin-display').innerText = 'Coins: ' + coins;
+                }, 60000); // 1 coin per minute at basic tier
+            }
+        }
 
-    <footer>
-        <p>&copy; 2026 Clinic. All Rights Reserved.</p>
-    </footer>
+        function purchaseFeature(feature) {
+            // Logic for purchasing features 
+            alert('Unlocking ' + feature + ' mining!');
+        }
+    </script>
 </body>
 </html>
