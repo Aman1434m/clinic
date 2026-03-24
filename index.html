@@ -87,10 +87,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);height
       ⚡ TapCoin
       <button onclick="if(confirm('Reset all data?')){localStorage.clear();location.reload()}" style="background:none;border:none;color:var(--txt2);font-size:10px;text-decoration:underline;cursor:pointer">RESET</button>
     </div>
-    <div class="user-info" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+    <div class="user-info">
       <div class="streak-badge" id="streakBadge">🔥 Lv.0 Bot</div>
       <div class="user-name" id="userName">Player</div>
-      <div style="font-size:10px;color:var(--txt2);font-weight:700" id="leagueName">🏆 Bronze League</div>
     </div>
   </div>
   <div class="score-section">
@@ -157,14 +156,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);height
 <!-- FRIENDS TAB -->
 <div class="tab-content list-page" id="tabFriends">
   <div class="section-title">👥 Referrals</div>
-  <div class="section-sub">Invite friends to earn massive rewards!</div>
-  <div class="list-card" style="flex-direction:column;text-align:center;padding:16px;">
-    <div class="list-name" id="refLinkText" style="font-size:11px;word-break:break-all;color:var(--txt2);margin-bottom:12px;background:rgba(0,0,0,0.3);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">Link</div>
-    <div style="display:flex;gap:8px;width:100%;">
-      <button class="list-action" id="btnCopy" style="flex:1;background:#4b5563;font-size:11px;padding:8px"><span style="font-size:16px">📋</span> Copy</button>
-      <button class="list-action" id="btnTg" style="flex:1;background:#3b82f6;font-size:11px;padding:8px"><span style="font-size:16px">✈️</span> Telegram</button>
-      <button class="list-action" id="btnWa" style="flex:1;background:#25D366;font-size:11px;padding:8px"><span style="font-size:16px">💬</span> WhatsApp</button>
-    </div>
+  <div class="section-sub">Invite friends to earn 500 coins each!</div>
+  <div class="list-card" style="flex-direction:column;text-align:center;padding:20px">
+    <div class="list-icon" style="margin:0 auto 10px;background:rgba(59,130,246,.2)">🔗</div>
+    <div class="list-name" id="refLinkText" style="font-size:11px;word-break:break-all;color:var(--txt2)">Link</div>
+    <button class="list-action" id="shareRefBtn" style="width:100%;margin-top:12px;background:linear-gradient(135deg,var(--blue),#2563eb)">Share Invite Link</button>
   </div>
   <div class="stats-row" style="padding:0">
     <div class="stat-card"><div class="s-n" id="refCount">0</div><div class="s-l">Friends</div></div>
@@ -226,29 +222,19 @@ if(userNameEl) userNameEl.textContent = (tg && tg.initDataUnsafe && tg.initDataU
 
 // ─── BOT LEVELS CONFIG ───
 var BOTS=[
-  {lvl:0,name:'Base Level',icon:'🧱',cost:0,max:10000,rate:0,reqRefs:0,color:'var(--txt2)'},
-  {lvl:1,name:'Silver Bot',icon:'🥈',cost:5000,max:50000,rate:1,reqRefs:1,color:'var(--silver)'},
-  {lvl:2,name:'Gold Bot',icon:'🥇',cost:20000,max:200000,rate:5,reqRefs:3,color:'var(--gold)'},
-  {lvl:3,name:'Platinum Bot',icon:'💎',cost:100000,max:1000000,rate:20,reqRefs:5,color:'var(--plat)'},
-  {lvl:4,name:'Diamond Bot',icon:'💠',cost:500000,max:5000000,rate:100,reqRefs:10,color:'var(--diam)'},
-  {lvl:5,name:'Master Bot',icon:'👑',cost:2000000,max:Infinity,rate:500,reqRefs:20,color:'var(--master)'}
-];
-
-// ─── LEAGUES CONFIG ───
-var LEAGUES=[
-  {name:'Bronze',req:0,reward:0,color:'#cd7f32'},
-  {name:'Silver',req:20000,reward:5000,color:'#c0c0c0'},
-  {name:'Gold',req:100000,reward:25000,color:'#ffd700'},
-  {name:'Platinum',req:500000,reward:100000,color:'#e5e4e2'},
-  {name:'Diamond',req:2000000,reward:500000,color:'#b9f2ff'},
-  {name:'Master',req:10000000,reward:2000000,color:'#ff4500'}
+  {lvl:0,name:'Base Level',icon:'🧱',cost:0,max:10000,rate:0,color:'var(--txt2)'},
+  {lvl:1,name:'Silver Bot',icon:'🥈',cost:5000,max:50000,rate:1,color:'var(--silver)'},
+  {lvl:2,name:'Gold Bot',icon:'🥇',cost:20000,max:200000,rate:5,color:'var(--gold)'},
+  {lvl:3,name:'Platinum Bot',icon:'💎',cost:100000,max:1000000,rate:20,color:'var(--plat)'},
+  {lvl:4,name:'Diamond Bot',icon:'💠',cost:500000,max:5000000,rate:100,color:'var(--diam)'},
+  {lvl:5,name:'Master Bot',icon:'👑',cost:2000000,max:Infinity,rate:500,color:'var(--master)'}
 ];
 
 // ─── State ───
 function todayStr(){return new Date().toISOString().slice(0,10)}
 function defaultState(){return{score:0,taps:0,energy:1000,botLevel:0,lastTick:Date.now(),combo:0,comboLast:0,
   referrals:[],refEarned:0,streak:0,lastLogin:0,
-  lastDaily:0,boost2xLeft:3,boost5xLeft:1,refillLeft:3,activeBoost:1,boostEnd:0,tasksCompleted:{},dailyTaps:0,dailyResetDate:todayStr(),leagueIdx:0}}
+  lastDaily:0,boost2xLeft:3,boost5xLeft:1,refillLeft:3,activeBoost:1,boostEnd:0,tasksCompleted:{},dailyTaps:0,dailyResetDate:todayStr()}}
 function loadState(){try{var d=localStorage.getItem('tapcoin_'+userId);return d?Object.assign({}, defaultState(), JSON.parse(d)):defaultState()}catch(e){return defaultState()}}
 function saveState(){S.lastTick=Date.now();localStorage.setItem('tapcoin_'+userId,JSON.stringify(S))}
 
@@ -258,17 +244,7 @@ var S=loadState();
 if(S.dailyResetDate!==todayStr()){S.dailyTaps=0;S.boost2xLeft=3;S.boost5xLeft=1;S.refillLeft=3;S.dailyResetDate=todayStr();S.tasksCompleted={}}
 // Streak Update
 var today=new Date().setHours(0,0,0,0);
-if(S.lastLogin){
-    var diff=(today-S.lastLogin)/864e5;
-    if(diff===1){
-        S.streak++;
-        if(S.streak===7){
-            S.score+=10000;
-            setTimeout(function(){toast('🎉 7-Day Streak Complete! +10,000 Coins!')},2000);
-            S.streak=0; // Reset streak after 7 days
-        }
-    } else if(diff>1) S.streak=1;
-}else S.streak=1;
+if(S.lastLogin){var diff=(today-S.lastLogin)/864e5;if(diff===1)S.streak++;else if(diff>1)S.streak=1}else S.streak=1;
 S.lastLogin=today;
 
 // ─── SELECTORS ───
@@ -313,10 +289,6 @@ function updateUI(){
   $('botLvl').textContent=b.name.split(' ')[0];
   $('streakBadge').textContent='🔥 Day '+S.streak+' / '+b.icon;
   
-  var l=LEAGUES[S.leagueIdx];
-  var lEl=$('leagueName');
-  if(lEl){ lEl.textContent='🏆 '+l.name+' League'; lEl.style.color=l.color; }
-  
   $('refCount').textContent=S.referrals.length;
   $('refEarned').textContent=fmt(S.refEarned);
 
@@ -360,218 +332,10 @@ function handleTap(e){
   S.score=Math.min(S.score+earned, b.max === Infinity ? Infinity : b.max);
   S.taps++;
   S.dailyTaps++;
-  
-  if(S.leagueIdx < LEAGUES.length-1 && S.score >= LEAGUES[S.leagueIdx+1].req){
-    S.leagueIdx++;
-    var reward = LEAGUES[S.leagueIdx].reward;
-    S.score += reward;
-    toast('🎉 Ranked up to '+LEAGUES[S.leagueIdx].name+' League! You got +'+fmt(reward)+' Coins!');
-    if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-  }
 
   var rect=coinBtn.getBoundingClientRect();
   var cx,cy;
   if(e.touches && e.touches.length > 0) {
     cx = e.touches[0].clientX;
     cy = e.touches[0].clientY;
-  } else if(e.changedTouches && e.changedTouches.length > 0) {
-    cx = e.changedTouches[0].clientX;
-    cy = e.changedTouches[0].clientY;
-  } else {
-    cx = e.clientX;
-    cy = e.clientY;
-  }
-  
-  var x=cx-rect.left,y=cy-rect.top;
-  var centerX=rect.width/2,centerY=rect.height/2;
-  var tiltX=(y-centerY)/10, tiltY=(centerX-x)/10;
-  coinBtn.style.transform='perspective(600px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg) scale(0.95)';
-  setTimeout(function(){coinBtn.style.transform=''},150);
-
-  var ax=cx-coinArea.getBoundingClientRect().left, ay=cy-coinArea.getBoundingClientRect().top;
-  createShockwave(ax,ay);
-  spawnFloat(ax,ay,'+'+earned,mult>1);
-  spawnParticles(ax,ay);
-  
-  updateUI();
-}
-
-function createShockwave(x,y){
-  var r=document.createElement('div');r.className='ring';r.style.left=(x-100)+'px';r.style.top=(y-100)+'px';coinArea.appendChild(r);
-  r.style.animation='shockwave 0.4s ease-out forwards';setTimeout(function(){r.remove()},400);
-}
-function spawnFloat(x,y,txt,boost){
-  var el=document.createElement('div');el.className='float-text';el.textContent=txt;el.style.left=(x-15)+'px';el.style.top=(y-20)+'px';
-  if(boost){el.style.color='var(--purple)';el.style.textShadow='0 0 10px rgba(168,85,247,.5)';el.style.fontSize='28px'}
-  else{
-      var colors = ['#fff','#f7931a','#22d67a','#a855f7'];
-      el.style.color=colors[Math.floor(Math.random()*4)];
-  }
-  coinArea.appendChild(el);setTimeout(function(){el.remove()},700)
-}
-function spawnParticles(x,y){
-    for(var i=0;i<6;i++){
-        var p=document.createElement('div');p.className='particle';
-        var a=Math.PI*2/6*i+Math.random()*0.5,d=40+Math.random()*40;
-        p.style.left=x+'px';p.style.top=y+'px';p.style.setProperty('--tx',Math.cos(a)*d+'px');p.style.setProperty('--ty',Math.sin(a)*d+'px');
-        var colors = ['#f7931a','#ffcb6b','#fff'];
-        p.style.background=colors[Math.floor(Math.random()*3)];
-        coinArea.appendChild(p);setTimeout(function(){p.remove()},600)
-    }
-}
-
-coinBtn.addEventListener('touchstart',handleTap,{passive:false});
-coinBtn.addEventListener('mousedown',handleTap);
-
-// ─── Game Loop ───
-setInterval(function(){
-  var b=BOTS[S.botLevel];
-  if(b.rate>0 && S.score<b.max){
-    S.score=Math.min(S.score+b.rate, b.max === Infinity ? Infinity : b.max);
-    updateUI(); 
-  }
-  if(S.energy<MAX_E) { S.energy=Math.min(S.energy+3,MAX_E); updateUI(); }
-},1000);
-setInterval(saveState,5000);
-
-// ─── Tabs & Toast ───
-var navItems = document.querySelectorAll('.nav-item');
-for(var i=0; i<navItems.length; i++){
-  navItems[i].addEventListener('click',function(){
-    var items = document.querySelectorAll('.nav-item');
-    for(var j=0; j<items.length; j++) items[j].classList.remove('active');
-    
-    var tabs = document.querySelectorAll('.tab-content');
-    for(var k=0; k<tabs.length; k++) tabs[k].classList.remove('active');
-    
-    this.classList.add('active');
-    $(this.getAttribute('data-tab')).classList.add('active');
-    if(tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-  });
-}
-function toast(msg){var t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2000)}
-
-// ─── Bots Upgrading ───
-function renderBots(){
-  var list=$('botsList');
-  if(!list) return;
-  var refs = S.referrals.length;
-  list.innerHTML=BOTS.slice(1).map(function(b){
-    var isUnl=S.botLevel>=b.lvl;
-    var reqInv = refs < b.reqRefs;
-    var canBuy=S.score>=b.cost && S.botLevel===b.lvl-1 && !reqInv;
-    var btnText = isUnl ? 'Owned' : (reqInv ? '👥 Need '+b.reqRefs+' Refs' : (canBuy ? 'Buy '+fmt(b.cost) : '🔒 '+fmt(b.cost)));
-    return '<div class="list-card '+(isUnl?'active-card':'')+'"><div class="list-icon">'+b.icon+'</div><div class="list-info"><div class="list-name" style="color:'+b.color+'">'+b.name+'</div><div class="list-desc">Vault limit: '+fmt(b.max)+'</div><div class="list-rate">⚡ '+b.rate+'/sec</div></div><button class="list-action" '+(!canBuy&&!isUnl?'disabled':'')+' onclick="'+(!isUnl&&!reqInv?('buyBot('+b.lvl+','+b.cost+')'):'')+'">'+btnText+'</button></div>'
-  }).join('');
-}
-window.buyBot=function(lvl,cost){
-  var b=BOTS[lvl];
-  if(S.referrals.length < b.reqRefs) { toast('❌ Need '+b.reqRefs+' friends first!'); return; }
-  if(S.score<cost)return;
-  S.score-=cost;S.botLevel=lvl;saveState();updateUI();
-  toast('🎉 Upgraded to '+BOTS[lvl].name+'!');
-  if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-  createShockwave(coinArea.getBoundingClientRect().width/2,coinArea.getBoundingClientRect().height/2);
-}
-
-// ─── Boosts ───
-$('dailyClaimBtn').addEventListener('click',function(){
-  if(S.lastDaily&&Date.now()-S.lastDaily<864e5){toast('⏰ Claim wait: 24h');return}
-  S.score+=500;S.lastDaily=Date.now();saveState();updateUI();toast('🎁 +500 Claimed!');
-});
-function activateBoost(mult,dur,key,btnId,timerId){
-  if(S.referrals.length < 3){toast('❌ Invite 3 friends to unlock Boosts!');return}
-  if(S[key]<=0){toast('❌ No uses left!');return}
-  if(S.boostEnd>Date.now()){toast('⏳ Boost active!');return}
-  S[key]--;S.activeBoost=mult;S.boostEnd=Date.now()+dur*1000;saveState();updateUI();toast('🚀 ' + mult + 'x Boost!');
-  var iv=setInterval(function(){
-    var left=Math.max(0,Math.ceil((S.boostEnd-Date.now())/1000));
-    var tEl = $(timerId);
-    if(tEl) tEl.textContent=left>0?left+'s':'';
-    if(left<=0){clearInterval(iv);S.activeBoost=1;updateUI()}
-  },500);
-}
-$('btn2x').addEventListener('click',function(){activateBoost(2,30,'boost2xLeft','btn2x','timer2x')});
-$('btn5x').addEventListener('click',function(){activateBoost(5,15,'boost5xLeft','btn5x','timer5x')});
-$('btnRefill').addEventListener('click',function(){
-  if(S.referrals.length < 3){toast('❌ Invite 3 friends to unlock Refills!');return}
-  if(S.refillLeft<=0){toast('❌ No refills left!');return}
-  S.refillLeft--;S.energy=MAX_E;saveState();updateUI();toast('🔋 Full Energy!');
-});
-
-// ─── Referrals ───
-var BOT_USERNAME='tapcoin_game_bot';
-var refLink='https://t.me/'+BOT_USERNAME+'?start=ref_'+userId;
-var rlT = $('refLinkText');
-if(rlT) rlT.textContent=refLink;
-
-var shareText = encodeURIComponent('🪙 Play TapCoin & earn rewards!\nJoin now: ');
-
-$('btnCopy').onclick=function(){
-  if(navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(refLink); toast('Link Copied! 📋'); } else { toast('Web copy not supported!'); }
-};
-$('btnTg').onclick=function(){
-  if(tg && tg.openTelegramLink) tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text='+shareText);
-  else window.open('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text='+shareText, '_blank');
-};
-$('btnWa').onclick=function(){
-  window.open('https://api.whatsapp.com/send?text='+shareText+encodeURIComponent(refLink), '_blank');
-};
-
-function renderFriends(){
-  var list=$('friendsList');
-  if(!list) return;
-  if(!S.referrals.length){
-      list.innerHTML='<div style="margin-bottom:15px;color:var(--txt2)">Invite friends to unlock features & earn coins!</div>';
-      return;
-  }
-  list.innerHTML=S.referrals.map(function(f,i){
-      var rwd = (i===0)?100:(i===1)?500:(i===2)?1000:(i===3)?1500:3000;
-      return '<div class="list-card"><div class="list-icon">'+String.fromCodePoint(0x1F600+i%16)+'</div><div class="list-info"><div class="list-name">'+f.name+'</div></div><div style="font-size:12px;color:var(--green);font-weight:700">+'+rwd+'</div></div>';
-  }).join('');
-}
-
-// ─── Tasks System ───
-var TASKS=[
-  {id:'tap100',name:'Tap 100 times',icon:'👆',reward:200,target:100,type:'taps'},
-  {id:'tap1000',name:'Tap 1000 times',icon:'🔥',reward:1000,target:1000,type:'taps'},
-  {id:'score10k',name:'Reach 10K Vault',icon:'💎',reward:2000,target:10000,type:'score'},
-  {id:'invite1',name:'Invite 1 friend',icon:'👥',reward:1000,target:1,type:'referrals'},
-  {id:'streak3',name:'3-day streak',icon:'📅',reward:1500,target:3,type:'streak'},
-];
-function getTaskProgress(t){
-  if(t.type==='taps')return Math.min(S.taps,t.target);
-  if(t.type==='score')return Math.min(S.score,t.target);
-  if(t.type==='referrals')return Math.min(S.referrals.length,t.target);
-  if(t.type==='streak')return Math.min(S.streak,t.target);
-  return 0;
-}
-function updateTasks(){
-  var list=$('tasksList');
-  if(!list) return;
-  list.innerHTML=TASKS.map(function(t){
-    var prog=getTaskProgress(t);var done=prog>=t.target;var claimed=S.tasksCompleted[t.id];
-    return '<div class="list-card"><div class="list-icon">'+t.icon+'</div><div class="list-info"><div class="list-name">'+t.name+'</div><div style="font-size:11px;color:var(--green)">+'+fmt(t.reward)+'</div><div class="task-progress"><div class="task-progress-fill" style="width:'+(prog/t.target*100)+'%"></div></div></div>'+(claimed?'<span class="task-check">✅</span>':done?'<button class="list-action" onclick="claimTask(\''+t.id+'\','+t.reward+')">Claim</button>':'<span style="font-size:11px;color:var(--txt2)">'+fmt(prog)+'/'+fmt(t.target)+'</span>')+'</div>'
-  }).join('');
-}
-window.claimTask=function(id,reward){
-  if(S.tasksCompleted[id])return;
-  S.tasksCompleted[id]=true;S.score+=reward;saveState();updateUI();
-  toast('🎉 +'+fmt(reward)+' claimed!');
-}
-
-// ─── Save & Exit ───
-$('saveBtn').addEventListener('click',function(){
-  if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-  saveState();
-  if(tg && tg.sendData) {
-    tg.sendData(JSON.stringify({score:S.score,taps:S.taps,bot:S.botLevel}));
-  } else {
-    toast('💾 Progress Saved Locally!');
-  }
-});
-
-updateUI();
-</script>
-</body>
-</html>
+  } else if(e.changedTouches && e.
