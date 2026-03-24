@@ -3,318 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaid Enterprises | Building Contractor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Tap to Earn</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --primary-color: #003f7a; /* L&T style dark blue */
-            --accent-color: #ffcc00; /* Gold/Yellow accent */
-            --text-dark: #333333;
-            --text-light: #ffffff;
-            --bg-light: #f4f7f6;
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background: #1e1e1e; 
+            color: white; 
+            margin-top: 50px; 
+            user-select: none; /* Text selection बंद करने के लिए */
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+        .coin { 
+            width: 150px; 
+            height: 150px; 
+            background: linear-gradient(135deg, #ffd700, #ff8c00); 
+            border-radius: 50%; 
+            display: inline-block; 
+            line-height: 150px; 
+            font-size: 24px; 
+            color: black; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: transform 0.1s; 
         }
-
-        html {
-            scroll-behavior: smooth;
+        .coin:active { 
+            transform: scale(0.90); /* टैप करने पर कॉइन दबेगा */
         }
-
-        body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-        }
-
-        /* Navbar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 50px;
-            background-color: var(--text-light);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .logo {
-            font-size: 24px;
+        button { 
+            margin-top: 40px; 
+            padding: 12px 24px; 
+            font-size: 18px; 
+            background: #0088cc; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
             font-weight: bold;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo span {
-            color: #d4af37; /* Gold color from Zaid Enterprises card */
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--primary-color);
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-color);
-        }
-
-        /* Hero Section with Animation */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(rgba(0, 63, 122, 0.8), rgba(0, 63, 122, 0.8)), url('https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: var(--text-light);
-            padding-top: 80px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            animation: fadeInDown 1.5s ease-out;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            max-width: 600px;
-            animation: fadeInUp 1.5s ease-out 0.5s both;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            background-color: var(--accent-color);
-            color: var(--text-dark);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 5px;
-            transition: transform 0.3s, background 0.3s;
-            animation: fadeInUp 1.5s ease-out 1s both;
-        }
-
-        .btn:hover {
-            background-color: #e6b800;
-            transform: translateY(-3px);
-        }
-
-        /* Building Animation */
-        .building-animation {
-            position: absolute;
-            bottom: -100px;
-            width: 100%;
-            height: 200px;
-            background: url('https://cdn.pixabay.com/photo/2017/02/14/03/03/city-2064619_1280.png') repeat-x bottom;
-            background-size: contain;
-            opacity: 0.4;
-            animation: buildRise 3s ease-out forwards;
-        }
-
-        /* Sections */
-        .section {
-            padding: 80px 10%;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 40px;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            width: 80px;
-            height: 4px;
-            background-color: var(--accent-color);
-            display: block;
-            margin: 10px auto 0;
-        }
-
-        /* About Section */
-        .about-content {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-
-        .about-text {
-            flex: 1;
-            line-height: 1.8;
-            font-size: 1.1rem;
-        }
-
-        .about-image {
-            flex: 1;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            overflow: hidden;
-        }
-
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s;
-        }
-
-        .about-image:hover img {
-            transform: scale(1.05);
-        }
-
-        /* Contact Section */
-        .contact-card {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            text-align: center;
-            max-width: 500px;
-            margin: 0 auto;
-            border-top: 5px solid var(--primary-color);
-        }
-
-        .contact-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-
-        .contact-info {
-            font-size: 1.2rem;
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .whatsapp-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 25px;
-            background-color: #25D366;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            font-size: 1.1rem;
-        }
-
-        .whatsapp-btn i {
-            margin-right: 8px;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--primary-color);
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes buildRise {
-            from { bottom: -200px; }
-            to { bottom: 0; }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .about-content { flex-direction: column; }
-            .hero h1 { font-size: 2.5rem; }
-            .nav-links { display: none; } /* Hamburger menu can be added later */
-            .navbar { justify-content: center; }
         }
     </style>
 </head>
 <body>
+    <h2>Tap & Earn Crypto</h2>
+    <p style="font-size: 20px;">Score: <span id="score">0</span></p>
+    
+    <div class="coin" onclick="tapCoin()">TAP ME</div>
+    <br>
+    
+    <button onclick="saveAndExit()">Save & Exit</button>
 
-    <nav class="navbar">
-        <div class="logo">
-            <i class="fa-solid fa-building"></i> <span>ZAID</span> ENTERPRISES
-        </div>
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
+    <script>
+        // Telegram Web App को Initialize करना
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // मिनी ऐप को फुल स्क्रीन में खोलने के लिए
 
-    <header id="home" class="hero">
-        <h1>THINK INFRASTRUCTURE.<br>THINK ZAID ENTERPRISES.</h1>
-        <p>Your trusted Building Contractor for shaping the future. We deliver excellence, quality, and strong foundations.</p>
-        <a href="#contact" class="btn">Start Your Project</a>
-        
-        <div class="building-animation"></div>
-    </header>
+        let score = 0;
 
-    <section id="about" class="section">
-        <h2 class="section-title">The Nation Builders</h2>
-        <div class="about-content">
-            <div class="about-image">
-                <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Construction Work">
-            </div>
-            <div class="about-text">
-                <p><strong>Zaid Enterprises</strong> ek leading building contractor company hai jo aapke sapnon ke projects ko hakikat mein badalti hai. Hum residential, commercial, aur heavy infrastructure projects mein maharat rakhte hain.</p>
-                <br>
-                <p>Hamari team majboot aur aadhunik design ke sath samay par kaam pura karne ke liye jani jati hai. Ek behtar kal ke nirmaan ke liye hum premium quality materials aur advanced techniques ka istemal karte hain.</p>
-            </div>
-        </div>
-    </section>
+        function tapCoin() {
+            score++;
+            document.getElementById("score").innerText = score;
+            // टैप करने पर मोबाइल में वाइब्रेशन (Haptic Feedback) फील होगा
+            tg.HapticFeedback.impactOccurred('light');
+        }
 
-    <section id="contact" class="section" style="background-color: #e9ecef;">
-        <h2 class="section-title">Get In Touch</h2>
-        <div class="contact-card">
-            <h3>Contractor: RIJWAN</h3>
-            <p style="color: #666; margin-bottom: 20px;">Zaid Enterprises - Building Contractor</p>
-            
-            <div class="contact-info">
-                <i class="fa-solid fa-phone" style="color: var(--primary-color);"></i>
-                <span>+91 7428511438</span>
-            </div>
-            
-            <a href="https://wa.me/917428511438" target="_blank" class="whatsapp-btn">
-                <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
-            </a>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Zaid Enterprises. All Rights Reserved.</p>
-    </footer>
-
+        function saveAndExit() {
+            // Telegram Bot को वापस स्कोर का डेटा भेजना
+            let data = JSON.stringify({ finalScore: score });
+            tg.sendData(data); // यह ऐप को बंद कर देगा और बॉट को डेटा भेज देगा
+        }
+    </script>
 </body>
 </html>
