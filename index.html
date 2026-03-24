@@ -1,80 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TapCoin Game</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-        }
-        h1, h2, h3 {
-            text-align: center;
-        }
-        .button {
-            background-color: #6200ea;
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 12px;
-        }
+        body { display: flex; flex-direction: column; align-items: center; }
+        nav { margin: 20px; }
+        .tab { display: none; }
+        .active { display: block; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to TapCoin!</h1>
-        <div id="invite-section">
-            <h2>Invite Section</h2>
-            <p>Invite your friends to earn coins!</p>
-            <button class="button" onclick="inviteFriend()">Invite a Friend</button>
-        </div>
-        <div id="mine-section">
-            <h2>Mine Section</h2>
-            <p>Your coins are being generated automatically!</p>
-            <div id="coin-display">Coins: 0</div>
-            <button class="button" onclick="startMining()">Start Mining</button>
-        </div>
-        <div id="feature-unlock">
-            <h3>Purchase Features</h3>
-            <p>Unlock super fast mining by inviting 1 friend!</p>
-            <button class="button" onclick="purchaseFeature('super-fast')">Purchase Super Fast Mining</button>
-            <p>Unlock fast mining by inviting 1 friend!</p>
-            <button class="button" onclick="purchaseFeature('fast')">Purchase Fast Mining</button>
-        </div>
+    <nav>
+        <button onclick="showTab('tap')">Tap</button>
+        <button onclick="showTab('invite')">Invite</button>
+        <button onclick="showTab('mine')">Mine</button>
+    </nav>
+    <div id="tap" class="tab active">
+        <h1>Tap Coins</h1>
+        <p id="coinCount">Coins: 0</p>
+        <button onclick="tapCoin()">Tap!</button>
     </div>
+    <div id="invite" class="tab">
+        <h1>Invite Friends</h1>
+        <p>Friends Invited: <span id="friendsInvited">0</span></p>
+        <button onclick="inviteFriend()">Invite Friend</button>
+    </div>
+    <div id="mine" class="tab">
+        <h1>Mining</h1>
+        <button onclick="selectMiningTier('basic')">Basic Mining (1 coin/min)</button>
+        <button onclick="selectMiningTier('advanced')">Advanced Mining (5 coins/min)</button>
+        <button onclick="selectMiningTier('elite')">Elite Mining (15 coins/min)</button>
+        <p>Current Mining Tier: <span id="currentTier">None</span></p>
+    </div>
+
     <script>
         let coins = 0;
+        let friendsInvited = 0;
         let miningInterval;
+        let miningRate = 0;
 
-        function inviteFriend() {
-            alert('Friend Invited! You can now unlock features.');
+        function tapCoin() {
+            coins++;
+            document.getElementById('coinCount').innerText = 'Coins: ' + coins;
         }
 
-        function startMining() {
-            if (!miningInterval) {
-                let miningTier = 'Basic'; // Example tier
-                let coinRate = 1; // Basic rate
+        function inviteFriend() {
+            friendsInvited++;
+            document.getElementById('friendsInvited').innerText = friendsInvited;
+            unlockFeatures();
+        }
 
-                miningInterval = setInterval(function() {
-                    coins += coinRate;
-                    document.getElementById('coin-display').innerText = 'Coins: ' + coins;
-                }, 60000); // 1 coin per minute at basic tier
+        function unlockFeatures() {
+            if(friendsInvited > 0) {
+                // Enable special features
+                alert('You can now unlock special tap features!');
             }
         }
 
-        function purchaseFeature(feature) {
-            // Logic for purchasing features 
-            alert('Unlocking ' + feature + ' mining!');
+        function selectMiningTier(tier) {
+            switch(tier) {
+                case 'basic':
+                    miningRate = 1;
+                    break;
+                case 'advanced':
+                    miningRate = 5;
+                    break;
+                case 'elite':
+                    miningRate = 15;
+                    break;
+            }
+            document.getElementById('currentTier').innerText = tier.charAt(0).toUpperCase() + tier.slice(1) + ' Mining';
+            startMining();
+        }
+
+        function startMining() {
+            clearInterval(miningInterval);
+            miningInterval = setInterval(() => {
+                coins += miningRate;
+                document.getElementById('coinCount').innerText = 'Coins: ' + coins;
+            }, 60000); // Every minute
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
         }
     </script>
 </body>
