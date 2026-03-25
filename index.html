@@ -87,9 +87,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);height
       ⚡ TapCoin
       <button onclick="if(confirm('Reset all data?')){localStorage.clear();location.reload()}" style="background:none;border:none;color:var(--txt2);font-size:10px;text-decoration:underline;cursor:pointer">RESET</button>
     </div>
-    <div class="user-info">
+    <div class="user-info" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
       <div class="streak-badge" id="streakBadge">🔥 Lv.0 Bot</div>
       <div class="user-name" id="userName">Player</div>
+      <div style="font-size:10px;color:var(--txt2);font-weight:700" id="leagueName">🏆 Bronze League</div>
     </div>
   </div>
   <div class="score-section">
@@ -230,11 +231,21 @@ var BOTS=[
   {lvl:5,name:'Master Bot',icon:'👑',cost:2000000,max:Infinity,rate:500,color:'var(--master)'}
 ];
 
+// ─── LEAGUES CONFIG ───
+var LEAGUES=[
+  {name:'Bronze',req:0,reward:0,color:'#cd7f32'},
+  {name:'Silver',req:20000,reward:5000,color:'#c0c0c0'},
+  {name:'Gold',req:100000,reward:25000,color:'#ffd700'},
+  {name:'Platinum',req:500000,reward:100000,color:'#e5e4e2'},
+  {name:'Diamond',req:2000000,reward:500000,color:'#b9f2ff'},
+  {name:'Master',req:10000000,reward:2000000,color:'#ff4500'}
+];
+
 // ─── State ───
 function todayStr(){return new Date().toISOString().slice(0,10)}
 function defaultState(){return{score:0,taps:0,energy:1000,botLevel:0,lastTick:Date.now(),combo:0,comboLast:0,
   referrals:[],refEarned:0,streak:0,lastLogin:0,
-  lastDaily:0,boost2xLeft:3,boost5xLeft:1,refillLeft:3,activeBoost:1,boostEnd:0,tasksCompleted:{},dailyTaps:0,dailyResetDate:todayStr()}}
+  lastDaily:0,boost2xLeft:3,boost5xLeft:1,refillLeft:3,activeBoost:1,boostEnd:0,tasksCompleted:{},dailyTaps:0,dailyResetDate:todayStr(),leagueIdx:0}}
 function loadState(){try{var d=localStorage.getItem('tapcoin_'+userId);return d?Object.assign({}, defaultState(), JSON.parse(d)):defaultState()}catch(e){return defaultState()}}
 function saveState(){S.lastTick=Date.now();localStorage.setItem('tapcoin_'+userId,JSON.stringify(S))}
 
@@ -289,6 +300,10 @@ function updateUI(){
   $('botLvl').textContent=b.name.split(' ')[0];
   $('streakBadge').textContent='🔥 Day '+S.streak+' / '+b.icon;
   
+  var l=LEAGUES[S.leagueIdx];
+  var lEl=$('leagueName');
+  if(lEl){ lEl.textContent='🏆 '+l.name+' League'; lEl.style.color=l.color; }
+  
   $('refCount').textContent=S.referrals.length;
   $('refEarned').textContent=fmt(S.refEarned);
 
@@ -315,27 +330,4 @@ function getComboBonus(){if(S.combo<5)return 0;return Math.min(Math.floor(S.comb
 function handleTap(e){
   e.preventDefault();
   var b=BOTS[S.botLevel];
-  if(S.energy<1 || (S.score>=b.max && b.max!==Infinity)) {
-    if(S.score>=b.max && b.max!==Infinity) toast('Vault is FULL! Upgrade Bot to earn more.');
-    return;
-  }
-  
-  if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-  
-  var now=Date.now();
-  if(now-S.comboLast<500)S.combo++;else S.combo=1;
-  S.comboLast=now;
-  
-  var mult=getMultiplier();
-  var earned=(1+getComboBonus())*mult;
-  S.energy--;
-  S.score=Math.min(S.score+earned, b.max === Infinity ? Infinity : b.max);
-  S.taps++;
-  S.dailyTaps++;
-
-  var rect=coinBtn.getBoundingClientRect();
-  var cx,cy;
-  if(e.touches && e.touches.length > 0) {
-    cx = e.touches[0].clientX;
-    cy = e.touches[0].clientY;
-  } else if(e.changedTouches && e.
+ 
