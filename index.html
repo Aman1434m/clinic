@@ -1,333 +1,1203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>TapCoin — Tap to Earn</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>TapCoin ⚡</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
+/* ─── RESET & BASE ─────────────────────────────────── */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#0a0e17;--bg2:#111827;--card:#1a2235;--accent:#f7931a;--glow:rgba(247,147,26,0.4);--txt:#f0f4ff;--txt2:#8892a4;--green:#22d67a;--purple:#a855f7;--blue:#3b82f6;--gold:#ffd700;--silver:#c0c0c0;--plat:#e5e4e2;--diam:#b9f2ff;--master:#ff4500}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);height:100vh;display:flex;flex-direction:column;overflow:hidden;user-select:none;-webkit-user-select:none;perspective:1000px}
-.tab-content{display:none;flex:1;flex-direction:column;overflow-y:auto;overflow-x:hidden;position:relative}
-.tab-content.active{display:flex}
-.header{width:100%;padding:12px 16px 6px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:17px;font-weight:900;background:linear-gradient(135deg,#f7931a,#ffcb6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:6px}
-.user-info{display:flex;align-items:center;gap:6px}
-.streak-badge{background:linear-gradient(135deg,#ff6b35,#f7931a);padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
-.user-name{font-size:12px;color:var(--txt2);font-weight:600}
-.score-section{text-align:center;padding:10px 0 0}
-.vault-wrap{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);padding:4px 12px;border-radius:20px;margin-bottom:6px;border:1px solid rgba(255,255,255,.1)}
-.vault-label{font-size:10px;color:var(--txt2);text-transform:uppercase;font-weight:800;letter-spacing:1px}
-.vault-val{font-size:11px;color:var(--accent);font-weight:700}
-.score-value{font-size:46px;font-weight:900;background:linear-gradient(180deg,#fff,#c0c8d8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
-.score-rate{font-size:12px;color:var(--green);font-weight:700;margin-top:4px}
-.combo-indicator{display:inline-block;background:linear-gradient(135deg,var(--purple),#ec4899);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:4px;opacity:0;transition:opacity .2s}
-.combo-indicator.active{opacity:1;animation:combo-pulse .5s ease infinite}
-@keyframes combo-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.coin-area{flex:1;display:flex;align-items:center;justify-content:center;position:relative;width:100%;min-height:220px;perspective:800px}
-.coin-btn{width:200px;height:200px;border-radius:50%;border:none;cursor:pointer;position:relative;background:radial-gradient(circle at 35% 35%,#ffe08a,#f7931a 50%,#c06a00);box-shadow:0 0 40px var(--glow),0 8px 32px rgba(0,0,0,.6),inset 0 -4px 12px rgba(0,0,0,.3),inset 0 4px 12px rgba(255,255,255,.2);transition:transform .1s cubic-bezier(.25,.8,.25,1),box-shadow .1s;display:flex;align-items:center;justify-content:center;z-index:2;transform-style:preserve-3d}
-.coin-btn::after{content:'';position:absolute;inset:4px;border-radius:50%;border:2px solid rgba(255,255,255,.3);opacity:.5}
-.coin-btn.boosted{box-shadow:0 0 60px rgba(168,85,247,.5),0 0 40px var(--glow),0 8px 32px rgba(0,0,0,.6),inset 0 -4px 12px rgba(0,0,0,.3),inset 0 4px 12px rgba(255,255,255,.2)}
-.coin-icon{font-size:75px;pointer-events:none;transform:translateZ(30px);filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
-.ring{position:absolute;width:200px;height:200px;border-radius:50%;border:2px solid var(--accent);opacity:0;pointer-events:none;z-index:1}
-@keyframes shockwave{0%{transform:scale(1);opacity:.6;border-width:6px}100%{transform:scale(1.5);opacity:0;border-width:1px}}
-.float-text{position:absolute;font-size:22px;font-weight:900;color:var(--txt);pointer-events:none;animation:float-up .7s ease-out forwards;z-index:10;text-shadow:0 2px 10px rgba(0,0,0,.8);transform:translateZ(50px)}
-@keyframes float-up{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-100px) scale(1.3)}}
-.particle{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;pointer-events:none;animation:burst .6s ease-out forwards;z-index:5;box-shadow:0 0 10px var(--glow)}
-@keyframes burst{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
-.energy-section{padding:0 16px;margin-bottom:6px}
-.energy-header{display:flex;justify-content:space-between;margin-bottom:4px}
-.energy-label,.energy-count{font-size:11px;font-weight:600}
-.energy-label{color:var(--txt2)}.energy-count{color:var(--green)}
-.energy-bar-bg{width:100%;height:8px;background:var(--card);border-radius:8px;overflow:hidden}
-.energy-bar-fill{height:100%;background:linear-gradient(90deg,#22d67a,#17b86a);border-radius:8px;transition:width .1s linear}
-.stats-row{display:flex;gap:8px;padding:6px 16px;width:100%}
-.stat-card{flex:1;background:var(--card);border-radius:12px;padding:8px;text-align:center;border:1px solid rgba(255,255,255,.04)}
-.stat-card .s-n{font-size:15px;font-weight:800;white-space:nowrap}.stat-card .s-l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt2);margin-top:1px}
-.bottom-nav{display:flex;background:var(--bg2);border-top:1px solid rgba(255,255,255,.06);padding:6px 0 env(safe-area-inset-bottom,8px)}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;cursor:pointer;opacity:.5;transition:opacity .2s;font-size:10px;font-weight:600;color:var(--txt2)}
-.nav-item.active{opacity:1;color:var(--accent)}
-.nav-item .nav-icon{font-size:20px}
-.list-page{padding:16px;gap:12px}
-.section-title{font-size:18px;font-weight:900;margin-bottom:4px}
-.section-sub{font-size:12px;color:var(--txt2);margin-bottom:12px}
-.list-card{background:var(--card);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:10px;border:1px solid rgba(255,255,255,.05);position:relative;overflow:hidden}
-.list-card.active-card{border:1px solid var(--accent);background:linear-gradient(135deg,rgba(247,147,26,.1),var(--card))}
-.list-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);border-radius:12px;border:1px solid rgba(255,255,255,.1)}
-.list-info{flex:1}.list-name{font-size:14px;font-weight:800}.list-desc{font-size:11px;color:var(--txt2);margin-top:2px}
-.list-rate{font-size:11px;color:var(--green);font-weight:700;margin-top:4px}
-.list-action{background:linear-gradient(135deg,var(--accent),#e8820f);padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700;color:#fff;border:none;cursor:pointer}
-.list-action:disabled{background:var(--bg);color:var(--txt2);opacity:.7}
-.task-progress{width:100%;height:4px;background:rgba(255,255,255,.06);border-radius:4px;margin-top:6px;overflow:hidden}
-.task-progress-fill{height:100%;background:linear-gradient(90deg,var(--green),#17b86a);border-radius:4px;transition:width .3s}
-.task-check{font-size:20px}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
-.modal{background:var(--card);border-radius:20px;padding:24px;width:90%;max-width:320px;text-align:center;border:1px solid rgba(255,255,255,.1);transform:scale(.9);transition:transform .3s;box-shadow:0 10px 40px rgba(0,0,0,.5)}
-.modal.show{display:flex;transform:scale(1)}
-.modal-icon{font-size:48px;margin-bottom:12px}
-.modal-title{font-size:20px;font-weight:900;margin-bottom:8px}
-.modal-desc{font-size:13px;color:var(--txt2);margin-bottom:16px}
-.modal-amt{font-size:28px;font-weight:900;color:var(--green);margin-bottom:20px}
-.modal-btn{width:100%;background:linear-gradient(135deg,var(--green),#17b86a);padding:14px;border-radius:12px;font-size:14px;font-weight:800;color:#fff;border:none;cursor:pointer}
-.save-row{padding:8px 16px 6px}
-.save-btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#f7931a,#e8820f);color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(247,147,26,.3)}
-.save-btn:active{transform:scale(.97)}
-.toast{position:fixed;top:20px;left:50%;transform:translate(-50%,-100px);background:var(--card);border:1px solid rgba(255,255,255,.1);padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:1000;transition:transform .3s;white-space:nowrap}
-.toast.show{transform:translate(-50%,0)}
+:root{
+  --bg:#0a0c10;--bg2:#111418;--card:#181c24;--card2:#1e2330;
+  --accent:#f7931a;--accent2:#e8820f;
+  --green:#22d67a;--green2:#17b86a;
+  --red:#ff4d4d;--blue:#4da6ff;--purple:#a855f7;
+  --txt:#eef0f5;--txt2:#7a8499;--txt3:#4a5168;
+  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+  --font:'Rajdhani',sans-serif;--mono:'Space Mono',monospace;
+}
+html,body{
+  height:100%;background:var(--bg);color:var(--txt);
+  font-family:var(--font);font-size:16px;
+  overflow:hidden;overscroll-behavior:none;
+}
+body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+
+/* ─── SCROLLABLE MAIN ──────────────────────────────── */
+#appWrap{flex:1;overflow:hidden;position:relative;}
+.tab-content{
+  display:none;flex-direction:column;
+  height:100%;overflow-y:auto;overflow-x:hidden;
+  padding-bottom:4px;
+  scrollbar-width:none;
+}
+.tab-content::-webkit-scrollbar{display:none;}
+.tab-content.active{display:flex;}
+
+/* ─── HEADER ───────────────────────────────────────── */
+.header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px 10px;
+  background:linear-gradient(180deg,rgba(17,20,24,.95) 0%,transparent 100%);
+  position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);
+}
+.logo{
+  display:flex;align-items:center;gap:8px;
+  font-size:22px;font-weight:700;letter-spacing:1px;
+  color:var(--accent);font-family:var(--mono);
+}
+.logo span{font-size:13px;color:var(--txt2);font-weight:400;}
+.user-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.streak-badge{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:.5px;
+}
+.user-name{font-size:14px;font-weight:700;color:var(--txt);}
+.league-name{font-size:10px;color:var(--txt2);font-weight:600;letter-spacing:.5px;}
+
+/* ─── SCORE SECTION ────────────────────────────────── */
+.score-section{
+  display:flex;flex-direction:column;align-items:center;
+  padding:6px 16px 0;
+}
+.vault-wrap{
+  display:flex;align-items:center;gap:8px;margin-bottom:2px;
+  background:var(--card);padding:5px 14px;border-radius:20px;
+  border:1px solid var(--border2);
+}
+.vault-label{font-size:11px;color:var(--txt2);font-weight:600;}
+.vault-val{font-size:11px;color:var(--accent);font-weight:800;font-family:var(--mono);}
+.score-value{
+  font-size:44px;font-weight:700;color:var(--txt);
+  font-family:var(--mono);letter-spacing:-2px;
+  text-shadow:0 0 30px rgba(247,147,26,.3);
+  transition:transform .05s;
+  line-height:1.1;
+}
+.score-value.tap-pop{transform:scale(1.06);}
+.score-rate{font-size:13px;color:var(--green);font-weight:600;margin-top:2px;}
+.combo-indicator{
+  font-size:12px;font-weight:700;padding:3px 12px;
+  border-radius:20px;margin-top:4px;
+  background:rgba(247,147,26,.12);color:var(--accent);
+  border:1px solid rgba(247,147,26,.25);
+  transition:all .2s;
+}
+.combo-indicator.hot{
+  background:rgba(34,214,122,.15);color:var(--green);
+  border-color:rgba(34,214,122,.35);
+  animation:comboPulse .4s ease;
+}
+@keyframes comboPulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+/* ─── COIN TAP AREA ────────────────────────────────── */
+.coin-area{
+  display:flex;justify-content:center;align-items:center;
+  flex:1;min-height:140px;padding:10px;
+  position:relative;
+}
+.coin-btn{
+  width:145px;height:145px;border-radius:50%;border:none;cursor:pointer;
+  background:radial-gradient(circle at 35% 35%,#ffd44a,#f7931a 55%,#c96d00);
+  box-shadow:0 0 0 6px rgba(247,147,26,.15),0 0 40px rgba(247,147,26,.3),0 8px 32px rgba(0,0,0,.6);
+  transition:transform .08s,box-shadow .08s;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.coin-btn:active{
+  transform:scale(.93);
+  box-shadow:0 0 0 3px rgba(247,147,26,.2),0 0 20px rgba(247,147,26,.2),0 4px 16px rgba(0,0,0,.4);
+}
+.coin-btn::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.35),transparent 60%);
+}
+.coin-icon{font-size:56px;line-height:1;position:relative;z-index:1;}
+
+/* Floating tap numbers */
+.tap-float{
+  position:absolute;pointer-events:none;
+  font-size:18px;font-weight:800;color:var(--accent);
+  font-family:var(--mono);
+  animation:tapFloat .8s ease-out forwards;
+  text-shadow:0 2px 8px rgba(0,0,0,.5);
+  z-index:20;
+}
+@keyframes tapFloat{
+  0%{opacity:1;transform:translateY(0) scale(1);}
+  100%{opacity:0;transform:translateY(-80px) scale(.7);}
+}
+
+/* ─── ENERGY BAR ───────────────────────────────────── */
+.energy-section{padding:0 16px;margin-bottom:6px;}
+.energy-header{display:flex;justify-content:space-between;margin-bottom:5px;}
+.energy-label{font-size:12px;font-weight:700;color:var(--txt2);}
+.energy-count{font-size:12px;font-weight:800;color:var(--green);font-family:var(--mono);}
+.energy-bar-bg{width:100%;height:8px;background:var(--card2);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.energy-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:8px;transition:width .15s linear;}
+
+/* ─── STAT CARDS ───────────────────────────────────── */
+.stats-row{display:flex;gap:8px;padding:6px 16px;}
+.stat-card{
+  flex:1;background:var(--card);border-radius:12px;padding:10px 6px;
+  text-align:center;border:1px solid var(--border);
+}
+.stat-card .s-n{font-size:16px;font-weight:800;font-family:var(--mono);white-space:nowrap;}
+.stat-card .s-l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt2);margin-top:2px;font-weight:600;}
+
+/* ─── BOTTOM NAV ───────────────────────────────────── */
+.bottom-nav{
+  display:flex;background:var(--bg2);
+  border-top:1px solid var(--border2);
+  padding:4px 0 env(safe-area-inset-bottom,6px);
+  flex-shrink:0;
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:2px;padding:6px 0;cursor:pointer;
+  opacity:.45;transition:opacity .2s,color .2s;
+  font-size:9px;font-weight:700;color:var(--txt2);
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.nav-item.active{opacity:1;color:var(--accent);}
+.nav-item .nav-icon{font-size:22px;}
+
+/* ─── PAGE COMMON ──────────────────────────────────── */
+.page-header{padding:14px 16px 0;}
+.page-title{font-size:22px;font-weight:700;letter-spacing:.5px;}
+.page-sub{font-size:12px;color:var(--txt2);margin-top:2px;font-weight:500;}
+.page-body{padding:12px 16px;flex:1;}
+
+/* ─── MINE CARDS ───────────────────────────────────── */
+.mine-grid{display:flex;flex-direction:column;gap:10px;}
+.mine-card{
+  background:var(--card);border-radius:16px;padding:14px;
+  border:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+  transition:border-color .2s,background .2s;
+  position:relative;overflow:hidden;
+}
+.mine-card.unlocked{border-color:rgba(34,214,122,.2);}
+.mine-card.unlocked::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(34,214,122,.04),transparent);
+  pointer-events:none;
+}
+.mine-card.locked{opacity:.7;filter:grayscale(.4);}
+.mine-card.active-mine{border-color:var(--accent);background:linear-gradient(135deg,rgba(247,147,26,.07),var(--card));}
+.mine-card.active-mine::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(247,147,26,.06),transparent);
+  pointer-events:none;
+}
+.mine-icon-wrap{
+  width:52px;height:52px;border-radius:14px;
+  background:rgba(0,0,0,.3);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;flex-shrink:0;position:relative;
+}
+.mine-lv-badge{
+  position:absolute;bottom:-4px;right:-4px;
+  background:var(--accent);color:#fff;
+  font-size:9px;font-weight:800;padding:1px 5px;
+  border-radius:6px;border:1.5px solid var(--bg);
+  font-family:var(--mono);
+}
+.mine-info{flex:1;}
+.mine-name{font-size:15px;font-weight:700;letter-spacing:.3px;}
+.mine-desc{font-size:11px;color:var(--txt2);margin-top:2px;font-weight:500;}
+.mine-rate{font-size:12px;color:var(--green);font-weight:800;margin-top:4px;font-family:var(--mono);}
+.mine-lock-info{font-size:11px;color:var(--red);font-weight:700;margin-top:4px;}
+.mine-action{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  padding:9px 16px;border-radius:10px;
+  font-size:12px;font-weight:800;color:#fff;
+  border:none;cursor:pointer;font-family:var(--font);
+  white-space:nowrap;flex-shrink:0;
+  box-shadow:0 2px 12px rgba(247,147,26,.3);
+  transition:transform .1s,box-shadow .1s;
+}
+.mine-action:active{transform:scale(.95);box-shadow:0 1px 6px rgba(247,147,26,.2);}
+.mine-action:disabled{
+  background:var(--card2);color:var(--txt3);
+  box-shadow:none;cursor:not-allowed;
+}
+.mine-lock-btn{
+  background:var(--card2);color:var(--txt3);
+  padding:9px 14px;border-radius:10px;
+  font-size:11px;font-weight:700;border:1px solid var(--border);
+  white-space:nowrap;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+}
+.mine-lock-btn span{font-size:9px;color:var(--txt3);}
+.mine-progress{
+  width:100%;height:3px;background:var(--card2);
+  border-radius:3px;margin-top:8px;overflow:hidden;
+}
+.mine-progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--green),var(--green2));
+  border-radius:3px;transition:width .3s;
+}
+.mine-section-label{
+  font-size:11px;font-weight:700;color:var(--txt2);
+  text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:8px;margin-top:4px;
+}
+.current-mine-banner{
+  background:linear-gradient(135deg,rgba(247,147,26,.12),rgba(247,147,26,.04));
+  border:1px solid rgba(247,147,26,.3);border-radius:12px;
+  padding:10px 14px;margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.cmb-icon{font-size:24px;}
+.cmb-info .cmb-title{font-size:12px;color:var(--txt2);font-weight:600;}
+.cmb-info .cmb-val{font-size:18px;font-weight:800;color:var(--accent);font-family:var(--mono);}
+
+/* ─── TASK CARDS ───────────────────────────────────── */
+.task-card{
+  background:var(--card);border-radius:14px;padding:14px;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:10px;border:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.task-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);border-radius:12px;border:1px solid var(--border2);flex-shrink:0;}
+.task-info{flex:1;}
+.task-name{font-size:14px;font-weight:700;}
+.task-desc{font-size:11px;color:var(--txt2);margin-top:2px;font-weight:500;}
+.task-reward{font-size:12px;color:var(--green);font-weight:800;margin-top:4px;font-family:var(--mono);}
+.task-bar{width:100%;height:4px;background:var(--card2);border-radius:4px;margin-top:6px;overflow:hidden;}
+.task-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:4px;transition:width .3s;}
+.task-action{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  padding:8px 14px;border-radius:10px;font-size:12px;
+  font-weight:800;color:#fff;border:none;cursor:pointer;
+  flex-shrink:0;font-family:var(--font);
+}
+.task-action:disabled{background:var(--card2);color:var(--txt3);cursor:not-allowed;}
+.task-done{font-size:22px;}
+
+/* ─── REFERRAL PAGE ────────────────────────────────── */
+.ref-hero{
+  background:linear-gradient(135deg,rgba(247,147,26,.12),rgba(247,147,26,.03));
+  border:1px solid rgba(247,147,26,.2);border-radius:16px;
+  padding:18px;margin-bottom:16px;text-align:center;
+}
+.ref-count-big{font-size:48px;font-weight:800;font-family:var(--mono);color:var(--accent);}
+.ref-label{font-size:13px;color:var(--txt2);font-weight:600;margin-top:2px;}
+.ref-link-box{
+  background:var(--card);border-radius:12px;padding:12px 14px;
+  display:flex;align-items:center;gap:10px;margin-bottom:16px;
+  border:1px solid var(--border2);
+}
+.ref-link-text{flex:1;font-size:11px;color:var(--txt2);word-break:break-all;font-family:var(--mono);}
+.ref-copy-btn{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border:none;padding:8px 14px;border-radius:8px;
+  font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;
+  font-family:var(--font);
+}
+.ref-share-btn{
+  width:100%;background:linear-gradient(135deg,var(--green),var(--green2));
+  color:#fff;border:none;padding:14px;border-radius:12px;
+  font-size:15px;font-weight:800;cursor:pointer;margin-bottom:16px;
+  font-family:var(--font);box-shadow:0 4px 20px rgba(34,214,122,.25);
+}
+.ref-unlock-title{font-size:14px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.ref-unlock-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border-radius:12px;padding:12px;
+  margin-bottom:8px;border:1px solid var(--border);
+}
+.ref-unlock-row.done{border-color:rgba(34,214,122,.25);background:rgba(34,214,122,.04);}
+.ref-unlock-icon{font-size:22px;width:38px;text-align:center;}
+.ref-unlock-info{flex:1;}
+.ref-unlock-name{font-size:13px;font-weight:700;}
+.ref-unlock-req{font-size:11px;color:var(--txt2);font-weight:600;margin-top:2px;}
+.ref-unlock-badge{
+  font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;
+  white-space:nowrap;
+}
+.ref-unlock-badge.done{background:rgba(34,214,122,.15);color:var(--green);}
+.ref-unlock-badge.locked{background:var(--card2);color:var(--txt3);}
+
+/* ─── STATS PAGE ───────────────────────────────────── */
+.big-stat-card{
+  background:var(--card);border-radius:16px;padding:16px;
+  margin-bottom:10px;border:1px solid var(--border);
+}
+.bsc-label{font-size:11px;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.bsc-val{font-size:28px;font-weight:800;font-family:var(--mono);}
+.bsc-sub{font-size:12px;color:var(--txt2);font-weight:600;margin-top:4px;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.sg-card{
+  background:var(--card);border-radius:14px;padding:14px;
+  border:1px solid var(--border);
+}
+.sg-icon{font-size:22px;margin-bottom:6px;}
+.sg-val{font-size:20px;font-weight:800;font-family:var(--mono);}
+.sg-label{font-size:10px;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
+.league-section{margin-bottom:10px;}
+.league-card{
+  background:linear-gradient(135deg,rgba(247,147,26,.1),var(--card));
+  border:1px solid rgba(247,147,26,.25);border-radius:16px;padding:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.league-icon{font-size:40px;}
+.league-info .lg-name{font-size:18px;font-weight:800;}
+.league-info .lg-pts{font-size:12px;color:var(--txt2);font-weight:600;margin-top:2px;}
+.league-bar{width:100%;height:6px;background:var(--card2);border-radius:6px;margin-top:8px;overflow:hidden;}
+.league-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .5s;}
+
+/* ─── MODAL ────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);
+  z-index:999;display:none;align-items:center;
+  justify-content:center;backdrop-filter:blur(8px);
+}
+.modal-overlay.show{display:flex;}
+.modal{
+  background:var(--card);border-radius:22px;padding:28px 24px;
+  width:90%;max-width:330px;text-align:center;
+  border:1px solid var(--border2);
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  animation:modalPop .25s ease;
+}
+@keyframes modalPop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-icon{font-size:52px;margin-bottom:12px;}
+.modal-title{font-size:22px;font-weight:800;margin-bottom:8px;}
+.modal-desc{font-size:13px;color:var(--txt2);margin-bottom:14px;font-weight:500;line-height:1.5;}
+.modal-amt{font-size:32px;font-weight:900;color:var(--green);margin-bottom:22px;font-family:var(--mono);}
+.modal-btn{
+  width:100%;background:linear-gradient(135deg,var(--green),var(--green2));
+  padding:15px;border-radius:14px;font-size:15px;font-weight:800;
+  color:#fff;border:none;cursor:pointer;font-family:var(--font);
+  box-shadow:0 4px 20px rgba(34,214,122,.3);
+}
+
+/* ─── TOAST ────────────────────────────────────────── */
+.toast{
+  position:fixed;top:20px;left:50%;
+  transform:translate(-50%,-100px);
+  background:var(--card2);border:1px solid var(--border2);
+  padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;
+  z-index:1100;transition:transform .3s;white-space:nowrap;
+  box-shadow:var(--shadow);
+}
+.toast.show{transform:translate(-50%,0);}
+
+/* ─── DIVIDER ──────────────────────────────────────── */
+.divider{height:1px;background:var(--border);margin:12px 0;}
+
+/* ─── RESET BTN ────────────────────────────────────── */
+.reset-btn{
+  background:none;border:1px solid var(--border);color:var(--txt2);
+  font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;
+  cursor:pointer;font-family:var(--font);
+}
 </style>
 </head>
 <body>
 
-<!-- HOME -->
-<div class="tab-content active" id="tabHome">
-  <div class="header">
-    <div class="logo" style="display:flex;align-items:center;gap:6px">
-      ⚡ TapCoin
-      <button onclick="if(confirm('Reset all data?')){localStorage.clear();location.reload()}" style="background:none;border:none;color:var(--txt2);font-size:10px;text-decoration:underline;cursor:pointer">RESET</button>
+<!-- ════════════════════════════════════════
+     WRAP
+════════════════════════════════════════ -->
+<div id="appWrap">
+
+  <!-- ══ TAB: HOME ══════════════════════════════════ -->
+  <div class="tab-content active" id="tabHome">
+
+    <div class="header">
+      <div class="logo">⚡ TapCoin <button class="reset-btn" onclick="resetAll()">RESET</button></div>
+      <div class="user-meta">
+        <div class="streak-badge" id="streakBadge">Lv.1 Tapper</div>
+        <div class="user-name" id="userName">Player</div>
+        <div class="league-name" id="leagueName">🥉 Bronze</div>
+      </div>
     </div>
-    <div class="user-info" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
-      <div class="streak-badge" id="streakBadge">🔥 Lv.0 Bot</div>
-      <div class="user-name" id="userName">Player</div>
-      <div style="font-size:10px;color:var(--txt2);font-weight:700" id="leagueName">🏆 Bronze League</div>
+
+    <div class="score-section">
+      <div class="vault-wrap">
+        <span class="vault-label">⚙️ Mining:</span>
+        <span class="vault-val" id="mineRateDisplay">+0/sec</span>
+      </div>
+      <div class="score-value" id="scoreDisplay">0</div>
+      <div class="score-rate" id="rateDisplay">+0/sec</div>
+      <div class="combo-indicator" id="comboIndicator">⚡ COMBO ×1</div>
+    </div>
+
+    <div class="coin-area" id="coinArea">
+      <button class="coin-btn" id="coinBtn">
+        <span class="coin-icon">🪙</span>
+      </button>
+    </div>
+
+    <div class="energy-section">
+      <div class="energy-header">
+        <span class="energy-label">⚡ Energy</span>
+        <span class="energy-count" id="energyCount">1000 / 1000</span>
+      </div>
+      <div class="energy-bar-bg">
+        <div class="energy-bar-fill" id="energyBarFill" style="width:100%"></div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="s-n" id="tapCount">0</div>
+        <div class="s-l">Total Taps</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-n" id="perTapDisplay">+1</div>
+        <div class="s-l">Per Tap</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-n" id="refCountHome">0</div>
+        <div class="s-l">Referrals</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-n" id="maxEnergyDisplay">1000</div>
+        <div class="s-l">Max Energy</div>
+      </div>
+    </div>
+
+  </div><!-- end tabHome -->
+
+  <!-- ══ TAB: MINE ══════════════════════════════════ -->
+  <div class="tab-content" id="tabMine">
+    <div class="page-header">
+      <div class="page-title">⛏️ Mine</div>
+      <div class="page-sub">Unlock mines with referrals — earn coins passively 24/7</div>
+    </div>
+    <div class="page-body" id="mineBody">
+      <!-- Generated by JS -->
     </div>
   </div>
-  <div class="score-section">
-    <div class="vault-wrap">
-      <span class="vault-label">Vault</span>
-      <span class="vault-val" id="vaultDisplay">0 / 10K</span>
+
+  <!-- ══ TAB: TASKS ═════════════════════════════════ -->
+  <div class="tab-content" id="tabTasks">
+    <div class="page-header">
+      <div class="page-title">📋 Tasks</div>
+      <div class="page-sub">Complete tasks, earn coins</div>
     </div>
-    <div class="score-value" id="scoreDisplay">0</div>
-    <div class="score-rate" id="rateDisplay">+0/sec</div>
-    <div class="combo-indicator" id="comboIndicator">🔥 COMBO x1</div>
-  </div>
-  <div class="coin-area" id="coinArea">
-    <button class="coin-btn" id="coinBtn"><span class="coin-icon">🪙</span></button>
-  </div>
-  <div class="energy-section">
-    <div class="energy-header">
-      <span class="energy-label">⚡ Energy</span>
-      <span class="energy-count" id="energyCount">1000 / 1000</span>
+    <div class="page-body" id="tasksBody">
+      <!-- Generated by JS -->
     </div>
-    <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyBarFill" style="width:100%"></div></div>
   </div>
-  <div class="stats-row">
-    <div class="stat-card"><div class="s-n" id="tapCount">0</div><div class="s-l">Taps</div></div>
-    <div class="stat-card"><div class="s-n" id="perTap">+1</div><div class="s-l">Power</div></div>
-    <div class="stat-card"><div class="s-n" id="botLvl">Base</div><div class="s-l">Tier</div></div>
-    <div class="stat-card"><div class="s-n" id="multDisplay">x1</div><div class="s-l">Boost</div></div>
+
+  <!-- ══ TAB: REFERRAL ══════════════════════════════ -->
+  <div class="tab-content" id="tabRef">
+    <div class="page-header">
+      <div class="page-title">👥 Referrals</div>
+      <div class="page-sub">Invite friends, unlock mines, earn bonuses</div>
+    </div>
+    <div class="page-body">
+
+      <div class="ref-hero">
+        <div class="ref-count-big" id="refCountBig">0</div>
+        <div class="ref-label">Total Friends Invited</div>
+        <div style="margin-top:8px;font-size:13px;color:var(--green);font-weight:700;" id="refBonusEarned">Bonus Earned: +0 coins</div>
+      </div>
+
+      <div class="ref-link-box">
+        <div class="ref-link-text" id="refLinkText">Loading your link…</div>
+        <button class="ref-copy-btn" onclick="copyRefLink()">📋 Copy</button>
+      </div>
+      <button class="ref-share-btn" onclick="shareRefLink()">🚀 Share Invite Link</button>
+
+      <div class="ref-unlock-title">🔒 Mine Unlock Progress</div>
+      <div id="refUnlockList"><!-- Generated by JS --></div>
+
+      <!-- DEBUG: Simulate refs -->
+      <div style="margin-top:12px;padding:12px;background:var(--card2);border-radius:12px;border:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--txt2);font-weight:700;margin-bottom:8px;">🧪 SIMULATE REFERRALS (Demo only)</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="addSimRef(1)" style="flex:1;background:var(--card);border:1px solid var(--border2);color:var(--txt);padding:8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+1 Ref</button>
+          <button onclick="addSimRef(3)" style="flex:1;background:var(--card);border:1px solid var(--border2);color:var(--txt);padding:8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+3 Refs</button>
+          <button onclick="addSimRef(10)" style="flex:1;background:var(--card);border:1px solid var(--border2);color:var(--txt);padding:8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+10 Refs</button>
+        </div>
+      </div>
+
+    </div>
   </div>
-  <div class="save-row"><button class="save-btn" id="saveBtn">💾 Save & Exit</button></div>
+
+  <!-- ══ TAB: STATS ══════════════════════════════════ -->
+  <div class="tab-content" id="tabStats">
+    <div class="page-header">
+      <div class="page-title">📊 Stats</div>
+      <div class="page-sub">Your journey so far</div>
+    </div>
+    <div class="page-body">
+
+      <div class="league-section">
+        <div class="league-card">
+          <div class="league-icon" id="statsLeagueIcon">🥉</div>
+          <div class="league-info">
+            <div class="lg-name" id="statsLeagueName">Bronze League</div>
+            <div class="lg-pts" id="statsLeaguePts">0 / 10,000 coins to Silver</div>
+            <div class="league-bar">
+              <div class="league-bar-fill" id="statsLeagueBar" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="sg-card">
+          <div class="sg-icon">🪙</div>
+          <div class="sg-val" id="sg-total">0</div>
+          <div class="sg-label">Total Coins</div>
+        </div>
+        <div class="sg-card">
+          <div class="sg-icon">👆</div>
+          <div class="sg-val" id="sg-taps">0</div>
+          <div class="sg-label">Total Taps</div>
+        </div>
+        <div class="sg-card">
+          <div class="sg-icon">⛏️</div>
+          <div class="sg-val" id="sg-mines">0</div>
+          <div class="sg-label">Mines Active</div>
+        </div>
+        <div class="sg-card">
+          <div class="sg-icon">👥</div>
+          <div class="sg-val" id="sg-refs">0</div>
+          <div class="sg-label">Referrals</div>
+        </div>
+        <div class="sg-card">
+          <div class="sg-icon">🔥</div>
+          <div class="sg-val" id="sg-combo">1</div>
+          <div class="sg-label">Best Combo</div>
+        </div>
+        <div class="sg-card">
+          <div class="sg-icon">⚡</div>
+          <div class="sg-val" id="sg-energy">1000</div>
+          <div class="sg-label">Max Energy</div>
+        </div>
+      </div>
+
+      <div class="big-stat-card">
+        <div class="bsc-label">⚙️ Passive Income Rate</div>
+        <div class="bsc-val" id="sg-rate">+0/sec</div>
+        <div class="bsc-sub">From all active mines</div>
+      </div>
+
+      <div class="big-stat-card">
+        <div class="bsc-label">📅 Session Started</div>
+        <div class="bsc-val" style="font-size:18px;" id="sg-session">Just now</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end appWrap -->
+
+<!-- ─── BOTTOM NAV ──────────────────────────────────── -->
+<nav class="bottom-nav" id="bottomNav">
+  <div class="nav-item active" data-tab="Home">
+    <div class="nav-icon">🏠</div>Home
+  </div>
+  <div class="nav-item" data-tab="Mine">
+    <div class="nav-icon">⛏️</div>Mine
+  </div>
+  <div class="nav-item" data-tab="Tasks">
+    <div class="nav-icon">📋</div>Tasks
+  </div>
+  <div class="nav-item" data-tab="Ref">
+    <div class="nav-icon">👥</div>Invite
+  </div>
+  <div class="nav-item" data-tab="Stats">
+    <div class="nav-icon">📊</div>Stats
+  </div>
+</nav>
+
+<!-- ─── REWARD MODAL ────────────────────────────────── -->
+<div class="modal-overlay" id="rewardModal">
+  <div class="modal">
+    <div class="modal-icon" id="modalIcon">🎉</div>
+    <div class="modal-title" id="modalTitle">Reward!</div>
+    <div class="modal-desc" id="modalDesc">You earned coins!</div>
+    <div class="modal-amt" id="modalAmt">+0</div>
+    <button class="modal-btn" onclick="closeModal()">🚀 Awesome!</button>
+  </div>
 </div>
 
-<!-- MINE TAB -->
-<div class="tab-content list-page" id="tabMine">
-  <div class="section-title">🤖 Auto-Mining Bots</div>
-  <div class="section-sub">Upgrade bots to increase Vault Capacity & Auto-Earn rate!</div>
-  <div id="botsList"></div>
-</div>
+<!-- ─── TOAST ────────────────────────────────────────── -->
+<div class="toast" id="toast">Copied!</div>
 
-<!-- BOOSTS TAB -->
-<div class="tab-content list-page" id="tabBoost">
-  <div class="section-title">🚀 Boosters</div>
-  <div class="section-sub">Power up your manual taps!</div>
-  <div class="list-card active-card">
-    <div class="list-icon">🎁</div>
-    <div class="list-info"><div class="list-name">Daily Bonus</div><div class="list-desc">Claim 500 free coins daily!</div></div>
-    <button class="list-action" id="dailyClaimBtn">Claim</button>
-  </div>
-  <div class="list-card">
-    <div class="list-icon">⚡</div>
-    <div class="list-info"><div class="list-name">2x Multiplier</div><div class="list-desc">Double taps for 30s (3/day)</div><div class="list-rate" id="timer2x" style="color:var(--purple)"></div></div>
-    <button class="list-action" id="btn2x">Activate</button>
-  </div>
-  <div class="list-card">
-    <div class="list-icon">🔥</div>
-    <div class="list-info"><div class="list-name">5x Multiplier</div><div class="list-desc">5x taps for 15s (1/day)</div><div class="list-rate" id="timer5x" style="color:var(--purple)"></div></div>
-    <button class="list-action" id="btn5x">Activate</button>
-  </div>
-  <div class="list-card">
-    <div class="list-icon">🔋</div>
-    <div class="list-info"><div class="list-name">Full Energy</div><div class="list-desc">Refill max energy (3/day)</div></div>
-    <button class="list-action" id="btnRefill">Refill</button>
-  </div>
-</div>
-
-<!-- FRIENDS TAB -->
-<div class="tab-content list-page" id="tabFriends">
-  <div class="section-title">👥 Referrals</div>
-  <div class="section-sub">Invite friends to earn 500 coins each!</div>
-  <div class="list-card" style="flex-direction:column;text-align:center;padding:20px">
-    <div class="list-icon" style="margin:0 auto 10px;background:rgba(59,130,246,.2)">🔗</div>
-    <div class="list-name" id="refLinkText" style="font-size:11px;word-break:break-all;color:var(--txt2)">Link</div>
-    <button class="list-action" id="shareRefBtn" style="width:100%;margin-top:12px;background:linear-gradient(135deg,var(--blue),#2563eb)">Share Invite Link</button>
-  </div>
-  <div class="stats-row" style="padding:0">
-    <div class="stat-card"><div class="s-n" id="refCount">0</div><div class="s-l">Friends</div></div>
-    <div class="stat-card"><div class="s-n" id="refEarned">0</div><div class="s-l">Earned</div></div>
-  </div>
-  <div class="section-title" style="margin-top:10px">Your Friends</div>
-  <div id="friendsList" style="text-align:center;font-size:12px;color:var(--txt2);padding:20px">No friends yet.</div>
-</div>
-
-<!-- TASKS TAB -->
-<div class="tab-content list-page" id="tabTasks">
-  <div class="section-title">📋 Daily Tasks</div>
-  <div class="section-sub">Complete tasks to earn bonus coins!</div>
-  <div id="tasksList"></div>
-</div>
-
-<!-- 5 TABS BOTTOM NAV -->
-<div class="bottom-nav">
-  <div class="nav-item active" data-tab="tabHome"><div class="nav-icon">🏠</div>Home</div>
-  <div class="nav-item" data-tab="tabMine"><div class="nav-icon">⛏️</div>Mine</div>
-  <div class="nav-item" data-tab="tabBoost"><div class="nav-icon">🚀</div>Boosts</div>
-  <div class="nav-item" data-tab="tabFriends"><div class="nav-icon">👥</div>Friends</div>
-  <div class="nav-item" data-tab="tabTasks"><div class="nav-icon">📋</div>Tasks</div>
-</div>
-
-<!-- OFFLINE MODAL -->
-<div class="modal-overlay" id="offlineModal">
-  <div class="modal show">
-    <div class="modal-icon">🤖</div>
-    <div class="modal-title">Welcome Back!</div>
-    <div class="modal-desc">Your mining bot collected coins while you were away.</div>
-    <div class="modal-amt" id="offlineAmt">+0 Coins</div>
-    <button class="modal-btn" id="offlineClaimBtn">Awesome!</button>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
 <script>
-// ─── UTILS & HELPERS (MUST BE TOP) ───
-function $(id){return document.getElementById(id);}
+/* ─── TELEGRAM SETUP ─────────────────────────────────── */
+const tg = window.Telegram?.WebApp;
+if(tg){
+  tg.ready();
+  tg.expand();
+  tg.setHeaderColor?.('#0a0c10');
+  tg.setBackgroundColor?.('#0a0c10');
+}
 
+/* ─── MINES CONFIG ───────────────────────────────────── */
+// 5 mine levels; refsRequired = 2^n - 1
+const MINES = [
+  {
+    id:0, name:'Rock Splitter', icon:'🪨', level:'I',
+    desc:'Basic manual rock mine. Steady but slow.',
+    ratePerSec:2, cost:500,
+    refsRequired:0, // FREE — first mine always available
+    unlockLabel:'Free Start'
+  },
+  {
+    id:1, name:'Coal Burner', icon:'🔥', level:'II',
+    desc:'Burns coal for consistent passive coins.',
+    ratePerSec:8, cost:2000,
+    refsRequired:1,
+    unlockLabel:'1 Referral'
+  },
+  {
+    id:2, name:'Iron Forge', icon:'⚙️', level:'III',
+    desc:'Industrial forge, multiplied output.',
+    ratePerSec:25, cost:7500,
+    refsRequired:3,
+    unlockLabel:'3 Referrals'
+  },
+  {
+    id:3, name:'Gold Rush', icon:'🏅', level:'IV',
+    desc:'Strike gold with exponential yields.',
+    ratePerSec:80, cost:25000,
+    refsRequired:7,
+    unlockLabel:'7 Referrals'
+  },
+  {
+    id:4, name:'Diamond Core', icon:'💎', level:'V',
+    desc:'Maximum depth, maximum rewards.',
+    ratePerSec:250, cost:100000,
+    refsRequired:15,
+    unlockLabel:'15 Referrals'
+  }
+];
+
+/* ─── TASKS CONFIG ───────────────────────────────────── */
+const TASKS_CONFIG = [
+  {id:'join_channel', icon:'📣', name:'Join Our Channel', desc:'Follow the official TapCoin channel', reward:500, type:'link', link:'https://t.me/tapcoin_official', progress:0, maxProgress:1},
+  {id:'tap_100',   icon:'👆', name:'100 Taps',      desc:'Tap the coin 100 times',     reward:200,   type:'tap',  targetTaps:100},
+  {id:'tap_1000',  icon:'🔥', name:'1000 Taps',     desc:'Tap the coin 1000 times',    reward:1000,  type:'tap',  targetTaps:1000},
+  {id:'tap_10000', icon:'⚡', name:'10,000 Taps',   desc:'Become a tap master',        reward:5000,  type:'tap',  targetTaps:10000},
+  {id:'ref_1',     icon:'👥', name:'First Referral', desc:'Invite your first friend',   reward:1000,  type:'ref',  targetRefs:1},
+  {id:'ref_5',     icon:'🤝', name:'5 Referrals',   desc:'Invite 5 friends',           reward:5000,  type:'ref',  targetRefs:5},
+  {id:'mine_1',    icon:'⛏️', name:'Buy First Mine', desc:'Activate your first mine',   reward:300,   type:'mine', targetMines:1},
+  {id:'score_10k', icon:'🏆', name:'10K Coins',     desc:'Accumulate 10,000 coins',    reward:2000,  type:'score',targetScore:10000},
+  {id:'score_100k',icon:'💰', name:'100K Coins',    desc:'Accumulate 100,000 coins',   reward:10000, type:'score',targetScore:100000},
+];
+
+/* ─── LEAGUES ────────────────────────────────────────── */
+const LEAGUES = [
+  {name:'Bronze',   icon:'🥉', min:0,      max:10000,  color:'#cd7f32'},
+  {name:'Silver',   icon:'🥈', min:10000,   max:100000, color:'#c0c0c0'},
+  {name:'Gold',     icon:'🥇', min:100000,  max:500000, color:'#ffd700'},
+  {name:'Platinum', icon:'💎', min:500000,  max:2000000,color:'#e5e4e2'},
+  {name:'Diamond',  icon:'💠', min:2000000, max:Infinity,color:'#b9f2ff'},
+];
+
+/* ─── STATE ──────────────────────────────────────────── */
+const DEF_STATE = {
+  coins:0, totalCoins:0, totalTaps:0,
+  energy:1000, maxEnergy:1000, energyRegen:1,
+  perTap:1,
+  activeMineId:-1,     // which mine is running (-1=none)
+  boughtMines:[],      // array of mine ids bought
+  refs:0, refBonusTotal:0,
+  tasks:{},            // task_id → true if done
+  bestCombo:1,
+  sessionStart: Date.now(),
+  lastSave: Date.now(),
+};
+let S = {};
+let combo=1, comboTimer=null;
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem('tapcoin_v2');
+    S = raw ? {...DEF_STATE,...JSON.parse(raw)} : {...DEF_STATE};
+  }catch(e){ S={...DEF_STATE}; }
+}
+function saveState(){
+  S.lastSave = Date.now();
+  localStorage.setItem('tapcoin_v2', JSON.stringify(S));
+}
+function resetAll(){
+  if(confirm('Reset ALL data?')){ localStorage.clear(); location.reload(); }
+}
+
+/* ─── HELPERS ────────────────────────────────────────── */
 function fmt(n){
-  if(n===Infinity)return'MAX';
-  if(n>=1e6)return(n/1e6).toFixed(2)+'M';
-  if(n>=1e3)return(n/1e3).toFixed(1)+'K';
-  return Math.floor(n).toString()
+  n=Math.floor(n);
+  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return (n/1e3).toFixed(1)+'K';
+  return n.toString();
+}
+function showToast(msg,dur=2000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+function showModal(icon,title,desc,amt){
+  document.getElementById('modalIcon').textContent=icon;
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalDesc').textContent=desc;
+  document.getElementById('modalAmt').textContent=amt;
+  document.getElementById('rewardModal').classList.add('show');
+}
+function closeModal(){
+  document.getElementById('rewardModal').classList.remove('show');
 }
 
-// ─── TG Init ───
-var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-if(tg){tg.ready();tg.expand();tg.setHeaderColor('#0a0e17');tg.setBackgroundColor('#0a0e17')}
-var userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || Math.floor(Math.random()*999999);
-
-// Set username safely
-var userNameEl = $('userName');
-if(userNameEl) userNameEl.textContent = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || 'Player';
-
-// ─── BOT LEVELS CONFIG ───
-var BOTS=[
-  {lvl:0,name:'Base Level',icon:'🧱',cost:0,max:10000,rate:0,color:'var(--txt2)'},
-  {lvl:1,name:'Silver Bot',icon:'🥈',cost:5000,max:50000,rate:1,color:'var(--silver)'},
-  {lvl:2,name:'Gold Bot',icon:'🥇',cost:20000,max:200000,rate:5,color:'var(--gold)'},
-  {lvl:3,name:'Platinum Bot',icon:'💎',cost:100000,max:1000000,rate:20,color:'var(--plat)'},
-  {lvl:4,name:'Diamond Bot',icon:'💠',cost:500000,max:5000000,rate:100,color:'var(--diam)'},
-  {lvl:5,name:'Master Bot',icon:'👑',cost:2000000,max:Infinity,rate:500,color:'var(--master)'}
-];
-
-// ─── LEAGUES CONFIG ───
-var LEAGUES=[
-  {name:'Bronze',req:0,reward:0,color:'#cd7f32'},
-  {name:'Silver',req:20000,reward:5000,color:'#c0c0c0'},
-  {name:'Gold',req:100000,reward:25000,color:'#ffd700'},
-  {name:'Platinum',req:500000,reward:100000,color:'#e5e4e2'},
-  {name:'Diamond',req:2000000,reward:500000,color:'#b9f2ff'},
-  {name:'Master',req:10000000,reward:2000000,color:'#ff4500'}
-];
-
-// ─── State ───
-function todayStr(){return new Date().toISOString().slice(0,10)}
-function defaultState(){return{score:0,taps:0,energy:1000,botLevel:0,lastTick:Date.now(),combo:0,comboLast:0,
-  referrals:[],refEarned:0,streak:0,lastLogin:0,
-  lastDaily:0,boost2xLeft:3,boost5xLeft:1,refillLeft:3,activeBoost:1,boostEnd:0,tasksCompleted:{},dailyTaps:0,dailyResetDate:todayStr(),leagueIdx:0}}
-function loadState(){try{var d=localStorage.getItem('tapcoin_'+userId);return d?Object.assign({}, defaultState(), JSON.parse(d)):defaultState()}catch(e){return defaultState()}}
-function saveState(){S.lastTick=Date.now();localStorage.setItem('tapcoin_'+userId,JSON.stringify(S))}
-
-var S=loadState();
-
-// Daily Reset
-if(S.dailyResetDate!==todayStr()){S.dailyTaps=0;S.boost2xLeft=3;S.boost5xLeft=1;S.refillLeft=3;S.dailyResetDate=todayStr();S.tasksCompleted={}}
-// Streak Update
-var today=new Date().setHours(0,0,0,0);
-if(S.lastLogin){var diff=(today-S.lastLogin)/864e5;if(diff===1)S.streak++;else if(diff>1)S.streak=1}else S.streak=1;
-S.lastLogin=today;
-
-// ─── SELECTORS ───
-var scoreEl=$('scoreDisplay'),vaultEl=$('vaultDisplay'),rateEl=$('rateDisplay'),
-  eBar=$('energyBarFill'),coinBtn=$('coinBtn'),coinArea=$('coinArea'),
-  comboEl=$('comboIndicator'),MAX_E=1000;
-
-// Offline earnings modal
-var nowTime = Date.now();
-var timeDiffSec = Math.floor((nowTime - S.lastTick)/1000);
-if(timeDiffSec > 60 && S.botLevel > 0){
-  var b = BOTS[S.botLevel];
-  var earned = timeDiffSec * b.rate;
-  if(S.score + earned > b.max && b.max !== Infinity){
-    earned = Math.max(0, b.max - S.score);
-  }
-  if(earned > 0){
-    S.score += earned;
-    $('offlineAmt').textContent='+'+fmt(earned)+' Coins';
-    $('offlineModal').style.display='flex';
-  }
+/* ─── LEAGUE ─────────────────────────────────────────── */
+function getLeague(coins){
+  return LEAGUES.find(l=>coins>=l.min&&coins<l.max)||LEAGUES[0];
 }
-S.lastTick=Date.now(); saveState();
-$('offlineClaimBtn').onclick=function(){$('offlineModal').style.display='none';};
 
-function getMultiplier(){return (S.boostEnd>Date.now())?S.activeBoost:1}
+/* ─── MINE RATE ──────────────────────────────────────── */
+function getMineRate(){
+  if(S.activeMineId<0) return 0;
+  const m=MINES.find(m=>m.id===S.activeMineId);
+  return m ? m.ratePerSec : 0;
+}
 
-// ─── Update UI ───
+/* ─── UI UPDATE ──────────────────────────────────────── */
 function updateUI(){
-  if(!scoreEl) return;
-  var b=BOTS[S.botLevel];
-  var mult=getMultiplier();
-  scoreEl.textContent=fmt(S.score);
-  $('tapCount').textContent=fmt(S.taps);
-  $('energyCount').textContent=Math.floor(S.energy)+' / '+MAX_E;
-  eBar.style.width=(S.energy/MAX_E*100)+'%';
-  
-  vaultEl.textContent=fmt(S.score)+' / '+fmt(b.max);
-  vaultEl.style.color=(S.score>=b.max && b.max!==Infinity)?'#f44':'var(--accent)';
+  const league=getLeague(S.coins);
+  const mineRate=getMineRate();
 
-  rateEl.textContent='+'+b.rate+'/sec';
-  $('botLvl').textContent=b.name.split(' ')[0];
-  $('streakBadge').textContent='🔥 Day '+S.streak+' / '+b.icon;
-  
-  var l=LEAGUES[S.leagueIdx];
-  var lEl=$('leagueName');
-  if(lEl){ lEl.textContent='🏆 '+l.name+' League'; lEl.style.color=l.color; }
-  
-  $('refCount').textContent=S.referrals.length;
-  $('refEarned').textContent=fmt(S.refEarned);
+  document.getElementById('scoreDisplay').textContent=fmt(S.coins);
+  document.getElementById('mineRateDisplay').textContent=mineRate>0?`+${fmt(mineRate)}/sec`:'Inactive';
+  document.getElementById('rateDisplay').textContent=`Total: +${fmt(S.totalCoins)} earned`;
+  document.getElementById('energyCount').textContent=`${Math.floor(S.energy)} / ${S.maxEnergy}`;
+  document.getElementById('energyBarFill').style.width=`${(S.energy/S.maxEnergy)*100}%`;
+  document.getElementById('tapCount').textContent=fmt(S.totalTaps);
+  document.getElementById('perTapDisplay').textContent=`+${S.perTap}`;
+  document.getElementById('refCountHome').textContent=S.refs;
+  document.getElementById('maxEnergyDisplay').textContent=fmt(S.maxEnergy);
+  document.getElementById('streakBadge').textContent=`${league.icon} Lv.${getCurrentLevel()} Tapper`;
+  document.getElementById('userName').textContent=getTgName();
+  document.getElementById('leagueName').textContent=`${league.icon} ${league.name}`;
 
-  // Combos
-  var comboActive=S.combo>=5;
-  if(comboActive) {
-    comboEl.classList.add('active');
-    comboEl.textContent='🔥 COMBO x'+Math.min(Math.floor(S.combo/5)+1,5);
-  } else {
-    comboEl.classList.remove('active');
-  }
-  
-  $('perTap').textContent='+'+((1 + (comboActive ? Math.min(Math.floor(S.combo/5),4) : 0))*mult);
-  $('multDisplay').textContent='x'+mult;
-  if(mult>1) coinBtn.classList.add('boosted'); else coinBtn.classList.remove('boosted');
-
-  renderBots();
-  renderFriends();
-  updateTasks();
+  updateComboUI();
+  updateStatsTab();
+  updateMineTab();
+  updateRefTab();
+  updateTasksTab();
 }
 
-// ─── 3D Tap ───
-function getComboBonus(){if(S.combo<5)return 0;return Math.min(Math.floor(S.combo/5),4)}
-function handleTap(e){
-  e.preventDefault();
-  var b=BOTS[S.botLevel];
- 
+function getCurrentLevel(){
+  const brackets=[0,1000,5000,20000,100000,500000,2000000];
+  for(let i=brackets.length-1;i>=0;i--){
+    if(S.totalCoins>=brackets[i]) return i+1;
+  }
+  return 1;
+}
+function getTgName(){
+  return tg?.initDataUnsafe?.user?.first_name || 'Player';
+}
+function getTgId(){
+  return tg?.initDataUnsafe?.user?.id || 'demo123';
+}
+
+function updateComboUI(){
+  const el=document.getElementById('comboIndicator');
+  el.textContent=`⚡ COMBO ×${combo}`;
+  el.className='combo-indicator'+(combo>=3?' hot':'');
+}
+
+function updateStatsTab(){
+  const league=getLeague(S.coins);
+  const nextLeague=LEAGUES[LEAGUES.indexOf(league)+1];
+  const progress=nextLeague
+    ?Math.min(100,((S.coins-league.min)/(league.max-league.min))*100):100;
+
+  document.getElementById('statsLeagueIcon').textContent=league.icon;
+  document.getElementById('statsLeagueName').textContent=league.name+' League';
+  document.getElementById('statsLeaguePts').textContent=nextLeague
+    ?`${fmt(S.coins)} / ${fmt(league.max)} → ${nextLeague.name}`
+    :'Max League Reached!';
+  document.getElementById('statsLeagueBar').style.width=progress+'%';
+
+  document.getElementById('sg-total').textContent=fmt(S.totalCoins);
+  document.getElementById('sg-taps').textContent=fmt(S.totalTaps);
+  document.getElementById('sg-mines').textContent=S.boughtMines.length;
+  document.getElementById('sg-refs').textContent=S.refs;
+  document.getElementById('sg-combo').textContent='×'+S.bestCombo;
+  document.getElementById('sg-energy').textContent=S.maxEnergy;
+  document.getElementById('sg-rate').textContent=getMineRate()>0?`+${fmt(getMineRate())}/sec`:'+0/sec';
+
+  const elapsed=Math.floor((Date.now()-S.sessionStart)/1000);
+  const mins=Math.floor(elapsed/60), secs=elapsed%60;
+  document.getElementById('sg-session').textContent=
+    elapsed<60?`${elapsed}s ago`:
+    elapsed<3600?`${mins}m ${secs}s`:
+    `${Math.floor(elapsed/3600)}h ${mins%60}m`;
+}
+
+/* ─── MINE TAB ───────────────────────────────────────── */
+function updateMineTab(){
+  const body=document.getElementById('mineBody');
+  if(!body) return;
+  body.innerHTML='';
+
+  // Current active mine banner
+  const active=MINES.find(m=>m.id===S.activeMineId);
+  const banner=document.createElement('div');
+  banner.className='current-mine-banner';
+  if(active){
+    banner.innerHTML=`
+      <div class="cmb-icon">${active.icon}</div>
+      <div class="cmb-info">
+        <div class="cmb-title">Active Mine</div>
+        <div class="cmb-val">${active.name} — +${fmt(active.ratePerSec)}/sec</div>
+      </div>`;
+  }else{
+    banner.innerHTML=`
+      <div class="cmb-icon">💤</div>
+      <div class="cmb-info">
+        <div class="cmb-title">No mine active</div>
+        <div class="cmb-val" style="color:var(--txt2);font-size:14px;">Buy & activate a mine below</div>
+      </div>`;
+  }
+  body.appendChild(banner);
+
+  const label=document.createElement('div');
+  label.className='mine-section-label';
+  label.textContent='ALL MINES';
+  body.appendChild(label);
+
+  const grid=document.createElement('div');
+  grid.className='mine-grid';
+
+  MINES.forEach(mine=>{
+    const isUnlocked=S.refs>=mine.refsRequired;
+    const isBought=S.boughtMines.includes(mine.id);
+    const isActive=S.activeMineId===mine.id;
+    const canAfford=S.coins>=mine.cost;
+
+    const card=document.createElement('div');
+    card.className='mine-card'+(isActive?' active-mine':isBought?' unlocked':!isUnlocked?' locked':'');
+
+    // Progress bar if active
+    const progressHTML = isActive
+      ? `<div class="mine-progress"><div class="mine-progress-fill" style="width:100%;animation:none;"></div></div>` : '';
+
+    let actionHTML='';
+    if(!isUnlocked){
+      // Locked by refs
+      const refsNeeded=mine.refsRequired-S.refs;
+      actionHTML=`<div class="mine-lock-btn">🔒<span>Need ${mine.refsRequired} refs</span><span style="color:var(--red)">${refsNeeded} more</span></div>`;
+    }else if(!isBought){
+      // Available to buy
+      actionHTML=`<button class="mine-action" ${!canAfford?'disabled':''} onclick="buyMine(${mine.id})">${canAfford?'Buy<br>'+fmt(mine.cost)+'🪙':'Need<br>'+fmt(mine.cost)+'🪙'}</button>`;
+    }else if(!isActive){
+      // Bought, activate
+      actionHTML=`<button class="mine-action" onclick="activateMine(${mine.id})" style="background:linear-gradient(135deg,var(--green),var(--green2));box-shadow:0 2px 12px rgba(34,214,122,.3);">▶ Activate</button>`;
+    }else{
+      // Currently active
+      actionHTML=`<button class="mine-action" disabled style="background:linear-gradient(135deg,var(--green),var(--green2));opacity:1;">✅ Running</button>`;
+    }
+
+    const refBar = !isUnlocked
+      ? `<div class="mine-progress"><div class="mine-progress-fill" style="width:${Math.min(100,(S.refs/mine.refsRequired)*100).toFixed(1)}%"></div></div>` : '';
+
+    card.innerHTML=`
+      <div class="mine-icon-wrap">
+        ${mine.icon}
+        <div class="mine-lv-badge">${mine.level}</div>
+      </div>
+      <div class="mine-info">
+        <div class="mine-name">${mine.name}</div>
+        <div class="mine-desc">${mine.desc}</div>
+        <div class="mine-rate">+${fmt(mine.ratePerSec)}/sec</div>
+        ${!isUnlocked?`<div class="mine-lock-info">🔒 Needs ${mine.refsRequired} referrals</div>`:''}
+        ${refBar}
+        ${progressHTML}
+      </div>
+      ${actionHTML}`;
+
+    grid.appendChild(card);
+  });
+
+  body.appendChild(grid);
+}
+
+function buyMine(id){
+  const mine=MINES.find(m=>m.id===id);
+  if(!mine) return;
+  if(S.refs<mine.refsRequired){ showToast('🔒 Need more referrals!'); return; }
+  if(S.boughtMines.includes(id)){ showToast('Already owned!'); return; }
+  if(S.coins<mine.cost){ showToast('Not enough coins!'); return; }
+  S.coins-=mine.cost;
+  S.boughtMines.push(id);
+  if(S.activeMineId<0) S.activeMineId=id; // auto-activate first mine
+  showModal(mine.icon,'Mine Purchased!',`${mine.name} is now active.`,`+${fmt(mine.ratePerSec)}/sec`);
+  saveState(); updateUI();
+  checkTaskMilestones();
+}
+
+function activateMine(id){
+  if(!S.boughtMines.includes(id)){ showToast('Buy this mine first!'); return; }
+  S.activeMineId=id;
+  const mine=MINES.find(m=>m.id===id);
+  showToast(`✅ ${mine.name} activated!`);
+  saveState(); updateUI();
+}
+
+/* ─── TASKS TAB ──────────────────────────────────────── */
+function updateTasksTab(){
+  const body=document.getElementById('tasksBody');
+  if(!body) return;
+  body.innerHTML='';
+
+  TASKS_CONFIG.forEach(task=>{
+    const done=S.tasks[task.id]===true;
+    const card=document.createElement('div');
+    card.className='task-card';
+
+    let progress=0,maxP=1;
+    if(task.type==='tap'){ progress=Math.min(S.totalTaps,task.targetTaps); maxP=task.targetTaps; }
+    else if(task.type==='ref'){ progress=Math.min(S.refs,task.targetRefs); maxP=task.targetRefs; }
+    else if(task.type==='mine'){ progress=Math.min(S.boughtMines.length,task.targetMines); maxP=task.targetMines; }
+    else if(task.type==='score'){ progress=Math.min(S.totalCoins,task.targetScore); maxP=task.targetScore; }
+    else if(task.type==='link'){ progress=done?1:0; maxP=1; }
+
+    const pct=Math.min(100,(progress/maxP)*100);
+    const canClaim=pct>=100&&!done;
+
+    card.innerHTML=`
+      <div class="task-icon">${task.icon}</div>
+      <div class="task-info">
+        <div class="task-name">${task.name}</div>
+        <div class="task-desc">${task.desc}</div>
+        <div class="task-reward">+${fmt(task.reward)} 🪙</div>
+        ${!done?`<div class="task-bar"><div class="task-bar-fill" style="width:${pct}%"></div></div>`:''}
+      </div>
+      ${done
+        ?'<div class="task-done">✅</div>'
+        :task.type==='link'
+          ?`<button class="task-action" onclick="claimLinkTask('${task.id}','${task.link}')">Go ➜</button>`
+          :canClaim
+            ?`<button class="task-action" onclick="claimTask('${task.id}')">Claim!</button>`
+            :`<button class="task-action" disabled>${fmt(progress)}/${fmt(maxP)}</button>`
+      }`;
+
+    body.appendChild(card);
+  });
+}
+
+function claimTask(id){
+  const task=TASKS_CONFIG.find(t=>t.id===id);
+  if(!task||S.tasks[id]) return;
+  S.tasks[id]=true;
+  S.coins+=task.reward;
+  S.totalCoins+=task.reward;
+  showModal('🎉','Task Complete!',task.name,`+${fmt(task.reward)} 🪙`);
+  saveState(); updateUI();
+}
+function claimLinkTask(id,link){
+  if(tg) tg.openTelegramLink?.(link)||tg.openLink(link);
+  else window.open(link,'_blank');
+  setTimeout(()=>{
+    if(!S.tasks[id]){
+      const task=TASKS_CONFIG.find(t=>t.id===id);
+      S.tasks[id]=true;
+      S.coins+=task.reward; S.totalCoins+=task.reward;
+      showModal('📣','Joined!',task.name,`+${fmt(task.reward)} 🪙`);
+      saveState(); updateUI();
+    }
+  },2000);
+}
+
+/* ─── REFERRAL TAB ───────────────────────────────────── */
+function getRefLink(){
+  const id=getTgId();
+  return `https://t.me/YourBotUsername?start=ref_${id}`;
+}
+function updateRefTab(){
+  const link=getRefLink();
+  document.getElementById('refLinkText').textContent=link;
+  document.getElementById('refCountBig').textContent=S.refs;
+  document.getElementById('refBonusEarned').textContent=`Bonus Earned: +${fmt(S.refBonusTotal)} coins`;
+
+  const list=document.getElementById('refUnlockList');
+  if(!list) return;
+  list.innerHTML='';
+
+  MINES.forEach(mine=>{
+    if(mine.refsRequired===0) return; // skip free mine
+    const done=S.refs>=mine.refsRequired;
+    const row=document.createElement('div');
+    row.className='ref-unlock-row'+(done?' done':'');
+    row.innerHTML=`
+      <div class="ref-unlock-icon">${mine.icon}</div>
+      <div class="ref-unlock-info">
+        <div class="ref-unlock-name">${mine.name} (Level ${mine.level})</div>
+        <div class="ref-unlock-req">Requires ${mine.refsRequired} referral${mine.refsRequired>1?'s':''} · +${fmt(mine.ratePerSec)}/sec</div>
+        ${!done?`<div class="task-bar" style="margin-top:5px"><div class="task-bar-fill" style="width:${Math.min(100,(S.refs/mine.refsRequired)*100).toFixed(1)}%"></div></div>`:''}
+      </div>
+      <div class="ref-unlock-badge ${done?'done':'locked'}">${done?'✅ Unlocked':'🔒 Locked'}</div>`;
+    list.appendChild(row);
+  });
+}
+function copyRefLink(){
+  navigator.clipboard?.writeText(getRefLink()).then(()=>showToast('✅ Link Copied!'));
+}
+function shareRefLink(){
+  const link=getRefLink();
+  const text=`🚀 Join TapCoin and start earning! ${link}`;
+  if(tg){
+    tg.switchInlineQuery?.(text)||tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🚀 Join TapCoin and start earning!')}`);
+  }else{
+    navigator.share?.({title:'TapCoin',text,url:link})||copyRefLink();
+  }
+}
+function addSimRef(n){
+  S.refs+=n;
+  const bonus=n*500;
+  S.coins+=bonus; S.totalCoins+=bonus; S.refBonusTotal+=bonus;
+  showToast(`+${n} referrals added! +${fmt(bonus)} 🪙`);
+  saveState(); updateUI();
+  checkTaskMilestones();
+}
+
+/* ─── TAP MECHANIC ───────────────────────────────────── */
+document.getElementById('coinBtn').addEventListener('click', function(e){
+  if(S.energy<1) return;
+  const gain=S.perTap*combo;
+  S.coins+=gain; S.totalCoins+=gain;
+  S.energy=Math.max(0,S.energy-1);
+  S.totalTaps++;
+
+  // Combo
+  combo=Math.min(combo+1,10);
+  if(combo>S.bestCombo) S.bestCombo=combo;
+  clearTimeout(comboTimer);
+  comboTimer=setTimeout(()=>{ combo=1; updateComboUI(); },2500);
+
+  // Float number
+  spawnFloat(e, `+${gain}`);
+
+  // Pop animation
+  const sv=document.getElementById('scoreDisplay');
+  sv.classList.remove('tap-pop');
+  void sv.offsetWidth;
+  sv.classList.add('tap-pop');
+  setTimeout(()=>sv.classList.remove('tap-pop'),80);
+
+  updateUI();
+  checkTaskMilestones();
+});
+
+function spawnFloat(e, txt){
+  const area=document.getElementById('coinArea');
+  const rect=area.getBoundingClientRect();
+  const el=document.createElement('div');
+  el.className='tap-float';
+  el.textContent=txt;
+  const x=(e.clientX||rect.left+rect.width/2)-rect.left-20;
+  const y=(e.clientY||rect.top+rect.height/2)-rect.top-20;
+  el.style.left=x+'px'; el.style.top=y+'px';
+  area.appendChild(el);
+  setTimeout(()=>el.remove(),900);
+}
+
+/* ─── TASK MILESTONE CHECK ───────────────────────────── */
+function checkTaskMilestones(){
+  TASKS_CONFIG.forEach(task=>{
+    if(S.tasks[task.id]) return;
+    let done=false;
+    if(task.type==='tap'&&S.totalTaps>=task.targetTaps) done=true;
+    if(task.type==='ref'&&S.refs>=task.targetRefs) done=true;
+    if(task.type==='mine'&&S.boughtMines.length>=task.targetMines) done=true;
+    if(task.type==='score'&&S.totalCoins>=task.targetScore) done=true;
+    if(done) autoClaimTask(task);
+  });
+}
+function autoClaimTask(task){
+  S.tasks[task.id]=true;
+  S.coins+=task.reward; S.totalCoins+=task.reward;
+  showModal('🎉','Task Complete!',task.name,`+${fmt(task.reward)} 🪙`);
+  saveState();
+}
+
+/* ─── GAME LOOPS ─────────────────────────────────────── */
+// Energy regeneration
+setInterval(()=>{
+  if(S.energy<S.maxEnergy){
+    S.energy=Math.min(S.maxEnergy, S.energy+S.energyRegen);
+    document.getElementById('energyCount').textContent=`${Math.floor(S.energy)} / ${S.maxEnergy}`;
+    document.getElementById('energyBarFill').style.width=`${(S.energy/S.maxEnergy)*100}%`;
+  }
+},1000);
+
+// Mine passive income
+setInterval(()=>{
+  const rate=getMineRate();
+  if(rate>0){
+    S.coins+=rate;
+    S.totalCoins+=rate;
+    document.getElementById('scoreDisplay').textContent=fmt(S.coins);
+    document.getElementById('mineRateDisplay').textContent=`+${fmt(rate)}/sec`;
+    checkTaskMilestones();
+  }
+},1000);
+
+// Autosave
+setInterval(()=>saveState(),10000);
+
+/* ─── NAVIGATION ─────────────────────────────────────── */
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const tab=item.dataset.tab;
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('tab'+tab)?.classList.add('active');
+    updateUI();
+  });
+});
+
+/* ─── OFFLINE EARNINGS ───────────────────────────────── */
+function calcOfflineEarnings(){
+  if(S.activeMineId<0||!S.lastSave) return;
+  const elapsed=(Date.now()-S.lastSave)/1000;
+  const maxOffline=8*3600; // max 8 hours
+  const secs=Math.min(elapsed,maxOffline);
+  if(secs<30) return;
+  const rate=getMineRate();
+  const earned=Math.floor(rate*secs);
+  if(earned>0){
+    S.coins+=earned; S.totalCoins+=earned;
+    const hrs=Math.floor(secs/3600), mins=Math.floor((secs%3600)/60);
+    const timeStr=hrs>0?`${hrs}h ${mins}m`:`${mins}m`;
+    setTimeout(()=>{
+      showModal('⛏️','Welcome Back!',`Your mine worked for ${timeStr}`,`+${fmt(earned)} 🪙`);
+    },800);
+    saveState();
+  }
+}
+
+/* ─── BOOT ───────────────────────────────────────────── */
+loadState();
+
+// If first mine never bought, auto-give mine 0
+if(S.boughtMines.length===0){
+  S.boughtMines.push(0);
+  S.activeMineId=0;
+  saveState();
+}
+
+calcOfflineEarnings();
+updateUI();
+</script>
+</body>
+</html>
