@@ -281,48 +281,159 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
 .task-done{font-size:22px;}
 
 /* ─── REFERRAL PAGE ────────────────────────────────── */
-.ref-hero{
-  background:linear-gradient(135deg,rgba(247,147,26,.12),rgba(247,147,26,.03));
-  border:1px solid rgba(247,147,26,.2);border-radius:16px;
-  padding:18px;margin-bottom:16px;text-align:center;
-}
-.ref-count-big{font-size:48px;font-weight:800;font-family:var(--mono);color:var(--accent);}
-.ref-label{font-size:13px;color:var(--txt2);font-weight:600;margin-top:2px;}
-.ref-link-box{
-  background:var(--card);border-radius:12px;padding:12px 14px;
-  display:flex;align-items:center;gap:10px;margin-bottom:16px;
-  border:1px solid var(--border2);
-}
-.ref-link-text{flex:1;font-size:11px;color:var(--txt2);word-break:break-all;font-family:var(--mono);}
-.ref-copy-btn{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;border:none;padding:8px 14px;border-radius:8px;
-  font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;
-  font-family:var(--font);
-}
-.ref-share-btn{
-  width:100%;background:linear-gradient(135deg,var(--green),var(--green2));
-  color:#fff;border:none;padding:14px;border-radius:12px;
-  font-size:15px;font-weight:800;cursor:pointer;margin-bottom:16px;
-  font-family:var(--font);box-shadow:0 4px 20px rgba(34,214,122,.25);
-}
-.ref-unlock-title{font-size:14px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
-.ref-unlock-row{
-  display:flex;align-items:center;gap:12px;
-  background:var(--card);border-radius:12px;padding:12px;
-  margin-bottom:8px;border:1px solid var(--border);
-}
-.ref-unlock-row.done{border-color:rgba(34,214,122,.25);background:rgba(34,214,122,.04);}
-.ref-unlock-icon{font-size:22px;width:38px;text-align:center;}
-.ref-unlock-info{flex:1;}
-.ref-unlock-name{font-size:13px;font-weight:700;}
-.ref-unlock-req{font-size:11px;color:var(--txt2);font-weight:600;margin-top:2px;}
-.ref-unlock-badge{
-  font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;
-  white-space:nowrap;
-}
-.ref-unlock-badge.done{background:rgba(34,214,122,.15);color:var(--green);}
-.ref-unlock-badge.locked{background:var(--card2);color:var(--txt3);}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Referral System</title>
+  <style>
+    /* Basic variables aur body styling takki page accha dikhe */
+    :root {
+      --mono: 'Courier New', Courier, monospace;
+      --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --accent: #f7931a;
+      --accent2: #e07b09;
+      --txt2: #555;
+      --txt3: #999;
+      --card: #ffffff;
+      --card2: #f4f4f4;
+      --border: #eeeeee;
+      --border2: #dddddd;
+      --green: #22d67a;
+      --green2: #1ab866;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: #f9f9f9;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* AAPKA DIYA HUA CSS START */
+    .ref-hero{
+      background:linear-gradient(135deg,rgba(247,147,26,.12),rgba(247,147,26,.03));
+      border:1px solid rgba(247,147,26,.2);border-radius:16px;
+      padding:18px;margin-bottom:16px;text-align:center;
+    }
+    .ref-count-big{font-size:48px;font-weight:800;font-family:var(--mono);color:var(--accent);}
+    .ref-label{font-size:13px;color:var(--txt2);font-weight:600;margin-top:2px;}
+    .ref-link-box{
+      background:var(--card);border-radius:12px;padding:12px 14px;
+      display:flex;align-items:center;gap:10px;margin-bottom:16px;
+      border:1px solid var(--border2);
+    }
+    .ref-link-text{flex:1;font-size:11px;color:var(--txt2);word-break:break-all;font-family:var(--mono);}
+    .ref-copy-btn{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;border:none;padding:8px 14px;border-radius:8px;
+      font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;
+      font-family:var(--font);
+    }
+    .ref-share-btn{
+      width:100%;background:linear-gradient(135deg,var(--green),var(--green2));
+      color:#fff;border:none;padding:14px;border-radius:12px;
+      font-size:15px;font-weight:800;cursor:pointer;margin-bottom:16px;
+      font-family:var(--font);box-shadow:0 4px 20px rgba(34,214,122,.25);
+    }
+    .ref-unlock-title{font-size:14px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+    .ref-unlock-row{
+      display:flex;align-items:center;gap:12px;
+      background:var(--card);border-radius:12px;padding:12px;
+      margin-bottom:8px;border:1px solid var(--border);
+    }
+    .ref-unlock-row.done{border-color:rgba(34,214,122,.25);background:rgba(34,214,122,.04);}
+    .ref-unlock-icon{font-size:22px;width:38px;text-align:center;}
+    .ref-unlock-info{flex:1;}
+    .ref-unlock-name{font-size:13px;font-weight:700;}
+    .ref-unlock-req{font-size:11px;color:var(--txt2);font-weight:600;margin-top:2px;}
+    .ref-unlock-badge{
+      font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;
+      white-space:nowrap;
+    }
+    .ref-unlock-badge.done{background:rgba(34,214,122,.15);color:var(--green);}
+    .ref-unlock-badge.locked{background:var(--card2);color:var(--txt3);}
+    /* AAPKA DIYA HUA CSS END */
+  </style>
+</head>
+<body>
+
+  <div class="ref-hero">
+    <div class="ref-count-big" id="real-ref-count">0</div>
+    <div class="ref-label">Total Real Referrals</div>
+  </div>
+
+  <div class="ref-link-box">
+    <div class="ref-link-text" id="ref-link">...loading link...</div>
+    <button class="ref-copy-btn" onclick="copyReferralLink()">Copy</button>
+  </div>
+
+  <button class="ref-share-btn" onclick="shareReferralLink()">Share with Friends</button>
+
+  <div class="ref-unlock-title">Unlock Rewards</div>
+  
+  <div class="ref-unlock-row done">
+    <div class="ref-unlock-icon">🎁</div>
+    <div class="ref-unlock-info">
+      <div class="ref-unlock-name">Starter Bonus</div>
+      <div class="ref-unlock-req">Invite 1 Friend</div>
+    </div>
+    <div class="ref-unlock-badge done">Unlocked</div>
+  </div>
+
+  <div class="ref-unlock-row">
+    <div class="ref-unlock-icon">🚀</div>
+    <div class="ref-unlock-info">
+      <div class="ref-unlock-name">Pro Earner</div>
+      <div class="ref-unlock-req">Invite 5 Friends</div>
+    </div>
+    <div class="ref-unlock-badge locked">Locked</div>
+  </div>
+
+  <script>
+    // Apne database se real referral link yahan lagayein
+    const realReferralLink = "https://yourwebsite.com/join?ref=REAL_USER_123"; 
+
+    // Page load hote hi link UI mein update karna
+    document.getElementById("ref-link").innerText = realReferralLink;
+
+    // 1. LINK COPY FUNCTION
+    function copyReferralLink() {
+      navigator.clipboard.writeText(realReferralLink).then(() => {
+        const copyBtn = document.querySelector('.ref-copy-btn');
+        copyBtn.innerText = 'Copied!';
+        
+        // 2 second baad wapas 'Copy' text kar do
+        setTimeout(() => {
+          copyBtn.innerText = 'Copy';
+        }, 2000);
+      }).catch(err => {
+        alert("Copy failed! Please try again.");
+      });
+    }
+
+    // 2. UNIVERSAL SHARE FUNCTION (WhatsApp, Facebook, etc.)
+    function shareReferralLink() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Join me and earn rewards!',
+          text: 'Use my real referral link to get started:',
+          url: realReferralLink
+        }).then(() => {
+          console.log('Shared successfully!');
+        }).catch((error) => console.log('Error sharing:', error));
+      } else {
+        alert("Share feature is not supported on your device. Please use the Copy button!");
+      }
+    }
+  </script>
+
+</body>
+</html>
+
 
 /* ─── STATS PAGE ───────────────────────────────────── */
 .big-stat-card{
