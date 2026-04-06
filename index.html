@@ -1,1280 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>TapCoin ⚡</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<style>
-/* ─── RESET & BASE ─────────────────────────────────── */
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#0a0c10;--bg2:#111418;--card:#181c24;--card2:#1e2330;
-  --accent:#f7931a;--accent2:#e8820f;
-  --green:#22d67a;--green2:#17b86a;
-  --red:#ff4d4d;--blue:#4da6ff;--purple:#a855f7;
-  --txt:#eef0f5;--txt2:#7a8499;--txt3:#4a5168;
-  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);
-  --shadow:0 4px 24px rgba(0,0,0,.5);
-  --font:'Rajdhani',sans-serif;--mono:'Space Mono',monospace;
-}
-html,body{
-  height:100%;background:var(--bg);color:var(--txt);
-  font-family:var(--font);font-size:16px;
-  overflow:hidden;overscroll-behavior:none;
-}
-body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web IDE - Online Code Editor</title>
 
-/* ─── SCROLLABLE MAIN ──────────────────────────────── */
-#appWrap{flex:1;overflow:hidden;position:relative;}
-.tab-content{
-  display:none;flex-direction:column;
-  height:100%;overflow-y:auto;overflow-x:hidden;
-  padding-bottom:4px;
-  scrollbar-width:none;
-}
-.tab-content::-webkit-scrollbar{display:none;}
-.tab-content.active{display:flex;}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        vsbg: '#1e1e1e',
+                        vsnav: '#252526',
+                        vsborder: '#333333',
+                        vspanel: '#2d2d2d'
+                    }
+                }
+            }
+        }
+    </script>
 
-/* ─── HEADER ───────────────────────────────────────── */
-.header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:14px 16px 10px;
-  background:linear-gradient(180deg,rgba(17,20,24,.95) 0%,transparent 100%);
-  position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);
-}
-.logo{
-  display:flex;align-items:center;gap:8px;
-  font-size:22px;font-weight:700;letter-spacing:1px;
-  color:var(--accent);font-family:var(--mono);
-}
-.logo span{font-size:13px;color:var(--txt2);font-weight:400;}
-.user-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
-.streak-badge{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;padding:3px 10px;border-radius:20px;
-  font-size:11px;font-weight:700;letter-spacing:.5px;
-}
-.user-name{font-size:14px;font-weight:700;color:var(--txt);}
-.league-name{font-size:10px;color:var(--txt2);font-weight:600;letter-spacing:.5px;}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/lint/lint.min.css">
 
-/* ─── SCORE SECTION ────────────────────────────────── */
-.score-section{
-  display:flex;flex-direction:column;align-items:center;
-  padding:6px 16px 0;
-}
-.vault-wrap{
-  display:flex;align-items:center;gap:8px;margin-bottom:2px;
-  background:var(--card);padding:5px 14px;border-radius:20px;
-  border:1px solid var(--border2);
-}
-.vault-label{font-size:11px;color:var(--txt2);font-weight:600;}
-.vault-val{font-size:11px;color:var(--accent);font-weight:800;font-family:var(--mono);}
-.score-value{
-  font-size:44px;font-weight:700;color:var(--txt);
-  font-family:var(--mono);letter-spacing:-2px;
-  text-shadow:0 0 30px rgba(247,147,26,.3);
-  transition:transform .05s;
-  line-height:1.1;
-}
-.score-value.tap-pop{transform:scale(1.06);}
-.score-rate{font-size:13px;color:var(--green);font-weight:600;margin-top:2px;}
-.combo-indicator{
-  font-size:12px;font-weight:700;padding:3px 12px;
-  border-radius:20px;margin-top:4px;
-  background:rgba(247,147,26,.12);color:var(--accent);
-  border:1px solid rgba(247,147,26,.25);
-  transition:all .2s;
-}
-.combo-indicator.hot{
-  background:rgba(34,214,122,.15);color:var(--green);
-  border-color:rgba(34,214,122,.35);
-  animation:comboPulse .4s ease;
-}
-@keyframes comboPulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jshint/2.13.6/jshint.min.js"></script>
 
-/* ─── COIN TAP AREA ────────────────────────────────── */
-.coin-area{
-  display:flex;justify-content:center;align-items:center;
-  flex:1;min-height:140px;padding:10px;
-  position:relative;
-}
-.coin-btn{
-  width:145px;height:145px;border-radius:50%;border:none;cursor:pointer;
-  background:radial-gradient(circle at 35% 35%,#ffd44a,#f7931a 55%,#c96d00);
-  box-shadow:0 0 0 6px rgba(247,147,26,.15),0 0 40px rgba(247,147,26,.3),0 8px 32px rgba(0,0,0,.6);
-  transition:transform .08s,box-shadow .08s;
-  display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;
-}
-.coin-btn:active{
-  transform:scale(.93);
-  box-shadow:0 0 0 3px rgba(247,147,26,.2),0 0 20px rgba(247,147,26,.2),0 4px 16px rgba(0,0,0,.4);
-}
-.coin-btn::after{
-  content:'';position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.35),transparent 60%);
-}
-.coin-icon{font-size:56px;line-height:1;position:relative;z-index:1;}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/display/placeholder.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/lint/lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/lint/javascript-lint.min.js"></script>
 
-/* Floating tap numbers */
-.tap-float{
-  position:absolute;pointer-events:none;
-  font-size:18px;font-weight:800;color:var(--accent);
-  font-family:var(--mono);
-  animation:tapFloat .8s ease-out forwards;
-  text-shadow:0 2px 8px rgba(0,0,0,.5);
-  z-index:20;
-}
-@keyframes tapFloat{
-  0%{opacity:1;transform:translateY(0) scale(1);}
-  100%{opacity:0;transform:translateY(-80px) scale(.7);}
-}
-
-/* ─── ENERGY BAR ───────────────────────────────────── */
-.energy-section{padding:0 16px;margin-bottom:6px;}
-.energy-header{display:flex;justify-content:space-between;margin-bottom:5px;}
-.energy-label{font-size:12px;font-weight:700;color:var(--txt2);}
-.energy-count{font-size:12px;font-weight:800;color:var(--green);font-family:var(--mono);}
-.energy-bar-bg{width:100%;height:8px;background:var(--card2);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
-.energy-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:8px;transition:width .15s linear;}
-
-/* ─── STAT CARDS ───────────────────────────────────── */
-.stats-row{display:flex;gap:8px;padding:6px 16px;}
-.stat-card{
-  flex:1;background:var(--card);border-radius:12px;padding:10px 6px;
-  text-align:center;border:1px solid var(--border);
-}
-.stat-card .s-n{font-size:16px;font-weight:800;font-family:var(--mono);white-space:nowrap;}
-.stat-card .s-l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--txt2);margin-top:2px;font-weight:600;}
-
-/* ─── BOTTOM NAV ───────────────────────────────────── */
-.bottom-nav{
-  display:flex;background:var(--bg2);
-  border-top:1px solid var(--border2);
-  padding:4px 0 env(safe-area-inset-bottom,6px);
-  flex-shrink:0;
-}
-.nav-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  gap:2px;padding:6px 0;cursor:pointer;
-  opacity:.45;transition:opacity .2s,color .2s;
-  font-size:9px;font-weight:700;color:var(--txt2);
-  letter-spacing:.5px;text-transform:uppercase;
-}
-.nav-item.active{opacity:1;color:var(--accent);}
-.nav-item .nav-icon{font-size:22px;}
-
-/* ─── PAGE COMMON ──────────────────────────────────── */
-.page-header{padding:14px 16px 0;}
-.page-title{font-size:22px;font-weight:700;letter-spacing:.5px;}
-.page-sub{font-size:12px;color:var(--txt2);margin-top:2px;font-weight:500;}
-.page-body{padding:12px 16px;flex:1;}
-
-/* ─── MINE CARDS ───────────────────────────────────── */
-.mine-grid{display:flex;flex-direction:column;gap:10px;}
-.mine-card{
-  background:var(--card);border-radius:16px;padding:14px;
-  border:1px solid var(--border);
-  display:flex;align-items:center;gap:12px;
-  transition:border-color .2s,background .2s;
-  position:relative;overflow:hidden;
-}
-.mine-card.unlocked{border-color:rgba(34,214,122,.2);}
-.mine-card.unlocked::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(34,214,122,.04),transparent);
-  pointer-events:none;
-}
-.mine-card.locked{opacity:.7;filter:grayscale(.4);}
-.mine-card.active-mine{border-color:var(--accent);background:linear-gradient(135deg,rgba(247,147,26,.07),var(--card));}
-.mine-card.active-mine::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(247,147,26,.06),transparent);
-  pointer-events:none;
-}
-.mine-icon-wrap{
-  width:52px;height:52px;border-radius:14px;
-  background:rgba(0,0,0,.3);border:1px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:26px;flex-shrink:0;position:relative;
-}
-.mine-lv-badge{
-  position:absolute;bottom:-4px;right:-4px;
-  background:var(--accent);color:#fff;
-  font-size:9px;font-weight:800;padding:1px 5px;
-  border-radius:6px;border:1.5px solid var(--bg);
-  font-family:var(--mono);
-}
-.mine-info{flex:1;}
-.mine-name{font-size:15px;font-weight:700;letter-spacing:.3px;}
-.mine-desc{font-size:11px;color:var(--txt2);margin-top:2px;font-weight:500;}
-.mine-rate{font-size:12px;color:var(--green);font-weight:800;margin-top:4px;font-family:var(--mono);}
-.mine-lock-info{font-size:11px;color:var(--red);font-weight:700;margin-top:4px;}
-.mine-action{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  padding:9px 16px;border-radius:10px;
-  font-size:12px;font-weight:800;color:#fff;
-  border:none;cursor:pointer;font-family:var(--font);
-  white-space:nowrap;flex-shrink:0;
-  box-shadow:0 2px 12px rgba(247,147,26,.3);
-  transition:transform .1s,box-shadow .1s;
-}
-.mine-action:active{transform:scale(.95);box-shadow:0 1px 6px rgba(247,147,26,.2);}
-.mine-action:disabled{
-  background:var(--card2);color:var(--txt3);
-  box-shadow:none;cursor:not-allowed;
-}
-.mine-lock-btn{
-  background:var(--card2);color:var(--txt3);
-  padding:9px 14px;border-radius:10px;
-  font-size:11px;font-weight:700;border:1px solid var(--border);
-  white-space:nowrap;flex-shrink:0;
-  display:flex;flex-direction:column;align-items:center;gap:1px;
-}
-.mine-lock-btn span{font-size:9px;color:var(--txt3);}
-.mine-progress{
-  width:100%;height:3px;background:var(--card2);
-  border-radius:3px;margin-top:8px;overflow:hidden;
-}
-.mine-progress-fill{
-  height:100%;background:linear-gradient(90deg,var(--green),var(--green2));
-  border-radius:3px;transition:width .3s;
-}
-.mine-section-label{
-  font-size:11px;font-weight:700;color:var(--txt2);
-  text-transform:uppercase;letter-spacing:1px;
-  margin-bottom:8px;margin-top:4px;
-}
-.current-mine-banner{
-  background:linear-gradient(135deg,rgba(247,147,26,.12),rgba(247,147,26,.04));
-  border:1px solid rgba(247,147,26,.3);border-radius:12px;
-  padding:10px 14px;margin-bottom:12px;
-  display:flex;align-items:center;gap:10px;
-}
-.cmb-icon{font-size:24px;}
-.cmb-info .cmb-title{font-size:12px;color:var(--txt2);font-weight:600;}
-.cmb-info .cmb-val{font-size:18px;font-weight:800;color:var(--accent);font-family:var(--mono);}
-
-/* ─── TASK CARDS ───────────────────────────────────── */
-.task-card{
-  background:var(--card);border-radius:14px;padding:14px;
-  display:flex;align-items:center;gap:12px;
-  margin-bottom:10px;border:1px solid var(--border);
-  position:relative;overflow:hidden;
-}
-.task-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);border-radius:12px;border:1px solid var(--border2);flex-shrink:0;}
-.task-info{flex:1;}
-.task-name{font-size:14px;font-weight:700;}
-.task-desc{font-size:11px;color:var(--txt2);margin-top:2px;font-weight:500;}
-.task-reward{font-size:12px;color:var(--green);font-weight:800;margin-top:4px;font-family:var(--mono);}
-.task-bar{width:100%;height:4px;background:var(--card2);border-radius:4px;margin-top:6px;overflow:hidden;}
-.task-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:4px;transition:width .3s;}
-.task-action{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  padding:8px 14px;border-radius:10px;font-size:12px;
-  font-weight:800;color:#fff;border:none;cursor:pointer;
-  flex-shrink:0;font-family:var(--font);
-}
-.task-action:disabled{background:var(--card2);color:var(--txt3);cursor:not-allowed;}
-.task-done{font-size:22px;}
-
-/* ─── REFERRAL PAGE ────────────────────────────────── */
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Real Referral System</title>
-  <style>
-    /* Basic variables aur body styling takki page accha dikhe */
-    :root {
-      --mono: 'Courier New', Courier, monospace;
-      --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      --accent: #f7931a;
-      --accent2: #e07b09;
-      --txt2: #555;
-      --txt3: #999;
-      --card: #ffffff;
-      --card2: #f4f4f4;
-      --border: #eeeeee;
-      --border2: #dddddd;
-      --green: #22d67a;
-      --green2: #1ab866;
-    }
-
-    body {
-      font-family: var(--font);
-      background-color: #f9f9f9;
-      padding: 20px;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    /* AAPKA DIYA HUA CSS START */
-    .ref-hero{
-      background:linear-gradient(135deg,rgba(247,147,26,.12),rgba(247,147,26,.03));
-      border:1px solid rgba(247,147,26,.2);border-radius:16px;
-      padding:18px;margin-bottom:16px;text-align:center;
-    }
-    .ref-count-big{font-size:48px;font-weight:800;font-family:var(--mono);color:var(--accent);}
-    .ref-label{font-size:13px;color:var(--txt2);font-weight:600;margin-top:2px;}
-    .ref-link-box{
-      background:var(--card);border-radius:12px;padding:12px 14px;
-      display:flex;align-items:center;gap:10px;margin-bottom:16px;
-      border:1px solid var(--border2);
-    }
-    .ref-link-text{flex:1;font-size:11px;color:var(--txt2);word-break:break-all;font-family:var(--mono);}
-    .ref-copy-btn{
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:#fff;border:none;padding:8px 14px;border-radius:8px;
-      font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;
-.ref-hero{
-  background:linear-gradient(135deg,rgba(247,147,26,.12),rgba(247,147,26,.03));
-  border:1px solid rgba(247,147,26,.2);border-radius:16px;
-  padding:18px;margin-bottom:16px;text-align:center;
-}
-.ref-count-big{font-size:48px;font-weight:800;font-family:var(--mono);color:var(--accent);}
-.ref-label{font-size:13px;color:var(--txt2);font-weight:600;margin-top:2px;}
-.ref-link-box{
-  background:var(--card);border-radius:12px;padding:12px 14px;
-  display:flex;align-items:center;gap:10px;margin-bottom:16px;
-  border:1px solid var(--border2);
-}
-.ref-link-text{flex:1;font-size:11px;color:var(--txt2);word-break:break-all;font-family:var(--mono);}
-.ref-copy-btn{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;border:none;padding:8px 14px;border-radius:8px;
-  font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;
-  font-family:var(--font);
-}
-.ref-share-btn{
-  width:100%;background:linear-gradient(135deg,var(--green),var(--green2));
-  color:#fff;border:none;padding:14px;border-radius:12px;
-  font-size:15px;font-weight:800;cursor:pointer;margin-bottom:16px;
-  font-family:var(--font);box-shadow:0 4px 20px rgba(34,214,122,.25);
-}
-.ref-unlock-title{font-size:14px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
-.ref-unlock-row{
-  display:flex;align-items:center;gap:12px;
-  background:var(--card);border-radius:12px;padding:12px;
-  margin-bottom:8px;border:1px solid var(--border);
-}
-.ref-unlock-row.done{border-color:rgba(34,214,122,.25);background:rgba(34,214,122,.04);}
-.ref-unlock-icon{font-size:22px;width:38px;text-align:center;}
-.ref-unlock-info{flex:1;}
-.ref-unlock-name{font-size:13px;font-weight:700;}
-.ref-unlock-req{font-size:11px;color:var(--txt2);font-weight:600;margin-top:2px;}
-.ref-unlock-badge{
-  font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;
-  white-space:nowrap;
-}
-.ref-unlock-badge.done{background:rgba(34,214,122,.15);color:var(--green);}
-.ref-unlock-badge.locked{background:var(--card2);color:var(--txt3);}
-Ref      font-family:var(--font);
-    }
-    .ref-share-btn{
-      width:100%;background:linear-gradient(135deg,var(--green),var(--green2));
-      color:#fff;border:none;padding:14px;border-radius:12px;
-      font-size:15px;font-weight:800;cursor:pointer;margin-bottom:16px;
-      font-family:var(--font);box-shadow:0 4px 20px rgba(34,214,122,.25);
-    }
-    .ref-unlock-title{font-size:14px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
-    .ref-unlock-row{
-      display:flex;align-items:center;gap:12px;
-      background:var(--card);border-radius:12px;padding:12px;
-      margin-bottom:8px;border:1px solid var(--border);
-    }
-    .ref-unlock-row.done{border-color:rgba(34,214,122,.25);background:rgba(34,214,122,.04);}
-    .ref-unlock-icon{font-size:22px;width:38px;text-align:center;}
-    .ref-unlock-info{flex:1;}
-    .ref-unlock-name{font-size:13px;font-weight:700;}
-    .ref-unlock-req{font-size:11px;color:var(--txt2);font-weight:600;margin-top:2px;}
-    .ref-unlock-badge{
-      font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;
-      white-space:nowrap;
-    }
-    .ref-unlock-badge.done{background:rgba(34,214,122,.15);color:var(--green);}
-    .ref-unlock-badge.locked{background:var(--card2);color:var(--txt3);}
-
-
-
-/* ─── STATS PAGE ───────────────────────────────────── */
-.big-stat-card{
-  background:var(--card);border-radius:16px;padding:16px;
-  margin-bottom:10px;border:1px solid var(--border);
-}
-.bsc-label{font-size:11px;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
-.bsc-val{font-size:28px;font-weight:800;font-family:var(--mono);}
-.bsc-sub{font-size:12px;color:var(--txt2);font-weight:600;margin-top:4px;}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-.sg-card{
-  background:var(--card);border-radius:14px;padding:14px;
-  border:1px solid var(--border);
-}
-.sg-icon{font-size:22px;margin-bottom:6px;}
-.sg-val{font-size:20px;font-weight:800;font-family:var(--mono);}
-.sg-label{font-size:10px;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
-.league-section{margin-bottom:10px;}
-.league-card{
-  background:linear-gradient(135deg,rgba(247,147,26,.1),var(--card));
-  border:1px solid rgba(247,147,26,.25);border-radius:16px;padding:16px;
-  display:flex;align-items:center;gap:14px;
-}
-.league-icon{font-size:40px;}
-.league-info .lg-name{font-size:18px;font-weight:800;}
-.league-info .lg-pts{font-size:12px;color:var(--txt2);font-weight:600;margin-top:2px;}
-.league-bar{width:100%;height:6px;background:var(--card2);border-radius:6px;margin-top:8px;overflow:hidden;}
-.league-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .5s;}
-
-/* ─── MODAL ────────────────────────────────────────── */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.85);
-  z-index:999;display:none;align-items:center;
-  justify-content:center;backdrop-filter:blur(8px);
-}
-.modal-overlay.show{display:flex;}
-.modal{
-  background:var(--card);border-radius:22px;padding:28px 24px;
-  width:90%;max-width:330px;text-align:center;
-  border:1px solid var(--border2);
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-  animation:modalPop .25s ease;
-}
-@keyframes modalPop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-.modal-icon{font-size:52px;margin-bottom:12px;}
-.modal-title{font-size:22px;font-weight:800;margin-bottom:8px;}
-.modal-desc{font-size:13px;color:var(--txt2);margin-bottom:14px;font-weight:500;line-height:1.5;}
-.modal-amt{font-size:32px;font-weight:900;color:var(--green);margin-bottom:22px;font-family:var(--mono);}
-.modal-btn{
-  width:100%;background:linear-gradient(135deg,var(--green),var(--green2));
-  padding:15px;border-radius:14px;font-size:15px;font-weight:800;
-  color:#fff;border:none;cursor:pointer;font-family:var(--font);
-  box-shadow:0 4px 20px rgba(34,214,122,.3);
-}
-
-/* ─── TOAST ────────────────────────────────────────── */
-.toast{
-  position:fixed;top:20px;left:50%;
-  transform:translate(-50%,-100px);
-  background:var(--card2);border:1px solid var(--border2);
-  padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;
-  z-index:1100;transition:transform .3s;white-space:nowrap;
-  box-shadow:var(--shadow);
-}
-.toast.show{transform:translate(-50%,0);}
-
-/* ─── DIVIDER ──────────────────────────────────────── */
-.divider{height:1px;background:var(--border);margin:12px 0;}
-
-/* ─── RESET BTN ────────────────────────────────────── */
-.reset-btn{
-  background:none;border:1px solid var(--border);color:var(--txt2);
-  font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;
-  cursor:pointer;font-family:var(--font);
-}
-</style>
+    <style>
+        /* Custom Editor Height Override */
+        .CodeMirror {
+            height: 100% !important;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 15px;
+            background-color: #1e1e1e !important;
+        }
+        .CodeMirror-empty.CodeMirror-focused { 
+            outline: none; 
+        }
+        .CodeMirror pre.CodeMirror-placeholder { 
+            color: #6b7280; 
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-vsbg text-gray-300 h-screen w-screen overflow-hidden flex flex-col font-sans">
 
-<!-- ════════════════════════════════════════
-     WRAP
-════════════════════════════════════════ -->
-<div id="appWrap">
-
-  <!-- ══ TAB: HOME ══════════════════════════════════ -->
-  <div class="tab-content active" id="tabHome">
-
-    <div class="header">
-      <div class="logo">⚡ TapCoin <button class="reset-btn" onclick="resetAll()">RESET</button></div>
-      <div class="user-meta">
-        <div class="streak-badge" id="streakBadge">Lv.1 Tapper</div>
-        <div class="user-name" id="userName">Player</div>
-        <div class="league-name" id="leagueName">🥉 Bronze</div>
-      </div>
-    </div>
-
-    <div class="score-section">
-      <div class="vault-wrap">
-        <span class="vault-label">⚙️ Mining:</span>
-        <span class="vault-val" id="mineRateDisplay">+0/sec</span>
-      </div>
-      <div class="score-value" id="scoreDisplay">0</div>
-      <div class="score-rate" id="rateDisplay">+0/sec</div>
-      <div class="combo-indicator" id="comboIndicator">⚡ COMBO ×1</div>
-    </div>
-
-    <div class="coin-area" id="coinArea">
-      <button class="coin-btn" id="coinBtn">
-        <span class="coin-icon">🪙</span>
-      </button>
-    </div>
-
-    <div class="energy-section">
-      <div class="energy-header">
-        <span class="energy-label">⚡ Energy</span>
-        <span class="energy-count" id="energyCount">1000 / 1000</span>
-      </div>
-      <div class="energy-bar-bg">
-        <div class="energy-bar-fill" id="energyBarFill" style="width:100%"></div>
-      </div>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="s-n" id="tapCount">0</div>
-        <div class="s-l">Total Taps</div>
-      </div>
-      <div class="stat-card">
-        <div class="s-n" id="perTapDisplay">+1</div>
-        <div class="s-l">Per Tap</div>
-      </div>
-      <div class="stat-card">
-        <div class="s-n" id="refCountHome">0</div>
-        <div class="s-l">Referrals</div>
-      </div>
-      <div class="stat-card">
-        <div class="s-n" id="maxEnergyDisplay">1000</div>
-        <div class="s-l">Max Energy</div>
-      </div>
-    </div>
-
-  </div><!-- end tabHome -->
-
-  <!-- ══ TAB: MINE ══════════════════════════════════ -->
-  <div class="tab-content" id="tabMine">
-    <div class="page-header">
-      <div class="page-title">⛏️ Mine</div>
-      <div class="page-sub">Unlock mines with referrals — earn coins passively 24/7</div>
-    </div>
-    <div class="page-body" id="mineBody">
-      <!-- Generated by JS -->
-    </div>
-  </div>
-
-  <!-- ══ TAB: TASKS ═════════════════════════════════ -->
-  <div class="tab-content" id="tabTasks">
-    <div class="page-header">
-      <div class="page-title">📋 Tasks</div>
-      <div class="page-sub">Complete tasks, earn coins</div>
-    </div>
-    <div class="page-body" id="tasksBody">
-      <!-- Generated by JS -->
-    </div>
-  </div>
-
-  <!-- ══ TAB: REFERRAL ══════════════════════════════ -->
-  <div class="tab-content" id="tabRef">
-    <div class="page-header">
-      <div class="page-title">👥 Referrals</div>
-      <div class="page-sub">Invite friends, unlock mines, earn bonuses</div>
-    </div>
-    <div class="page-body">
-
-      <div class="ref-hero">
-        <div class="ref-count-big" id="refCountBig">0</div>
-        <div class="ref-label">Total Friends Invited</div>
-        <div style="margin-top:8px;font-size:13px;color:var(--green);font-weight:700;" id="refBonusEarned">Bonus Earned: +0 coins</div>
-      </div>
-
-      <div class="ref-link-box">
-        <div class="ref-link-text" id="refLinkText">Loading your link…</div>
-        <button class="ref-copy-btn" onclick="copyRefLink()">📋 Copy</button>
-      </div>
-      <button class="ref-share-btn" onclick="shareRefLink()">🚀 Share Invite Link</button>
-
-      <div class="ref-unlock-title">🔒 Mine Unlock Progress</div>
-      <div id="refUnlockList"><!-- Generated by JS --></div>
-
-      <!-- DEBUG: Simulate refs -->
-      <div style="margin-top:12px;padding:12px;background:var(--card2);border-radius:12px;border:1px solid var(--border);">
-        <div style="font-size:11px;color:var(--txt2);font-weight:700;margin-bottom:8px;">🧪 SIMULATE REFERRALS (Demo only)</div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="addSimRef(1)" style="flex:1;background:var(--card);border:1px solid var(--border2);color:var(--txt);padding:8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+1 Ref</button>
-          <button onclick="addSimRef(3)" style="flex:1;background:var(--card);border:1px solid var(--border2);color:var(--txt);padding:8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+3 Refs</button>
-          <button onclick="addSimRef(10)" style="flex:1;background:var(--card);border:1px solid var(--border2);color:var(--txt);padding:8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);">+10 Refs</button>
+    <nav class="bg-vsnav border-b border-vsborder h-14 flex items-center justify-between px-4 shrink-0 shadow-md">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-white font-bold text-lg tracking-wide flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                Web IDE
+            </h1>
+            
+            <div class="border-l border-gray-600 h-6 mx-2"></div>
+            
+            <select id="languageSelector" class="bg-vspanel text-sm text-gray-200 rounded border border-vsborder px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors">
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="javascript">JavaScript</option>
+            </select>
         </div>
-      </div>
 
-    </div>
-  </div>
+        <div class="flex items-center space-x-3">
+            <button id="runBtn" class="bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded text-sm font-medium transition-colors flex items-center gap-1 shadow-sm">
+                ▶ Run
+            </button>
+            <button id="clearBtn" class="bg-vsborder hover:bg-gray-600 text-gray-300 px-4 py-1.5 rounded text-sm font-medium transition-colors">
+                Clear
+            </button>
+            <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded text-sm font-medium transition-colors flex items-center gap-1 shadow-sm">
+                ↓ Download
+            </button>
+        </div>
+    </nav>
 
-  <!-- ══ TAB: STATS ══════════════════════════════════ -->
-  <div class="tab-content" id="tabStats">
-    <div class="page-header">
-      <div class="page-title">📊 Stats</div>
-      <div class="page-sub">Your journey so far</div>
-    </div>
-    <div class="page-body">
-
-      <div class="league-section">
-        <div class="league-card">
-          <div class="league-icon" id="statsLeagueIcon">🥉</div>
-          <div class="league-info">
-            <div class="lg-name" id="statsLeagueName">Bronze League</div>
-            <div class="lg-pts" id="statsLeaguePts">0 / 10,000 coins to Silver</div>
-            <div class="league-bar">
-              <div class="league-bar-fill" id="statsLeagueBar" style="width:0%"></div>
+    <main class="flex flex-1 overflow-hidden">
+        
+        <section class="w-1/2 flex flex-col border-r border-vsborder relative">
+            
+            <div class="bg-vspanel border-b border-vsborder p-2 flex items-center justify-between text-xs text-gray-400 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <label for="fileUpload" class="cursor-pointer bg-vsbg border border-vsborder hover:bg-vsborder px-3 py-1 rounded transition-colors text-gray-200">
+                        + Upload Project Files
+                    </label>
+                    <input type="file" id="fileUpload" multiple accept=".html,.css,.js" class="hidden">
+                    <span id="uploadStatus" class="italic hidden">Files loaded. Click Run!</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="bg-yellow-600/20 text-yellow-500 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">JSHint Active</span>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="stat-grid">
-        <div class="sg-card">
-          <div class="sg-icon">🪙</div>
-          <div class="sg-val" id="sg-total">0</div>
-          <div class="sg-label">Total Coins</div>
-        </div>
-        <div class="sg-card">
-          <div class="sg-icon">👆</div>
-          <div class="sg-val" id="sg-taps">0</div>
-          <div class="sg-label">Total Taps</div>
-        </div>
-        <div class="sg-card">
-          <div class="sg-icon">⛏️</div>
-          <div class="sg-val" id="sg-mines">0</div>
-          <div class="sg-label">Mines Active</div>
-        </div>
-        <div class="sg-card">
-          <div class="sg-icon">👥</div>
-          <div class="sg-val" id="sg-refs">0</div>
-          <div class="sg-label">Referrals</div>
-        </div>
-        <div class="sg-card">
-          <div class="sg-icon">🔥</div>
-          <div class="sg-val" id="sg-combo">1</div>
-          <div class="sg-label">Best Combo</div>
-        </div>
-        <div class="sg-card">
-          <div class="sg-icon">⚡</div>
-          <div class="sg-val" id="sg-energy">1000</div>
-          <div class="sg-label">Max Energy</div>
-        </div>
-      </div>
-
-      <div class="big-stat-card">
-        <div class="bsc-label">⚙️ Passive Income Rate</div>
-        <div class="bsc-val" id="sg-rate">+0/sec</div>
-        <div class="bsc-sub">From all active mines</div>
-      </div>
-
-      <div class="big-stat-card">
-        <div class="bsc-label">📅 Session Started</div>
-        <div class="bsc-val" style="font-size:18px;" id="sg-session">Just now</div>
-      </div>
-
-    </div>
-  </div>
-
-</div><!-- end appWrap -->
-
-<!-- ─── BOTTOM NAV ──────────────────────────────────── -->
-<nav class="bottom-nav" id="bottomNav">
-  <div class="nav-item active" data-tab="Home">
-    <div class="nav-icon">🏠</div>Home
-  </div>
-  <div class="nav-item" data-tab="Mine">
-    <div class="nav-icon">⛏️</div>Mine
-  </div>
-  <div class="nav-item" data-tab="Tasks">
-    <div class="nav-icon">📋</div>Tasks
-  </div>
-  <div class="nav-item" data-tab="Ref">
-    <div class="nav-icon">👥</div>Invite
-  </div>
-  <div class="nav-item" data-tab="Stats">
-    <div class="nav-icon">📊</div>Stats
-  </div>
-</nav>
-
-<!-- ─── REWARD MODAL ────────────────────────────────── -->
-<div class="modal-overlay" id="rewardModal">
-  <div class="modal">
-    <div class="modal-icon" id="modalIcon">🎉</div>
-    <div class="modal-title" id="modalTitle">Reward!</div>
-    <div class="modal-desc" id="modalDesc">You earned coins!</div>
-    <div class="modal-amt" id="modalAmt">+0</div>
-    <button class="modal-btn" onclick="closeModal()">🚀 Awesome!</button>
-  </div>
-</div>
-
-<!-- ─── TOAST ────────────────────────────────────────── -->
-<div class="toast" id="toast">Copied!</div>
-
-<!-- ════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════ -->
-<script>
-/* ─── TELEGRAM SETUP ─────────────────────────────────── */
-const tg = window.Telegram?.WebApp;
-if(tg){
-  tg.ready();
-  tg.expand();
-  tg.setHeaderColor?.('#0a0c10');
-  tg.setBackgroundColor?.('#0a0c10');
-}
-
-/* ─── MINES CONFIG ───────────────────────────────────── */
-// 5 mine levels; refsRequired = 2^n - 1
-const MINES = [
-  {
-    id:0, name:'Rock Splitter', icon:'🪨', level:'I',
-    desc:'Basic manual rock mine. Steady but slow.',
-    ratePerSec:2, cost:500,
-    refsRequired:0, // FREE — first mine always available
-    unlockLabel:'Free Start'
-  },
-  {
-    id:1, name:'Coal Burner', icon:'🔥', level:'II',
-    desc:'Burns coal for consistent passive coins.',
-    ratePerSec:8, cost:2000,
-    refsRequired:1,
-    unlockLabel:'1 Referral'
-  },
-  {
-    id:2, name:'Iron Forge', icon:'⚙️', level:'III',
-    desc:'Industrial forge, multiplied output.',
-    ratePerSec:25, cost:7500,
-    refsRequired:3,
-    unlockLabel:'3 Referrals'
-  },
-  {
-    id:3, name:'Gold Rush', icon:'🏅', level:'IV',
-    desc:'Strike gold with exponential yields.',
-    ratePerSec:80, cost:25000,
-    refsRequired:7,
-    unlockLabel:'7 Referrals'
-  },
-  {
-    id:4, name:'Diamond Core', icon:'💎', level:'V',
-    desc:'Maximum depth, maximum rewards.',
-    ratePerSec:250, cost:100000,
-    refsRequired:15,
-    unlockLabel:'15 Referrals'
-  }
-];
-
-/* ─── TASKS CONFIG ───────────────────────────────────── */
-const TASKS_CONFIG = [
-  {id:'join_channel', icon:'📣', name:'Join Our Channel', desc:'Follow the official TapCoin channel', reward:500, type:'link', link:'https://t.me/tapcoin_official', progress:0, maxProgress:1},
-  {id:'tap_100',   icon:'👆', name:'100 Taps',      desc:'Tap the coin 100 times',     reward:200,   type:'tap',  targetTaps:100},
-  {id:'tap_1000',  icon:'🔥', name:'1000 Taps',     desc:'Tap the coin 1000 times',    reward:1000,  type:'tap',  targetTaps:1000},
-  {id:'tap_10000', icon:'⚡', name:'10,000 Taps',   desc:'Become a tap master',        reward:5000,  type:'tap',  targetTaps:10000},
-  {id:'ref_1',     icon:'👥', name:'First Referral', desc:'Invite your first friend',   reward:1000,  type:'ref',  targetRefs:1},
-  {id:'ref_5',     icon:'🤝', name:'5 Referrals',   desc:'Invite 5 friends',           reward:5000,  type:'ref',  targetRefs:5},
-  {id:'mine_1',    icon:'⛏️', name:'Buy First Mine', desc:'Activate your first mine',   reward:300,   type:'mine', targetMines:1},
-  {id:'score_10k', icon:'🏆', name:'10K Coins',     desc:'Accumulate 10,000 coins',    reward:2000,  type:'score',targetScore:10000},
-  {id:'score_100k',icon:'💰', name:'100K Coins',    desc:'Accumulate 100,000 coins',   reward:10000, type:'score',targetScore:100000},
-];
-
-/* ─── LEAGUES ────────────────────────────────────────── */
-const LEAGUES = [
-  {name:'Bronze',   icon:'🥉', min:0,      max:10000,  color:'#cd7f32'},
-  {name:'Silver',   icon:'🥈', min:10000,   max:100000, color:'#c0c0c0'},
-  {name:'Gold',     icon:'🥇', min:100000,  max:500000, color:'#ffd700'},
-  {name:'Platinum', icon:'💎', min:500000,  max:2000000,color:'#e5e4e2'},
-  {name:'Diamond',  icon:'💠', min:2000000, max:Infinity,color:'#b9f2ff'},
-];
-
-/* ─── STATE ──────────────────────────────────────────── */
-const DEF_STATE = {
-  coins:0, totalCoins:0, totalTaps:0,
-  energy:1000, maxEnergy:1000, energyRegen:1,
-  perTap:1,
-  activeMineId:-1,     // which mine is running (-1=none)
-  boughtMines:[],      // array of mine ids bought
-  refs:0, refBonusTotal:0,
-  tasks:{},            // task_id → true if done
-  bestCombo:1,
-  sessionStart: Date.now(),
-  lastSave: Date.now(),
-};
-let S = {};
-let combo=1, comboTimer=null;
-
-function loadState(){
-  try{
-    const raw=localStorage.getItem('tapcoin_v2');
-    S = raw ? {...DEF_STATE,...JSON.parse(raw)} : {...DEF_STATE};
-  }catch(e){ S={...DEF_STATE}; }
-}
-function saveState(){
-  S.lastSave = Date.now();
-  localStorage.setItem('tapcoin_v2', JSON.stringify(S));
-}
-function resetAll(){
-  if(confirm('Reset ALL data?')){ localStorage.clear(); location.reload(); }
-}
-
-/* ─── HELPERS ────────────────────────────────────────── */
-function fmt(n){
-  n=Math.floor(n);
-  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
-  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
-  if(n>=1e3) return (n/1e3).toFixed(1)+'K';
-  return n.toString();
-}
-function showToast(msg,dur=2000){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),dur);
-}
-function showModal(icon,title,desc,amt){
-  document.getElementById('modalIcon').textContent=icon;
-  document.getElementById('modalTitle').textContent=title;
-  document.getElementById('modalDesc').textContent=desc;
-  document.getElementById('modalAmt').textContent=amt;
-  document.getElementById('rewardModal').classList.add('show');
-}
-function closeModal(){
-  document.getElementById('rewardModal').classList.remove('show');
-}
-
-/* ─── LEAGUE ─────────────────────────────────────────── */
-function getLeague(coins){
-  return LEAGUES.find(l=>coins>=l.min&&coins<l.max)||LEAGUES[0];
-}
-
-/* ─── MINE RATE ──────────────────────────────────────── */
-function getMineRate(){
-  if(S.activeMineId<0) return 0;
-  const m=MINES.find(m=>m.id===S.activeMineId);
-  return m ? m.ratePerSec : 0;
-}
-
-/* ─── UI UPDATE ──────────────────────────────────────── */
-function updateUI(){
-  const league=getLeague(S.coins);
-  const mineRate=getMineRate();
-
-  document.getElementById('scoreDisplay').textContent=fmt(S.coins);
-  document.getElementById('mineRateDisplay').textContent=mineRate>0?`+${fmt(mineRate)}/sec`:'Inactive';
-  document.getElementById('rateDisplay').textContent=`Total: +${fmt(S.totalCoins)} earned`;
-  document.getElementById('energyCount').textContent=`${Math.floor(S.energy)} / ${S.maxEnergy}`;
-  document.getElementById('energyBarFill').style.width=`${(S.energy/S.maxEnergy)*100}%`;
-  document.getElementById('tapCount').textContent=fmt(S.totalTaps);
-  document.getElementById('perTapDisplay').textContent=`+${S.perTap}`;
-  document.getElementById('refCountHome').textContent=S.refs;
-  document.getElementById('maxEnergyDisplay').textContent=fmt(S.maxEnergy);
-  document.getElementById('streakBadge').textContent=`${league.icon} Lv.${getCurrentLevel()} Tapper`;
-  document.getElementById('userName').textContent=getTgName();
-  document.getElementById('leagueName').textContent=`${league.icon} ${league.name}`;
-
-  updateComboUI();
-  updateStatsTab();
-  updateMineTab();
-  updateRefTab();
-  updateTasksTab();
-}
-
-function getCurrentLevel(){
-  const brackets=[0,1000,5000,20000,100000,500000,2000000];
-  for(let i=brackets.length-1;i>=0;i--){
-    if(S.totalCoins>=brackets[i]) return i+1;
-  }
-  return 1;
-}
-function getTgName(){
-  return tg?.initDataUnsafe?.user?.first_name || 'Player';
-}
-function getTgId(){
-  return tg?.initDataUnsafe?.user?.id || 'demo123';
-}
-
-function updateComboUI(){
-  const el=document.getElementById('comboIndicator');
-  el.textContent=`⚡ COMBO ×${combo}`;
-  el.className='combo-indicator'+(combo>=3?' hot':'');
-}
-
-function updateStatsTab(){
-  const league=getLeague(S.coins);
-  const nextLeague=LEAGUES[LEAGUES.indexOf(league)+1];
-  const progress=nextLeague
-    ?Math.min(100,((S.coins-league.min)/(league.max-league.min))*100):100;
-
-  document.getElementById('statsLeagueIcon').textContent=league.icon;
-  document.getElementById('statsLeagueName').textContent=league.name+' League';
-  document.getElementById('statsLeaguePts').textContent=nextLeague
-    ?`${fmt(S.coins)} / ${fmt(league.max)} → ${nextLeague.name}`
-    :'Max League Reached!';
-  document.getElementById('statsLeagueBar').style.width=progress+'%';
-
-  document.getElementById('sg-total').textContent=fmt(S.totalCoins);
-  document.getElementById('sg-taps').textContent=fmt(S.totalTaps);
-  document.getElementById('sg-mines').textContent=S.boughtMines.length;
-  document.getElementById('sg-refs').textContent=S.refs;
-  document.getElementById('sg-combo').textContent='×'+S.bestCombo;
-  document.getElementById('sg-energy').textContent=S.maxEnergy;
-  document.getElementById('sg-rate').textContent=getMineRate()>0?`+${fmt(getMineRate())}/sec`:'+0/sec';
-
-  const elapsed=Math.floor((Date.now()-S.sessionStart)/1000);
-  const mins=Math.floor(elapsed/60), secs=elapsed%60;
-  document.getElementById('sg-session').textContent=
-    elapsed<60?`${elapsed}s ago`:
-    elapsed<3600?`${mins}m ${secs}s`:
-    `${Math.floor(elapsed/3600)}h ${mins%60}m`;
-}
-
-/* ─── MINE TAB ───────────────────────────────────────── */
-function updateMineTab(){
-  const body=document.getElementById('mineBody');
-  if(!body) return;
-  body.innerHTML='';
-
-  // Current active mine banner
-  const active=MINES.find(m=>m.id===S.activeMineId);
-  const banner=document.createElement('div');
-  banner.className='current-mine-banner';
-  if(active){
-    banner.innerHTML=`
-      <div class="cmb-icon">${active.icon}</div>
-      <div class="cmb-info">
-        <div class="cmb-title">Active Mine</div>
-        <div class="cmb-val">${active.name} — +${fmt(active.ratePerSec)}/sec</div>
-      </div>`;
-  }else{
-    banner.innerHTML=`
-      <div class="cmb-icon">💤</div>
-      <div class="cmb-info">
-        <div class="cmb-title">No mine active</div>
-        <div class="cmb-val" style="color:var(--txt2);font-size:14px;">Buy & activate a mine below</div>
-      </div>`;
-  }
-  body.appendChild(banner);
-
-  const label=document.createElement('div');
-  label.className='mine-section-label';
-  label.textContent='ALL MINES';
-  body.appendChild(label);
-
-  const grid=document.createElement('div');
-  grid.className='mine-grid';
-
-  MINES.forEach(mine=>{
-    const isUnlocked=S.refs>=mine.refsRequired;
-    const isBought=S.boughtMines.includes(mine.id);
-    const isActive=S.activeMineId===mine.id;
-    const canAfford=S.coins>=mine.cost;
-
-    const card=document.createElement('div');
-    card.className='mine-card'+(isActive?' active-mine':isBought?' unlocked':!isUnlocked?' locked':'');
-
-    // Progress bar if active
-    const progressHTML = isActive
-      ? `<div class="mine-progress"><div class="mine-progress-fill" style="width:100%;animation:none;"></div></div>` : '';
-
-    let actionHTML='';
-    if(!isUnlocked){
-      // Locked by refs
-      const refsNeeded=mine.refsRequired-S.refs;
-      actionHTML=`<div class="mine-lock-btn">🔒<span>Need ${mine.refsRequired} refs</span><span style="color:var(--red)">${refsNeeded} more</span></div>`;
-    }else if(!isBought){
-      // Available to buy
-      actionHTML=`<button class="mine-action" ${!canAfford?'disabled':''} onclick="buyMine(${mine.id})">${canAfford?'Buy<br>'+fmt(mine.cost)+'🪙':'Need<br>'+fmt(mine.cost)+'🪙'}</button>`;
-    }else if(!isActive){
-      // Bought, activate
-      actionHTML=`<button class="mine-action" onclick="activateMine(${mine.id})" style="background:linear-gradient(135deg,var(--green),var(--green2));box-shadow:0 2px 12px rgba(34,214,122,.3);">▶ Activate</button>`;
-    }else{
-      // Currently active
-      actionHTML=`<button class="mine-action" disabled style="background:linear-gradient(135deg,var(--green),var(--green2));opacity:1;">✅ Running</button>`;
-    }
-
-    const refBar = !isUnlocked
-      ? `<div class="mine-progress"><div class="mine-progress-fill" style="width:${Math.min(100,(S.refs/mine.refsRequired)*100).toFixed(1)}%"></div></div>` : '';
-
-    card.innerHTML=`
-      <div class="mine-icon-wrap">
-        ${mine.icon}
-        <div class="mine-lv-badge">${mine.level}</div>
-      </div>
-      <div class="mine-info">
-        <div class="mine-name">${mine.name}</div>
-        <div class="mine-desc">${mine.desc}</div>
-        <div class="mine-rate">+${fmt(mine.ratePerSec)}/sec</div>
-        ${!isUnlocked?`<div class="mine-lock-info">🔒 Needs ${mine.refsRequired} referrals</div>`:''}
-        ${refBar}
-        ${progressHTML}
-      </div>
-      ${actionHTML}`;
-
-    grid.appendChild(card);
-  });
-
-  body.appendChild(grid);
-}
-
-function buyMine(id){
-  const mine=MINES.find(m=>m.id===id);
-  if(!mine) return;
-  if(S.refs<mine.refsRequired){ showToast('🔒 Need more referrals!'); return; }
-  if(S.boughtMines.includes(id)){ showToast('Already owned!'); return; }
-  if(S.coins<mine.cost){ showToast('Not enough coins!'); return; }
-  S.coins-=mine.cost;
-  S.boughtMines.push(id);
-  if(S.activeMineId<0) S.activeMineId=id; // auto-activate first mine
-  showModal(mine.icon,'Mine Purchased!',`${mine.name} is now active.`,`+${fmt(mine.ratePerSec)}/sec`);
-  saveState(); updateUI();
-  checkTaskMilestones();
-}
-
-function activateMine(id){
-  if(!S.boughtMines.includes(id)){ showToast('Buy this mine first!'); return; }
-  S.activeMineId=id;
-  const mine=MINES.find(m=>m.id===id);
-  showToast(`✅ ${mine.name} activated!`);
-  saveState(); updateUI();
-}
-
-/* ─── TASKS TAB ──────────────────────────────────────── */
-function updateTasksTab(){
-  const body=document.getElementById('tasksBody');
-  if(!body) return;
-  body.innerHTML='';
-
-  TASKS_CONFIG.forEach(task=>{
-    const done=S.tasks[task.id]===true;
-    const card=document.createElement('div');
-    card.className='task-card';
-
-    let progress=0,maxP=1;
-    if(task.type==='tap'){ progress=Math.min(S.totalTaps,task.targetTaps); maxP=task.targetTaps; }
-    else if(task.type==='ref'){ progress=Math.min(S.refs,task.targetRefs); maxP=task.targetRefs; }
-    else if(task.type==='mine'){ progress=Math.min(S.boughtMines.length,task.targetMines); maxP=task.targetMines; }
-    else if(task.type==='score'){ progress=Math.min(S.totalCoins,task.targetScore); maxP=task.targetScore; }
-    else if(task.type==='link'){ progress=done?1:0; maxP=1; }
-
-    const pct=Math.min(100,(progress/maxP)*100);
-    const canClaim=pct>=100&&!done;
-
-    card.innerHTML=`
-      <div class="task-icon">${task.icon}</div>
-      <div class="task-info">
-        <div class="task-name">${task.name}</div>
-        <div class="task-desc">${task.desc}</div>
-        <div class="task-reward">+${fmt(task.reward)} 🪙</div>
-        ${!done?`<div class="task-bar"><div class="task-bar-fill" style="width:${pct}%"></div></div>`:''}
-      </div>
-      ${done
-        ?'<div class="task-done">✅</div>'
-        :task.type==='link'
-          ?`<button class="task-action" onclick="claimLinkTask('${task.id}','${task.link}')">Go ➜</button>`
-          :canClaim
-            ?`<button class="task-action" onclick="claimTask('${task.id}')">Claim!</button>`
-            :`<button class="task-action" disabled>${fmt(progress)}/${fmt(maxP)}</button>`
-      }`;
-
-    body.appendChild(card);
-  });
-}
-
-function claimTask(id){
-  const task=TASKS_CONFIG.find(t=>t.id===id);
-  if(!task||S.tasks[id]) return;
-  S.tasks[id]=true;
-  S.coins+=task.reward;
-  S.totalCoins+=task.reward;
-  showModal('🎉','Task Complete!',task.name,`+${fmt(task.reward)} 🪙`);
-  saveState(); updateUI();
-}
-function claimLinkTask(id,link){
-  if(tg) tg.openTelegramLink?.(link)||tg.openLink(link);
-  else window.open(link,'_blank');
-  setTimeout(()=>{
-    if(!S.tasks[id]){
-      const task=TASKS_CONFIG.find(t=>t.id===id);
-      S.tasks[id]=true;
-      S.coins+=task.reward; S.totalCoins+=task.reward;
-      showModal('📣','Joined!',task.name,`+${fmt(task.reward)} 🪙`);
-      saveState(); updateUI();
-    }
-  },2000);
-}
-
-/* ─── REFERRAL TAB ───────────────────────────────────── */
-function getRefLink(){
-  const id=getTgId();
-  return `https://t.me/YourBotUsername?start=ref_${id}`;
-}
-function updateRefTab(){
-  const link=getRefLink();
-  document.getElementById('refLinkText').textContent=link;
-  document.getElementById('refCountBig').textContent=S.refs;
-  document.getElementById('refBonusEarned').textContent=`Bonus Earned: +${fmt(S.refBonusTotal)} coins`;
-
-  const list=document.getElementById('refUnlockList');
-  if(!list) return;
-  list.innerHTML='';
-
-  MINES.forEach(mine=>{
-    if(mine.refsRequired===0) return; // skip free mine
-    const done=S.refs>=mine.refsRequired;
-    const row=document.createElement('div');
-    row.className='ref-unlock-row'+(done?' done':'');
-    row.innerHTML=`
-      <div class="ref-unlock-icon">${mine.icon}</div>
-      <div class="ref-unlock-info">
-        <div class="ref-unlock-name">${mine.name} (Level ${mine.level})</div>
-        <div class="ref-unlock-req">Requires ${mine.refsRequired} referral${mine.refsRequired>1?'s':''} · +${fmt(mine.ratePerSec)}/sec</div>
-        ${!done?`<div class="task-bar" style="margin-top:5px"><div class="task-bar-fill" style="width:${Math.min(100,(S.refs/mine.refsRequired)*100).toFixed(1)}%"></div></div>`:''}
-      </div>
-      <div class="ref-unlock-badge ${done?'done':'locked'}">${done?'✅ Unlocked':'🔒 Locked'}</div>`;
-    list.appendChild(row);
-  });
-}
-function copyRefLink(){
-  navigator.clipboard?.writeText(getRefLink()).then(()=>showToast('✅ Link Copied!'));
-}
-function shareRefLink(){
-  const link=getRefLink();
-  const text=`🚀 Join TapCoin and start earning! ${link}`;
-  if(tg){
-    tg.switchInlineQuery?.(text)||tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('🚀 Join TapCoin and start earning!')}`);
-  }else{
-    navigator.share?.({title:'TapCoin',text,url:link})||copyRefLink();
-  }
-}
-function addSimRef(n){
-  S.refs+=n;
-  const bonus=n*500;
-  S.coins+=bonus; S.totalCoins+=bonus; S.refBonusTotal+=bonus;
-  showToast(`+${n} referrals added! +${fmt(bonus)} 🪙`);
-  saveState(); updateUI();
-  checkTaskMilestones();
-}
-
-/* ─── TAP MECHANIC ───────────────────────────────────── */
-document.getElementById('coinBtn').addEventListener('click', function(e){
-  if(S.energy<1) return;
-  const gain=S.perTap*combo;
-  S.coins+=gain; S.totalCoins+=gain;
-  S.energy=Math.max(0,S.energy-1);
-  S.totalTaps++;
-
-  // Combo
-  combo=Math.min(combo+1,10);
-  if(combo>S.bestCombo) S.bestCombo=combo;
-  clearTimeout(comboTimer);
-  comboTimer=setTimeout(()=>{ combo=1; updateComboUI(); },2500);
-
-  // Float number
-  spawnFloat(e, `+${gain}`);
-
-  // Pop animation
-  const sv=document.getElementById('scoreDisplay');
-  sv.classList.remove('tap-pop');
-  void sv.offsetWidth;
-  sv.classList.add('tap-pop');
-  setTimeout(()=>sv.classList.remove('tap-pop'),80);
-
-  updateUI();
-  checkTaskMilestones();
-});
-
-function spawnFloat(e, txt){
-  const area=document.getElementById('coinArea');
-  const rect=area.getBoundingClientRect();
-  const el=document.createElement('div');
-  el.className='tap-float';
-  el.textContent=txt;
-  const x=(e.clientX||rect.left+rect.width/2)-rect.left-20;
-  const y=(e.clientY||rect.top+rect.height/2)-rect.top-20;
-  el.style.left=x+'px'; el.style.top=y+'px';
-  area.appendChild(el);
-  setTimeout(()=>el.remove(),900);
-}
-
-/* ─── TASK MILESTONE CHECK ───────────────────────────── */
-function checkTaskMilestones(){
-  TASKS_CONFIG.forEach(task=>{
-    if(S.tasks[task.id]) return;
-    let done=false;
-    if(task.type==='tap'&&S.totalTaps>=task.targetTaps) done=true;
-    if(task.type==='ref'&&S.refs>=task.targetRefs) done=true;
-    if(task.type==='mine'&&S.boughtMines.length>=task.targetMines) done=true;
-    if(task.type==='score'&&S.totalCoins>=task.targetScore) done=true;
-    if(done) autoClaimTask(task);
-  });
-}
-function autoClaimTask(task){
-  S.tasks[task.id]=true;
-  S.coins+=task.reward; S.totalCoins+=task.reward;
-  showModal('🎉','Task Complete!',task.name,`+${fmt(task.reward)} 🪙`);
-  saveState();
-}
-
-/* ─── GAME LOOPS ─────────────────────────────────────── */
-// Energy regeneration
-setInterval(()=>{
-  if(S.energy<S.maxEnergy){
-    S.energy=Math.min(S.maxEnergy, S.energy+S.energyRegen);
-    document.getElementById('energyCount').textContent=`${Math.floor(S.energy)} / ${S.maxEnergy}`;
-    document.getElementById('energyBarFill').style.width=`${(S.energy/S.maxEnergy)*100}%`;
-  }
-},1000);
-
-// Mine passive income
-setInterval(()=>{
-  const rate=getMineRate();
-  if(rate>0){
-    S.coins+=rate;
-    S.totalCoins+=rate;
-    document.getElementById('scoreDisplay').textContent=fmt(S.coins);
-    document.getElementById('mineRateDisplay').textContent=`+${fmt(rate)}/sec`;
-    checkTaskMilestones();
-  }
-},1000);
-
-// Autosave
-setInterval(()=>saveState(),10000);
-
-/* ─── NAVIGATION ─────────────────────────────────────── */
-document.querySelectorAll('.nav-item').forEach(item=>{
-  item.addEventListener('click',()=>{
-    const tab=item.dataset.tab;
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-    item.classList.add('active');
-    document.getElementById('tab'+tab)?.classList.add('active');
-    updateUI();
-  });
-});
-
-/* ─── OFFLINE EARNINGS ───────────────────────────────── */
-function calcOfflineEarnings(){
-  if(S.activeMineId<0||!S.lastSave) return;
-  const elapsed=(Date.now()-S.lastSave)/1000;
-  const maxOffline=8*3600; // max 8 hours
-  const secs=Math.min(elapsed,maxOffline);
-  if(secs<30) return;
-  const rate=getMineRate();
-  const earned=Math.floor(rate*secs);
-  if(earned>0){
-    S.coins+=earned; S.totalCoins+=earned;
-    const hrs=Math.floor(secs/3600), mins=Math.floor((secs%3600)/60);
-    const timeStr=hrs>0?`${hrs}h ${mins}m`:`${mins}m`;
-    setTimeout(()=>{
-      showModal('⛏️','Welcome Back!',`Your mine worked for ${timeStr}`,`+${fmt(earned)} 🪙`);
-    },800);
-    saveState();
-  }
-}
-
-/* ─── BOOT ───────────────────────────────────────────── */
-loadState();
-
-// If first mine never bought, auto-give mine 0
-if(S.boughtMines.length===0){
-  S.boughtMines.push(0);
-  S.activeMineId=0;
-  saveState();
-}
-
-calcOfflineEarnings();
-updateUI();
-</script>
+            <div class="flex-1 relative bg-vsbg">
+                <textarea id="editor"></textarea>
+            </div>
+        </section>
+
+        <section class="w-1/2 flex flex-col bg-white">
+            <div class="bg-gray-100 border-b border-gray-300 h-8 flex items-center px-4 text-xs text-gray-500 font-mono shadow-sm z-10 shrink-0 flex justify-between">
+                <span>Preview Output</span>
+                <span class="flex space-x-1">
+                    <span class="w-3 h-3 rounded-full bg-red-400"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-400"></span>
+                </span>
+            </div>
+            <iframe id="previewFrame" class="flex-1 w-full border-none bg-white"></iframe>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const editorTextarea = document.getElementById('editor');
+            const languageSelector = document.getElementById('languageSelector');
+            const runBtn = document.getElementById('runBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const fileUpload = document.getElementById('fileUpload');
+            const previewFrame = document.getElementById('previewFrame');
+            const uploadStatus = document.getElementById('uploadStatus');
+
+            // Store uploaded multi-file contents
+            let projectFiles = { html: '', css: '', js: '' };
+
+            // CodeMirror Configuration Mapping
+            const modes = {
+                'html': { mode: 'htmlmixed', placeholder: '' },
+                'css': { mode: 'css', placeholder: '/* Write your CSS here... */' },
+                'javascript': { mode: 'javascript', placeholder: '// Write your JavaScript here...\n// Syntax errors will be underlined.' }
+            };
+
+            // Initialize CodeMirror
+            const editor = CodeMirror.fromTextArea(editorTextarea, {
+                lineNumbers: true,
+                theme: 'dracula',
+                mode: modes['html'].mode,
+                placeholder: modes['html'].placeholder,
+                indentUnit: 4,
+                matchBrackets: true,
+                autoCloseTags: true,
+                lint: true,
+                gutters: ["CodeMirror-lint-markers"]
+            });
+
+            // 1. Language Selector Logic
+            languageSelector.addEventListener('change', (e) => {
+                const lang = e.target.value;
+                const config = modes[lang];
+                
+                // Update CodeMirror Mode and Placeholder
+                editor.setOption('mode', config.mode);
+                editor.setOption('placeholder', config.placeholder);
+                
+                // Enable/Disable Linting based on language
+                editor.setOption('lint', lang === 'javascript');
+            });
+
+            // 2. Run / Render Logic
+            const renderPreview = () => {
+                const currentCode = editor.getValue();
+                const currentLang = languageSelector.value;
+                let finalHTML = '';
+
+                // If user uploaded files, prioritize combining them, overriding with current editor content based on selected tab
+                if (projectFiles.html || projectFiles.css || projectFiles.js) {
+                    let h = currentLang === 'html' ? currentCode : projectFiles.html;
+                    let c = currentLang === 'css' ? currentCode : projectFiles.css;
+                    let j = currentLang === 'javascript' ? currentCode : projectFiles.js;
+                    
+                    finalHTML = `
+                        <!DOCTYPE html>
+                        <html>
+                            <head>
+                                <style>${c}</style>
+                            </head>
+                            <body>
+                                ${h}
+                                <script>${j}<\/script>
+                            </body>
+                        </html>
+                    `;
+                } 
+                // Normal Single File Mode
+                else {
+                    if (currentLang === 'html') {
+                        finalHTML = currentCode;
+                    } else if (currentLang === 'css') {
+                        finalHTML = `
+                            <!DOCTYPE html>
+                            <html>
+                            <head><style>${currentCode}</style></head>
+                            <body style="font-family: sans-serif; padding: 20px;">
+                                <h2>CSS Live Preview</h2>
+                                <p>This is standard HTML to showcase your CSS rules.</p>
+                                <button class="btn">Test Button</button>
+                                <div class="box">Test Box</div>
+                            </body>
+                            </html>
+                        `;
+                    } else if (currentLang === 'javascript') {
+                        finalHTML = `
+                            <!DOCTYPE html>
+                            <html>
+                            <head></head>
+                            <body style="font-family: sans-serif; padding: 20px;">
+                                <h2>JavaScript Live Preview</h2>
+                                <p>Check the browser console (F12) for console.log outputs.</p>
+                                <div id="app"></div>
+                                <script>
+                                    try {
+                                        ${currentCode}
+                                    } catch (e) {
+                                        document.body.innerHTML += '<p style="color:red;">Error: ' + e.message + '</p>';
+                                    }
+                                <\/script>
+                            </body>
+                            </html>
+                        `;
+                    }
+                }
+
+                // Inject into iframe using srcdoc for security and performance
+                previewFrame.srcdoc = finalHTML;
+            };
+
+            runBtn.addEventListener('click', renderPreview);
+
+            // 3. Multi-file Project Upload Logic
+            fileUpload.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files.length === 0) return;
+
+                projectFiles = { html: '', css: '', js: '' };
+                let filesProcessed = 0;
+
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const content = event.target.result;
+                        if (file.name.endsWith('.html')) projectFiles.html += content + '\n';
+                        else if (file.name.endsWith('.css')) projectFiles.css += content + '\n';
+                        else if (file.name.endsWith('.js')) projectFiles.js += content + '\n';
+
+                        filesProcessed++;
+                        if (filesProcessed === files.length) {
+                            uploadStatus.classList.remove('hidden');
+                            setTimeout(() => uploadStatus.classList.add('hidden'), 3000);
+                            renderPreview(); // Auto-run after upload
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+            });
+
+            // 4. Clear Logic
+            clearBtn.addEventListener('click', () => {
+                editor.setValue('');
+                previewFrame.srcdoc = '';
+                projectFiles = { html: '', css: '', js: '' };
+                fileUpload.value = '';
+            });
+
+            // 5. Download Logic
+            downloadBtn.addEventListener('click', () => {
+                const code = editor.getValue();
+                if (!code) return alert("Editor is empty!");
+
+                const ext = languageSelector.value === 'javascript' ? 'js' : languageSelector.value;
+                const blob = new Blob([code], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `script.${ext}`;
+                document.body.appendChild(a);
+                a.click();
+                
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            // Initial focus
+            editor.focus();
+        });
+    </script>
 </body>
 </html>
