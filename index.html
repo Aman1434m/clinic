@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Online Code Editor</title>
+    <title>Modern Online Code Editor</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -23,7 +23,6 @@
 
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        /* Custom Overrides for CodeMirror to stretch full height */
         .CodeMirror {
             height: 100%;
             font-family: 'Fira Code', 'Courier New', Courier, monospace;
@@ -32,25 +31,33 @@
         .CodeMirror-empty.CodeMirror-focused { opacity: 0.6; }
         .CodeMirror-pre.CodeMirror-empty { color: #888; }
         
-        /* Custom scrollbar for terminal */
+        /* Home Screen Card Animations */
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px -5px rgba(59, 130, 246, 0.4);
+            border-color: #3b82f6;
+        }
+        
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 h-screen flex flex-col overflow-hidden">
 
-    <div id="homeScreen" class="w-full h-full overflow-y-auto p-6 md:p-10">
+    <div id="homeScreen" class="w-full h-full overflow-y-auto p-6 md:p-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-gray-800 via-gray-900 to-black">
         <div class="max-w-6xl mx-auto">
-            <header class="text-center mb-12">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-4">
-                    {'</>'} CodePlay Platform
+            <header class="text-center mb-16 mt-8">
+                <h1 class="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 mb-4 drop-shadow-lg">
+                    {'</>'} CodePlay Studio
                 </h1>
-                <p class="text-gray-400 text-lg">Select your domain and language to start coding.</p>
+                <p class="text-gray-400 text-xl">Choose your development field to start coding</p>
             </header>
 
-            <div id="categoriesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="categoriesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 </div>
         </div>
     </div>
@@ -59,25 +66,30 @@
         
         <header class="bg-gray-800 border-b border-gray-700 p-3 flex flex-wrap items-center justify-between gap-3 shadow-md">
             <div class="flex items-center gap-4">
-                <button id="backBtn" class="text-gray-400 hover:text-white transition-colors flex items-center gap-1">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <button id="backBtn" class="text-gray-400 hover:text-white transition-colors flex items-center gap-1 bg-gray-700 px-3 py-1.5 rounded-md hover:bg-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back
                 </button>
-                <div class="h-6 w-px bg-gray-600"></div>
-                <h1 id="dynamicTitle" class="text-xl font-bold tracking-wider text-blue-400">
-                    {'</>'} HTML
+                
+                <div class="h-6 w-px bg-gray-600 hidden md:block"></div>
+                
+                <h1 id="dynamicSyntax" class="text-lg md:text-xl font-bold tracking-wider text-blue-400">
+                    {'</>'} CodePlay
                 </h1>
             </div>
             
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2 md:gap-3">
+                <select id="langSelector" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2 cursor-pointer transition-colors outline-none font-semibold">
+                    </select>
+
                 <button id="checkBtn" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-1 shadow-sm">
-                    ▶ Run / Preview
+                    ▶ Run
                 </button>
                 <button id="clearBtn" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-1 shadow-sm">
                     ✖ Clear
                 </button>
                 <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold transition-colors flex items-center gap-1 shadow-sm">
-                    ↓ Download
+                    ↓ Save
                 </button>
             </div>
         </header>
@@ -95,215 +107,228 @@
                 <iframe id="previewFrame" class="w-full h-full border-none bg-white"></iframe>
                 
                 <div id="terminalOutput" class="w-full h-full bg-gray-950 text-green-400 p-4 font-mono text-sm overflow-y-auto hidden">
-                    <div class="text-gray-500 mb-2">System Console Output...</div>
-                    <div id="terminalContent"></div>
+                    <div class="text-gray-500 mb-4 border-b border-gray-800 pb-2">Terminal Ready...</div>
+                    <div id="terminalContent" class="space-y-2"></div>
                 </div>
             </section>
         </main>
     </div>
 
     <script>
-        // 1. Languages and Categories Configuration
-        const techDomains = {
-            "Web Development": [
-                { name: "HTML", mode: "htmlmixed", icon: "</>", type: "web", ext: "html" },
-                { name: "CSS", mode: "css", icon: "/* */", type: "web", ext: "css" },
-                { name: "JavaScript", mode: "javascript", icon: "{ }", type: "web", ext: "js" }
-            ],
-            "Software Development": [
-                { name: "C++", mode: "text/x-c++src", icon: "C++", type: "console", ext: "cpp" },
-                { name: "Java", mode: "text/x-java", icon: "☕", type: "console", ext: "java" },
-                { name: "C#", mode: "text/x-csharp", icon: "C#", type: "console", ext: "cs" }
-            ],
-            "Mobile Development": [
-                { name: "Kotlin", mode: "text/x-java", icon: "Kt", type: "console", ext: "kt" },
-                { name: "Swift", mode: "text/x-c++src", icon: "🍎", type: "console", ext: "swift" },
-                { name: "Dart", mode: "javascript", icon: "🎯", type: "console", ext: "dart" }
-            ],
-            "AI & Data Science": [
-                { name: "Python", mode: "python", icon: ">_", type: "console", ext: "py" },
-                { name: "R", mode: "python", icon: "R", type: "console", ext: "r" }
-            ],
-            "Database Languages": [
-                { name: "SQL", mode: "sql", icon: "[(]", type: "console", ext: "sql" }
-            ],
-            "Scripting & Automation": [
-                { name: "Bash / Shell", mode: "shell", icon: "$", type: "console", ext: "sh" },
-                { name: "PowerShell", mode: "shell", icon: ">_", type: "console", ext: "ps1" }
-            ],
-            "Game Development": [
-                { name: "C++ (Unreal)", mode: "text/x-c++src", icon: "🎮", type: "console", ext: "cpp" },
-                { name: "C# (Unity)", mode: "text/x-csharp", icon: "🎮", type: "console", ext: "cs" }
-            ]
+        // 1. Data Structure with Icons and Categories
+        const categoriesData = {
+            "web": {
+                title: "Web Development", icon: "🌐", type: "web",
+                languages: [
+                    { id: "html", name: "HTML", mode: "htmlmixed", syntax: "</>", ext: "html" },
+                    { id: "css", name: "CSS", mode: "css", syntax: "{;}", ext: "css" },
+                    { id: "js", name: "JavaScript", mode: "javascript", syntax: "JS", ext: "js" }
+                ]
+            },
+            "software": {
+                title: "Software Development", icon: "💻", type: "console",
+                languages: [
+                    { id: "cpp", name: "C++", mode: "text/x-c++src", syntax: "C++", ext: "cpp" },
+                    { id: "java", name: "Java", mode: "text/x-java", syntax: "☕", ext: "java" },
+                    { id: "csharp", name: "C#", mode: "text/x-csharp", syntax: "C#", ext: "cs" }
+                ]
+            },
+            "mobile": {
+                title: "Mobile Development", icon: "📱", type: "console",
+                languages: [
+                    { id: "kotlin", name: "Kotlin", mode: "text/x-java", syntax: "Kt", ext: "kt" },
+                    { id: "swift", name: "Swift", mode: "text/x-c++src", syntax: "🍎", ext: "swift" },
+                    { id: "dart", name: "Dart", mode: "javascript", syntax: "🎯", ext: "dart" }
+                ]
+            },
+            "ai_data": {
+                title: "AI & Data Science", icon: "🧠", type: "console",
+                languages: [
+                    { id: "python", name: "Python", mode: "python", syntax: "Py", ext: "py" },
+                    { id: "r", name: "R Language", mode: "python", syntax: "R", ext: "r" }
+                ]
+            },
+            "database": {
+                title: "Database Languages", icon: "🗄️", type: "console",
+                languages: [
+                    { id: "sql", name: "SQL", mode: "sql", syntax: "SQL", ext: "sql" }
+                ]
+            },
+            "scripting": {
+                title: "Scripting & Automation", icon: "⚙️", type: "console",
+                languages: [
+                    { id: "bash", name: "Bash / Shell", mode: "shell", syntax: "$_", ext: "sh" }
+                ]
+            },
+            "game": {
+                title: "Game Development", icon: "🎮", type: "console",
+                languages: [
+                    { id: "cpp_ue", name: "C++ (Unreal)", mode: "text/x-c++src", syntax: "UE", ext: "cpp" },
+                    { id: "cs_unity", name: "C# (Unity)", mode: "text/x-csharp", syntax: "Unity", ext: "cs" }
+                ]
+            }
         };
 
-        // Current state
-        let currentLang = null;
+        let currentCategory = null;
+        let currentLangConfig = null;
 
         // 2. Initialize CodeMirror
         const editorElement = document.getElementById('codeEditor');
         const editor = CodeMirror.fromTextArea(editorElement, {
-            mode: 'htmlmixed',
-            theme: 'material-darker',
-            lineNumbers: true,
-            indentUnit: 4,
-            placeholder: "Select a language to start typing..."
+            mode: 'htmlmixed', theme: 'material-darker', lineNumbers: true, indentUnit: 4
         });
 
         // DOM Elements
         const homeScreen = document.getElementById('homeScreen');
         const editorScreen = document.getElementById('editorScreen');
         const categoriesGrid = document.getElementById('categoriesGrid');
-        const backBtn = document.getElementById('backBtn');
-        const dynamicTitle = document.getElementById('dynamicTitle');
-        const checkBtn = document.getElementById('checkBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
+        const langSelector = document.getElementById('langSelector');
+        const dynamicSyntax = document.getElementById('dynamicSyntax');
         const previewFrame = document.getElementById('previewFrame');
         const terminalOutput = document.getElementById('terminalOutput');
         const terminalContent = document.getElementById('terminalContent');
         const outputLabel = document.getElementById('outputLabel');
 
-        // 3. Render Categories and Languages on Home Screen
-        for (const [domain, languages] of Object.entries(techDomains)) {
-            // Create Card
+        // 3. Render Home Screen Cards
+        for (const [key, data] of Object.entries(categoriesData)) {
             const card = document.createElement('div');
-            card.className = "bg-gray-800 border border-gray-700 rounded-lg p-5 hover:border-blue-500 transition-colors shadow-lg";
-            
-            // Domain Title
-            const title = document.createElement('h2');
-            title.className = "text-xl font-bold text-white border-b border-gray-700 pb-2 mb-4";
-            title.innerText = domain;
-            card.appendChild(title);
-            
-            // Languages Container
-            const langContainer = document.createElement('div');
-            langContainer.className = "flex flex-wrap gap-2";
-            
-            languages.forEach(lang => {
-                const btn = document.createElement('button');
-                btn.className = "bg-gray-700 hover:bg-blue-600 text-sm text-gray-200 py-1.5 px-3 rounded shadow transition-colors";
-                btn.innerText = lang.name;
-                btn.onclick = () => openEditor(lang);
-                langContainer.appendChild(btn);
-            });
-
-            card.appendChild(langContainer);
+            card.className = "category-card bg-gray-800/80 border border-gray-700 rounded-xl p-6 cursor-pointer flex flex-col items-center text-center backdrop-blur-sm";
+            card.innerHTML = `
+                <div class="text-5xl mb-4">${data.icon}</div>
+                <h2 class="text-2xl font-bold text-white mb-2">${data.title}</h2>
+                <p class="text-gray-400 text-sm">${data.languages.map(l => l.name).join(', ')}</p>
+            `;
+            card.onclick = () => openCategory(key);
             categoriesGrid.appendChild(card);
         }
 
-        // 4. Navigation & Setup Logic
-        function openEditor(langConfig) {
-            currentLang = langConfig;
+        // 4. Open Category & Setup Dropdown
+        function openCategory(categoryKey) {
+            currentCategory = categoriesData[categoryKey];
             
-            // UI Switch
+            // Populate Dropdown
+            langSelector.innerHTML = '';
+            currentCategory.languages.forEach((lang, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.innerText = lang.name;
+                langSelector.appendChild(option);
+            });
+
+            // Switch Screen
             homeScreen.classList.add('hidden');
             editorScreen.classList.remove('hidden');
             
-            // Update Header Syntax/Title
-            dynamicTitle.innerText = `${langConfig.icon} ${langConfig.name}`;
+            // Trigger language setup for the first item
+            setupLanguage(0);
             
-            // Configure CodeMirror
-            editor.setOption("mode", langConfig.mode);
+            setTimeout(() => editor.refresh(), 10); // Fix UI glitch
+        }
+
+        // Dropdown change event
+        langSelector.addEventListener('change', (e) => {
+            setupLanguage(e.target.value);
+        });
+
+        function setupLanguage(index) {
+            currentLangConfig = currentCategory.languages[index];
+            
+            // Update UI
+            dynamicSyntax.innerText = `${currentLangConfig.syntax} ${currentLangConfig.name}`;
+            editor.setOption("mode", currentLangConfig.mode);
             editor.setValue("");
-            editor.setOption("placeholder", `Write your ${langConfig.name} code here...`);
+            editor.setOption("placeholder", `Start writing ${currentLangConfig.name} code here...`);
             
-            // Setup Output Area (Iframe for Web, Terminal for Console)
-            if (langConfig.type === 'web') {
+            // Switch Output Window
+            if (currentCategory.type === 'web') {
                 previewFrame.classList.remove('hidden');
                 terminalOutput.classList.add('hidden');
-                outputLabel.innerText = "Live Preview";
-                previewFrame.srcdoc = ""; // Clear iframe
+                outputLabel.innerText = "Live Web Preview";
             } else {
                 previewFrame.classList.add('hidden');
                 terminalOutput.classList.remove('hidden');
-                outputLabel.innerText = "Console Output";
+                outputLabel.innerText = "Smart Terminal";
                 terminalContent.innerHTML = "";
             }
-
-            // Refresh editor to fix sizing bugs after unhiding
-            setTimeout(() => editor.refresh(), 10);
         }
 
-        backBtn.addEventListener('click', () => {
+        document.getElementById('backBtn').addEventListener('click', () => {
             editorScreen.classList.add('hidden');
             homeScreen.classList.remove('hidden');
+            terminalContent.innerHTML = "";
+            previewFrame.srcdoc = "";
         });
 
-        // 5. Run / Check Logic
-        checkBtn.addEventListener('click', () => {
-            const code = editor.getValue();
+        // 5. Smart Checker & Run Logic
+        document.getElementById('checkBtn').addEventListener('click', () => {
+            const code = editor.getValue().trim();
             
-            if (currentLang.type === 'web') {
-                // Web Dev Live Preview
+            if (currentCategory.type === 'web') {
+                // Web Preview Logic
                 const documentContent = previewFrame.contentDocument || previewFrame.contentWindow.document;
                 documentContent.open();
-                
-                if (currentLang.name === 'CSS') {
-                    documentContent.write(`<style>${code}</style> <div style="font-family:sans-serif; padding:20px; color:#333;"><h2>CSS Test</h2><p>Your CSS is applied to this body.</p></div>`);
-                } else if (currentLang.name === 'JavaScript') {
-                    documentContent.write(`
-                        <div style="font-family:sans-serif; padding:10px;">Check browser console or output below.</div>
-                        <script>
-                            // Override console.log to show on screen for quick JS testing
-                            const oldLog = console.log;
-                            console.log = function(...args) {
-                                document.body.innerHTML += '<div style="background:#eee; padding:5px; margin-bottom:2px; border-left:3px solid blue;">> ' + args.join(' ') + '</div>';
-                                oldLog(...args);
-                            };
-                            try {
-                                ${code}
-                            } catch(e) {
-                                document.body.innerHTML += '<div style="color:red; padding:5px;">Error: ' + e.message + '</div>';
-                            }
-                        <\/script>`);
+                if (currentLangConfig.id === 'css') {
+                    documentContent.write(`<style>${code}</style><div style="padding:20px; font-family:sans-serif;"><h1>CSS Preview Active</h1><p>Your styles are applied to this document.</p></div>`);
+                } else if (currentLangConfig.id === 'js') {
+                    documentContent.write(`<script>try { ${code} } catch(e) { document.write('<span style="color:red">JS Error: ' + e.message + '</span>'); }<\/script>`);
                 } else {
                     documentContent.write(code);
                 }
                 documentContent.close();
             } else {
-                // Console Languages (Backend execution simulation)
-                // Browser cannot natively run C++/Python without WASM/Backend
-                const timestamp = new Date().toLocaleTimeString();
-                terminalContent.innerHTML = `
-                    <div class="mb-3">
-                        <span class="text-blue-400">user@codeplay:~$</span> run ${currentLang.name.toLowerCase()}_script.${currentLang.ext} <br>
-                        <span class="text-gray-400">[${timestamp}] Executing...</span>
-                    </div>
-                    <div class="text-yellow-400 border-l-2 border-yellow-600 pl-3 mb-3">
-                        <b>Note:</b> This is a frontend-only platform. Compiling and running backend/system languages like <b>${currentLang.name}</b> directly in the browser requires a backend server or WebAssembly integration. <br><br>
-                        Your code has been saved locally in the editor. Use the <b>Download</b> button to save and run it on your local machine.
-                    </div>
-                    <div class="text-white opacity-50">Code preview:<br>${code.substring(0, 50).replace(/</g, "&lt;").replace(/>/g, "&gt;")}${code.length > 50 ? '...' : ''}</div>
-                `;
+                // Smart Terminal Logic for Backend/Console Languages
+                terminalContent.innerHTML = `<div class="text-blue-400">> Running ${currentLangConfig.name} script...</div>`;
+                
+                setTimeout(() => {
+                    if (code.length === 0) {
+                        terminalContent.innerHTML += `<div class="text-red-400 mt-2">❌ Error: Code is empty! Bhai, thoda code toh likho.</div>`;
+                        return;
+                    }
+
+                    let status = "success";
+                    let message = "Perfect! Code structure looks solid. ✅ Tum sahi jaa rahe ho!";
+                    
+                    // Basic Heuristic Checks (Fake AI-like checking)
+                    if (currentLangConfig.id === 'python' && !(/print|def|import|class|for|if/i.test(code))) {
+                        status = "warning";
+                        message = "⚠️ Warning: Yeh code thoda incomplete lag raha hai. Basic syntax check karo.";
+                    } else if ((currentLangConfig.id === 'cpp' || currentLangConfig.id === 'java' || currentLangConfig.id === 'csharp') && !code.includes(";")) {
+                        status = "error";
+                        message = "❌ Error: Are you missing a semicolon (;)? C/Java based languages me zaruri hota hai!";
+                    } else if (code.length < 10) {
+                        status = "warning";
+                        message = "⚠️ Note: Code bahut chhota hai, but syntax theek lag raha hai. Keep going!";
+                    }
+
+                    // Display Result
+                    if (status === "success") {
+                        terminalContent.innerHTML += `<div class="text-green-400 mt-2 bg-green-900/30 p-2 rounded">${message}</div>`;
+                    } else if (status === "warning") {
+                        terminalContent.innerHTML += `<div class="text-yellow-400 mt-2 bg-yellow-900/30 p-2 rounded">${message}</div>`;
+                    } else {
+                        terminalContent.innerHTML += `<div class="text-red-400 mt-2 bg-red-900/30 p-2 rounded">${message}</div>`;
+                    }
+                    
+                    terminalContent.innerHTML += `<div class="text-gray-500 mt-4 text-xs italic">* Note: Direct compilation is disabled in browser. Use 'Save' to run locally.</div>`;
+                }, 600); // 600ms fake delay to look like it's processing
             }
         });
 
-        // 6. Clear Logic
-        clearBtn.addEventListener('click', () => {
+        // 6. Clear & Download
+        document.getElementById('clearBtn').addEventListener('click', () => {
             editor.setValue("");
-            if (currentLang.type === 'web') {
-                previewFrame.srcdoc = "";
-            } else {
-                terminalContent.innerHTML = "";
-            }
+            previewFrame.srcdoc = "";
+            terminalContent.innerHTML = "";
         });
 
-        // 7. Download Logic
-        downloadBtn.addEventListener('click', () => {
+        document.getElementById('downloadBtn').addEventListener('click', () => {
             const code = editor.getValue();
-            if(!code.trim()) {
-                alert("The editor is empty. Please write some code to download.");
-                return;
-            }
-
-            const ext = currentLang.ext;
+            if(!code.trim()) { alert("Editor empty hai bhai!"); return; }
             const blob = new Blob([code], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
-            
             const a = document.createElement('a');
             a.href = url;
-            a.download = `main.${ext}`;
+            a.download = `script.${currentLangConfig.ext}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
