@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web IDE - Online Code Editor</title>
+    <title>Pro Web IDE - VS Code x CodePen</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,300 +13,428 @@
                     colors: {
                         vsbg: '#1e1e1e',
                         vsnav: '#252526',
-                        vsborder: '#333333',
-                        vspanel: '#2d2d2d'
+                        vsborder: '#3c3c3c',
+                        vspanel: '#2d2d2d',
+                        vshover: '#2a2d2e',
+                        vsaccent: '#007acc'
                     }
                 }
             }
         }
     </script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/lint/lint.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jshint/2.13.6/jshint.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/display/placeholder.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/lint/lint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/lint/javascript-lint.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/vscode-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/lint.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/display/placeholder.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/lint/javascript-lint.min.js"></script>
 
     <style>
-        /* Custom Editor Height Override */
-        .CodeMirror {
-            height: 100% !important;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 15px;
-            background-color: #1e1e1e !important;
-        }
-        .CodeMirror-empty.CodeMirror-focused { 
-            outline: none; 
-        }
-        .CodeMirror pre.CodeMirror-placeholder { 
-            color: #6b7280; 
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e1e1e;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4b5563;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* CodeMirror Customization */
+        .CodeMirror { height: 100% !important; font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px; background-color: #1e1e1e !important; }
+        .CodeMirror-gutters { background-color: #1e1e1e; border-right: 1px solid #3c3c3c; }
+        .CodeMirror pre.CodeMirror-placeholder { color: #6b7280; }
+        
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: #1e1e1e; }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 5px; border: 2px solid #1e1e1e; }
+        ::-webkit-scrollbar-thumb:hover { background: #4f4f4f; }
+
+        /* Splitter Setup */
+        .gutter { background-color: #3c3c3c; cursor: col-resize; width: 4px; transition: background 0.2s; }
+        .gutter:hover { background-color: #007acc; }
+
+        /* Mobile Preview Frame */
+        .preview-mobile { width: 375px !important; height: 667px !important; margin: auto; border: 12px solid #2d2d2d; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: white; }
+        .preview-desktop { width: 100%; height: 100%; background: white; }
     </style>
 </head>
-<body class="bg-vsbg text-gray-300 h-screen w-screen overflow-hidden flex flex-col font-sans">
+<body class="bg-vsbg text-gray-300 h-screen w-screen overflow-hidden flex flex-col">
 
-    <nav class="bg-vsnav border-b border-vsborder h-14 flex items-center justify-between px-4 shrink-0 shadow-md">
-        <div class="flex items-center space-x-4">
-            <h1 class="text-white font-bold text-lg tracking-wide flex items-center gap-2">
-                <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
-                Web IDE
-            </h1>
+    <nav class="bg-vsnav border-b border-vsborder h-12 flex items-center justify-between px-4 shrink-0 select-none">
+        <div class="flex items-center gap-4">
+            <div class="text-vsaccent font-bold text-lg flex items-center gap-2">
+                <i class="fa-solid fa-code"></i> Pro IDE
+            </div>
             
-            <div class="border-l border-gray-600 h-6 mx-2"></div>
-            
-            <select id="languageSelector" class="bg-vspanel text-sm text-gray-200 rounded border border-vsborder px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors">
-                <option value="html">HTML</option>
-                <option value="css">CSS</option>
-                <option value="javascript">JavaScript</option>
-            </select>
+            <div class="flex items-center gap-2 ml-4">
+                <label for="fileUpload" class="cursor-pointer text-sm hover:text-white px-2 py-1 rounded hover:bg-vshover transition" title="Upload Files (Drag & Drop also works)">
+                    <i class="fa-solid fa-upload mr-1"></i> Upload
+                </label>
+                <input type="file" id="fileUpload" multiple accept=".html,.css,.js" class="hidden">
+                
+                <button id="downloadBtn" class="text-sm hover:text-white px-2 py-1 rounded hover:bg-vshover transition">
+                    <i class="fa-solid fa-download mr-1"></i> Download File
+                </button>
+            </div>
         </div>
 
-        <div class="flex items-center space-x-3">
-            <button id="runBtn" class="bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded text-sm font-medium transition-colors flex items-center gap-1 shadow-sm">
-                ▶ Run
+        <div class="flex items-center gap-3 text-sm">
+            <label class="flex items-center gap-2 cursor-pointer hover:text-white">
+                <input type="checkbox" id="autoRunToggle" class="accent-vsaccent" checked> Auto-Run
+            </label>
+            <div class="w-px h-4 bg-vsborder mx-2"></div>
+            <button id="clearBtn" class="hover:text-red-400 px-3 py-1 rounded hover:bg-vshover transition">
+                <i class="fa-solid fa-trash mr-1"></i> Clear All
             </button>
-            <button id="clearBtn" class="bg-vsborder hover:bg-gray-600 text-gray-300 px-4 py-1.5 rounded text-sm font-medium transition-colors">
-                Clear
-            </button>
-            <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded text-sm font-medium transition-colors flex items-center gap-1 shadow-sm">
-                ↓ Download
+            <button id="runBtn" class="bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded flex items-center gap-2 shadow-lg transition transform hover:scale-105">
+                <i class="fa-solid fa-play text-xs"></i> Run Code
             </button>
         </div>
     </nav>
 
-    <main class="flex flex-1 overflow-hidden">
+    <div class="flex flex-1 overflow-hidden" id="main-split">
         
-        <section class="w-1/2 flex flex-col border-r border-vsborder relative">
+        <div class="w-1/2 flex flex-col border-r border-vsborder relative" id="dragDropZone">
             
-            <div class="bg-vspanel border-b border-vsborder p-2 flex items-center justify-between text-xs text-gray-400 shrink-0">
-                <div class="flex items-center space-x-2">
-                    <label for="fileUpload" class="cursor-pointer bg-vsbg border border-vsborder hover:bg-vsborder px-3 py-1 rounded transition-colors text-gray-200">
-                        + Upload Project Files
-                    </label>
-                    <input type="file" id="fileUpload" multiple accept=".html,.css,.js" class="hidden">
-                    <span id="uploadStatus" class="italic hidden">Files loaded. Click Run!</span>
-                </div>
-                <div class="flex items-center">
-                    <span class="bg-yellow-600/20 text-yellow-500 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">JSHint Active</span>
-                </div>
+            <div id="dropOverlay" class="absolute inset-0 bg-blue-500/10 border-2 border-dashed border-vsaccent z-50 hidden flex-col items-center justify-center backdrop-blur-sm">
+                <i class="fa-solid fa-file-arrow-up text-5xl text-vsaccent mb-4"></i>
+                <p class="text-xl text-white font-semibold">Drop files here to upload</p>
+                <p class="text-sm text-gray-400">.html, .css, .js supported</p>
             </div>
 
-            <div class="flex-1 relative bg-vsbg">
+            <div class="bg-vspanel flex overflow-x-auto custom-scrollbar shrink-0 border-b border-vsborder" id="fileTabs">
+                </div>
+
+            <div class="flex-1 relative">
                 <textarea id="editor"></textarea>
             </div>
-        </section>
+        </div>
 
-        <section class="w-1/2 flex flex-col bg-white">
-            <div class="bg-gray-100 border-b border-gray-300 h-8 flex items-center px-4 text-xs text-gray-500 font-mono shadow-sm z-10 shrink-0 flex justify-between">
-                <span>Preview Output</span>
-                <span class="flex space-x-1">
-                    <span class="w-3 h-3 rounded-full bg-red-400"></span>
-                    <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
-                    <span class="w-3 h-3 rounded-full bg-green-400"></span>
-                </span>
+        <div class="w-1/2 flex flex-col bg-gray-900 relative">
+            
+            <div class="bg-vspanel border-b border-vsborder h-10 flex items-center justify-between px-3 text-xs shrink-0 select-none">
+                <div class="flex items-center gap-3">
+                    <span class="text-gray-400 uppercase tracking-wide font-semibold"><i class="fa-brands fa-chrome mr-1"></i> Live Preview</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button id="mobileToggle" class="text-gray-400 hover:text-white p-1 rounded hover:bg-vshover transition" title="Toggle Mobile View">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                    </button>
+                    <button id="consoleToggle" class="text-gray-400 hover:text-white p-1 rounded hover:bg-vshover transition" title="Toggle Console">
+                        <i class="fa-solid fa-terminal"></i> Console
+                    </button>
+                </div>
             </div>
-            <iframe id="previewFrame" class="flex-1 w-full border-none bg-white"></iframe>
-        </section>
-    </main>
+            
+            <div class="flex-1 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-[#0f0f0f] flex items-center justify-center p-2 overflow-auto" id="previewContainer">
+                <iframe id="previewFrame" class="preview-desktop transition-all duration-300"></iframe>
+            </div>
+
+            <div id="consolePanel" class="h-1/3 bg-vsbg border-t border-vsborder hidden flex-col font-mono text-sm shadow-inner">
+                <div class="bg-vspanel px-3 py-1 flex justify-between items-center text-xs text-gray-400 border-b border-vsborder shrink-0">
+                    <span><i class="fa-solid fa-terminal mr-1"></i> Console</span>
+                    <button id="clearConsoleBtn" class="hover:text-white"><i class="fa-solid fa-ban"></i></button>
+                </div>
+                <div id="consoleLogs" class="p-3 overflow-y-auto flex-1 text-gray-300 space-y-1">
+                    </div>
+            </div>
+
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
-            const editorTextarea = document.getElementById('editor');
-            const languageSelector = document.getElementById('languageSelector');
-            const runBtn = document.getElementById('runBtn');
-            const clearBtn = document.getElementById('clearBtn');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const fileUpload = document.getElementById('fileUpload');
-            const previewFrame = document.getElementById('previewFrame');
-            const uploadStatus = document.getElementById('uploadStatus');
-
-            // Store uploaded multi-file contents
-            let projectFiles = { html: '', css: '', js: '' };
-
-            // CodeMirror Configuration Mapping
-            const modes = {
-                'html': { mode: 'htmlmixed', placeholder: '' },
-                'css': { mode: 'css', placeholder: '/* Write your CSS here... */' },
-                'javascript': { mode: 'javascript', placeholder: '// Write your JavaScript here...\n// Syntax errors will be underlined.' }
+            
+            // --- STATE MANAGEMENT ---
+            let files = {
+                'index.html': '\n<h1>Hello Pro IDE!</h1>\n<p>Start editing to see magic.</p>',
+                'style.css': '/* Style your app here */\nh1 {\n  color: #007acc;\n  font-family: sans-serif;\n}',
+                'script.js': '// JavaScript Logic\nconsole.log("Welcome to Pro IDE Console!");\n'
+            };
+            let activeFile = 'index.html';
+            
+            // CodeMirror modes setup
+            const cmModes = {
+                'html': { mode: 'htmlmixed', hint: '' },
+                'css': { mode: 'css', hint: '/* Write your CSS... */' },
+                'js': { mode: 'javascript', hint: '// Write JS (errors will be underlined)...' }
             };
 
-            // Initialize CodeMirror
+            // --- DOM ELEMENTS ---
+            const editorTextarea = document.getElementById('editor');
+            const fileTabsContainer = document.getElementById('fileTabs');
+            const previewFrame = document.getElementById('previewFrame');
+            const previewContainer = document.getElementById('previewContainer');
+            const consoleLogs = document.getElementById('consoleLogs');
+            const dropOverlay = document.getElementById('dropOverlay');
+            
+            // --- INITIALIZE CODEMIRROR ---
             const editor = CodeMirror.fromTextArea(editorTextarea, {
                 lineNumbers: true,
-                theme: 'dracula',
-                mode: modes['html'].mode,
-                placeholder: modes['html'].placeholder,
+                theme: 'vscode-dark',
                 indentUnit: 4,
-                matchBrackets: true,
                 autoCloseTags: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
                 lint: true,
-                gutters: ["CodeMirror-lint-markers"]
+                gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers"]
             });
 
-            // 1. Language Selector Logic
-            languageSelector.addEventListener('change', (e) => {
-                const lang = e.target.value;
-                const config = modes[lang];
-                
-                // Update CodeMirror Mode and Placeholder
-                editor.setOption('mode', config.mode);
-                editor.setOption('placeholder', config.placeholder);
-                
-                // Enable/Disable Linting based on language
-                editor.setOption('lint', lang === 'javascript');
-            });
-
-            // 2. Run / Render Logic
-            const renderPreview = () => {
-                const currentCode = editor.getValue();
-                const currentLang = languageSelector.value;
-                let finalHTML = '';
-
-                // If user uploaded files, prioritize combining them, overriding with current editor content based on selected tab
-                if (projectFiles.html || projectFiles.css || projectFiles.js) {
-                    let h = currentLang === 'html' ? currentCode : projectFiles.html;
-                    let c = currentLang === 'css' ? currentCode : projectFiles.css;
-                    let j = currentLang === 'javascript' ? currentCode : projectFiles.js;
-                    
-                    finalHTML = `
-                        <!DOCTYPE html>
-                        <html>
-                            <head>
-                                <style>${c}</style>
-                            </head>
-                            <body>
-                                ${h}
-                                <script>${j}<\/script>
-                            </body>
-                        </html>
-                    `;
-                } 
-                // Normal Single File Mode
-                else {
-                    if (currentLang === 'html') {
-                        finalHTML = currentCode;
-                    } else if (currentLang === 'css') {
-                        finalHTML = `
-                            <!DOCTYPE html>
-                            <html>
-                            <head><style>${currentCode}</style></head>
-                            <body style="font-family: sans-serif; padding: 20px;">
-                                <h2>CSS Live Preview</h2>
-                                <p>This is standard HTML to showcase your CSS rules.</p>
-                                <button class="btn">Test Button</button>
-                                <div class="box">Test Box</div>
-                            </body>
-                            </html>
-                        `;
-                    } else if (currentLang === 'javascript') {
-                        finalHTML = `
-                            <!DOCTYPE html>
-                            <html>
-                            <head></head>
-                            <body style="font-family: sans-serif; padding: 20px;">
-                                <h2>JavaScript Live Preview</h2>
-                                <p>Check the browser console (F12) for console.log outputs.</p>
-                                <div id="app"></div>
-                                <script>
-                                    try {
-                                        ${currentCode}
-                                    } catch (e) {
-                                        document.body.innerHTML += '<p style="color:red;">Error: ' + e.message + '</p>';
-                                    }
-                                <\/script>
-                            </body>
-                            </html>
-                        `;
-                    }
+            // Handle Editor Changes
+            editor.on('change', () => {
+                files[activeFile] = editor.getValue();
+                if(document.getElementById('autoRunToggle').checked) {
+                    renderPreview();
                 }
+            });
 
-                // Inject into iframe using srcdoc for security and performance
-                previewFrame.srcdoc = finalHTML;
-            };
+            // --- TABS SYSTEM ---
+            function getExtension(filename) {
+                return filename.split('.').pop().toLowerCase();
+            }
 
-            runBtn.addEventListener('click', renderPreview);
+            function renderTabs() {
+                fileTabsContainer.innerHTML = '';
+                Object.keys(files).forEach(filename => {
+                    const ext = getExtension(filename);
+                    let icon = 'fa-file';
+                    let color = 'text-gray-400';
+                    
+                    if(ext === 'html') { icon = 'fa-html5 text-orange-500'; }
+                    else if(ext === 'css') { icon = 'fa-css3-alt text-blue-400'; }
+                    else if(ext === 'js') { icon = 'fa-js text-yellow-400'; }
 
-            // 3. Multi-file Project Upload Logic
-            fileUpload.addEventListener('change', (e) => {
-                const files = e.target.files;
-                if (files.length === 0) return;
-
-                projectFiles = { html: '', css: '', js: '' };
-                let filesProcessed = 0;
-
-                Array.from(files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const content = event.target.result;
-                        if (file.name.endsWith('.html')) projectFiles.html += content + '\n';
-                        else if (file.name.endsWith('.css')) projectFiles.css += content + '\n';
-                        else if (file.name.endsWith('.js')) projectFiles.js += content + '\n';
-
-                        filesProcessed++;
-                        if (filesProcessed === files.length) {
-                            uploadStatus.classList.remove('hidden');
-                            setTimeout(() => uploadStatus.classList.add('hidden'), 3000);
-                            renderPreview(); // Auto-run after upload
-                        }
-                    };
-                    reader.readAsText(file);
+                    const isActive = filename === activeFile;
+                    
+                    const tab = document.createElement('div');
+                    tab.className = `flex items-center gap-2 px-4 py-2 cursor-pointer border-r border-vsborder transition-colors text-sm ${isActive ? 'bg-vsbg text-white border-t-2 border-t-vsaccent' : 'bg-vspanel text-gray-400 hover:bg-vshover border-t-2 border-t-transparent'}`;
+                    tab.innerHTML = `<i class="fa-brands ${icon}"></i> ${filename}`;
+                    
+                    tab.onclick = () => switchFile(filename);
+                    fileTabsContainer.appendChild(tab);
                 });
+            }
+
+            function switchFile(filename) {
+                activeFile = filename;
+                renderTabs();
+                
+                // Set CodeMirror Content silently (without triggering auto-run unnecessarily)
+                editor.setValue(files[filename] || '');
+                
+                // Update Syntax Highlighting Mode
+                const ext = getExtension(filename);
+                const config = cmModes[ext] || { mode: 'text/plain', hint: '' };
+                editor.setOption('mode', config.mode);
+                editor.setOption('placeholder', config.hint);
+                
+                // Enable JS Linting only for JS files
+                editor.setOption('lint', ext === 'js');
+                
+                // Timeout needed to refresh editor rendering
+                setTimeout(() => editor.refresh(), 10);
+            }
+
+            // --- PREVIEW & CONSOLE LOGIC ---
+            function renderPreview() {
+                let html = files['index.html'] || '';
+                let css = files['style.css'] || '';
+                let js = files['script.js'] || '';
+
+                // Combine them properly
+                const finalHTML = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>${css}</style>
+                        <script>
+                            // Catch Console Logs and send to parent
+                            const originalConsoleLog = console.log;
+                            const originalConsoleError = console.error;
+                            
+                            console.log = function(...args) {
+                                window.parent.postMessage({ type: 'console', method: 'log', data: args }, '*');
+                                originalConsoleLog.apply(console, args);
+                            };
+                            
+                            console.error = function(...args) {
+                                window.parent.postMessage({ type: 'console', method: 'error', data: args }, '*');
+                                originalConsoleError.apply(console, args);
+                            };
+
+                            // Catch syntax errors
+                            window.onerror = function(message, source, lineno, colno, error) {
+                                window.parent.postMessage({ type: 'console', method: 'error', data: [message] }, '*');
+                            };
+                        <\/script>
+                    </head>
+                    <body>
+                        ${html}
+                        <script>
+                            try {
+                                ${js}
+                            } catch(e) {
+                                console.error(e.message);
+                            }
+                        <\/script>
+                    </body>
+                    </html>
+                `;
+
+                previewFrame.srcdoc = finalHTML;
+            }
+
+            // Receive console logs from Iframe
+            window.addEventListener('message', (e) => {
+                if(e.data && e.data.type === 'console') {
+                    const dataString = e.data.data.map(item => 
+                        typeof item === 'object' ? JSON.stringify(item) : item
+                    ).join(' ');
+                    
+                    const logEl = document.createElement('div');
+                    logEl.className = e.data.method === 'error' ? 'text-red-400 bg-red-400/10 p-1 rounded' : 'border-b border-gray-800 pb-1';
+                    logEl.innerText = `> ${dataString}`;
+                    consoleLogs.appendChild(logEl);
+                    consoleLogs.scrollTop = consoleLogs.scrollHeight;
+                }
             });
 
-            // 4. Clear Logic
-            clearBtn.addEventListener('click', () => {
-                editor.setValue('');
-                previewFrame.srcdoc = '';
-                projectFiles = { html: '', css: '', js: '' };
-                fileUpload.value = '';
+            // --- UI CONTROLS ---
+            document.getElementById('runBtn').addEventListener('click', () => {
+                document.getElementById('consoleLogs').innerHTML = ''; // Clear console on manual run
+                renderPreview();
             });
 
-            // 5. Download Logic
-            downloadBtn.addEventListener('click', () => {
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                if(confirm('Are you sure you want to clear all files?')) {
+                    files = { 'index.html': '', 'style.css': '', 'script.js': '' };
+                    switchFile('index.html');
+                    renderPreview();
+                    document.getElementById('consoleLogs').innerHTML = '';
+                }
+            });
+
+            document.getElementById('clearConsoleBtn').addEventListener('click', () => {
+                document.getElementById('consoleLogs').innerHTML = '';
+            });
+
+            // Mobile Toggle
+            document.getElementById('mobileToggle').addEventListener('click', (e) => {
+                const isMobile = previewFrame.classList.contains('preview-mobile');
+                if(isMobile) {
+                    previewFrame.className = 'preview-desktop transition-all duration-300';
+                    e.currentTarget.innerHTML = '<i class="fa-solid fa-mobile-screen"></i>';
+                    e.currentTarget.classList.remove('text-blue-400');
+                } else {
+                    previewFrame.className = 'preview-mobile transition-all duration-300';
+                    e.currentTarget.innerHTML = '<i class="fa-solid fa-desktop"></i>';
+                    e.currentTarget.classList.add('text-blue-400');
+                }
+            });
+
+            // Console Toggle
+            document.getElementById('consoleToggle').addEventListener('click', (e) => {
+                const panel = document.getElementById('consolePanel');
+                if(panel.classList.contains('hidden')) {
+                    panel.classList.remove('hidden');
+                    panel.classList.add('flex');
+                    e.currentTarget.classList.add('text-blue-400');
+                } else {
+                    panel.classList.add('hidden');
+                    panel.classList.remove('flex');
+                    e.currentTarget.classList.remove('text-blue-400');
+                }
+            });
+
+            // --- DOWNLOAD FEATURE ---
+            document.getElementById('downloadBtn').addEventListener('click', () => {
                 const code = editor.getValue();
-                if (!code) return alert("Editor is empty!");
-
-                const ext = languageSelector.value === 'javascript' ? 'js' : languageSelector.value;
+                if(!code) return alert("File is empty!");
+                
                 const blob = new Blob([code], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
-                
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `script.${ext}`;
+                a.download = activeFile;
                 document.body.appendChild(a);
                 a.click();
-                
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             });
 
-            // Initial focus
-            editor.focus();
+            // --- MULTI-FILE UPLOAD & DRAG/DROP ---
+            function handleFiles(uploadedFiles) {
+                if (uploadedFiles.length === 0) return;
+                
+                let processed = 0;
+                Array.from(uploadedFiles).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const name = file.name;
+                        const ext = getExtension(name);
+                        
+                        // Overwrite standard files or add new ones
+                        if(['html', 'css', 'js'].includes(ext)) {
+                            // If they upload "something.html", we map it to index.html for simplicity in this 3-file system
+                            if(ext === 'html') files['index.html'] = event.target.result;
+                            if(ext === 'css') files['style.css'] = event.target.result;
+                            if(ext === 'js') files['script.js'] = event.target.result;
+                        }
+                        
+                        processed++;
+                        if(processed === uploadedFiles.length) {
+                            switchFile(activeFile); // refresh current view
+                            if(document.getElementById('autoRunToggle').checked) renderPreview();
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+            }
+
+            // Input element upload
+            document.getElementById('fileUpload').addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+                e.target.value = ''; // reset
+            });
+
+            // Drag and Drop Logic
+            const dragZone = document.body;
+            dragZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropOverlay.classList.remove('hidden');
+                dropOverlay.classList.add('flex');
+            });
+
+            dragZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                // Prevent flicker when dragging over children
+                if (!e.relatedTarget || !dragZone.contains(e.relatedTarget)) {
+                    dropOverlay.classList.add('hidden');
+                    dropOverlay.classList.remove('flex');
+                }
+            });
+
+            dragZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropOverlay.classList.add('hidden');
+                dropOverlay.classList.remove('flex');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            // --- INIT CALL ---
+            switchFile('index.html');
+            renderPreview();
         });
     </script>
 </body>
