@@ -1,3023 +1,1168 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oath Gravity — AI Code Forge</title>
-
-<!-- CodeMirror Core -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material-darker.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/lint/lint.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldgutter.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/dialog/dialog.min.css">
-
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-<style>
-:root {
-  --bg-void: #020408;
-  --bg-deep: #060d14;
-  --bg-panel: #091520;
-  --bg-surface: #0d1e2e;
-  --bg-elevated: #122436;
-  --bg-hover: #1a3348;
-  --border: #1e3a52;
-  --border-bright: #2a5070;
-  --accent-primary: #00d4ff;
-  --accent-secondary: #ff6b35;
-  --accent-green: #00ff9d;
-  --accent-purple: #b57bff;
-  --accent-yellow: #ffd700;
-  --text-primary: #e8f4fd;
-  --text-secondary: #7fa8c4;
-  --text-muted: #3d6278;
-  --glow-blue: 0 0 20px rgba(0,212,255,0.3);
-  --glow-orange: 0 0 20px rgba(255,107,53,0.3);
-  --glow-green: 0 0 20px rgba(0,255,157,0.2);
-}
-
-* { margin:0; padding:0; box-sizing:border-box; }
-html,body { height:100%; overflow:hidden; }
-
-body {
-  font-family: 'Syne', sans-serif;
-  background: var(--bg-void);
-  color: var(--text-primary);
-}
-
-/* === SCROLLBAR === */
-::-webkit-scrollbar { width:6px; height:6px; }
-::-webkit-scrollbar-track { background: var(--bg-deep); }
-::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius:3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
-
-/* ========== HOME SCREEN ========== */
-#home-screen {
-  position: fixed; inset:0; z-index:100;
-  background: var(--bg-void);
-  display: flex; flex-direction:column;
-  overflow-y: auto;
-}
-
-.home-bg {
-  position: fixed; inset:0; pointer-events:none; z-index:0;
-  background:
-    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,212,255,0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(255,107,53,0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(181,123,255,0.03) 0%, transparent 70%);
-}
-
-.home-grid-bg {
-  position: fixed; inset:0; pointer-events:none; z-index:0;
-  background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-.home-content { position:relative; z-index:1; padding:48px 56px 80px; max-width:1400px; margin:0 auto; width:100%; }
-
-/* Logo / Header */
-.home-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:64px; }
-
-.logo-mark {
-  display:flex; align-items:center; gap:14px;
-}
-
-.logo-icon {
-  width:44px; height:44px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-purple));
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  display:flex; align-items:center; justify-content:center;
-  font-size:18px; animation: logoPulse 3s ease-in-out infinite;
-  position:relative;
-}
-
-@keyframes logoPulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(0,212,255,0); }
-}
-
-.logo-text-main {
-  font-size:22px; font-weight:800; letter-spacing:-0.5px;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-purple));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-
-.logo-text-sub {
-  font-size:10px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase;
-  font-family: 'Space Mono', monospace;
-}
-
-.home-tagline {
-  font-family: 'Space Mono', monospace;
-  font-size:11px; color:var(--text-muted); letter-spacing:2px;
-  border:1px solid var(--border); padding:6px 14px; border-radius:20px;
-  background: rgba(0,212,255,0.03);
-}
-
-/* Hero */
-.hero-section { text-align:center; margin-bottom:72px; }
-
-.hero-title {
-  font-size:clamp(42px,6vw,80px); font-weight:800; line-height:1.0;
-  letter-spacing:-3px; margin-bottom:20px;
-}
-
-.hero-title .line1 { display:block; color:var(--text-primary); }
-.hero-title .line2 {
-  display:block;
-  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-purple) 50%, var(--accent-secondary) 100%);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  animation: gradShift 4s ease infinite;
-  background-size: 200%;
-}
-
-@keyframes gradShift {
-  0% { background-position:0% 50%; }
-  50% { background-position:100% 50%; }
-  100% { background-position:0% 50%; }
-}
-
-.hero-sub {
-  font-size:15px; color:var(--text-secondary); max-width:520px; margin:0 auto 36px;
-  line-height:1.7; font-family:'JetBrains Mono', monospace; font-weight:300;
-}
-
-.hero-stats {
-  display:flex; gap:32px; justify-content:center; margin-bottom:16px;
-}
-
-.stat-badge {
-  font-family:'Space Mono',monospace; font-size:11px;
-  color:var(--accent-green); letter-spacing:1px;
-  display:flex; align-items:center; gap:6px;
-}
-
-.stat-dot {
-  width:6px; height:6px; border-radius:50%;
-  background:var(--accent-green);
-  animation: blink 1.5s ease-in-out infinite;
-}
-
-@keyframes blink {
-  0%,100% { opacity:1; }
-  50% { opacity:0.2; }
-}
-
-/* Section Grid */
-.section-label {
-  font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px;
-  color:var(--text-muted); text-transform:uppercase; margin-bottom:20px;
-  display:flex; align-items:center; gap:12px;
-}
-
-.section-label::after {
-  content:''; flex:1; height:1px; background:var(--border);
-}
-
-/* Category Cards */
-.categories-grid {
-  display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;
-  margin-bottom:48px;
-}
-
-.cat-card {
-  background: var(--bg-panel);
-  border:1px solid var(--border);
-  border-radius:16px; padding:28px;
-  cursor:pointer; transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
-  position:relative; overflow:hidden;
-  group: true;
-}
-
-.cat-card::before {
-  content:''; position:absolute; inset:0;
-  opacity:0; transition:opacity 0.3s;
-  border-radius:16px;
-}
-
-.cat-card.web::before { background: radial-gradient(ellipse at top left, rgba(0,212,255,0.08), transparent 60%); }
-.cat-card.app::before { background: radial-gradient(ellipse at top left, rgba(255,107,53,0.08), transparent 60%); }
-.cat-card.data::before { background: radial-gradient(ellipse at top left, rgba(0,255,157,0.08), transparent 60%); }
-.cat-card.ai::before { background: radial-gradient(ellipse at top left, rgba(181,123,255,0.08), transparent 60%); }
-.cat-card.devops::before { background: radial-gradient(ellipse at top left, rgba(255,215,0,0.08), transparent 60%); }
-.cat-card.general::before { background: radial-gradient(ellipse at top left, rgba(0,212,255,0.08), transparent 60%); }
-
-.cat-card:hover { transform:translateY(-4px); border-color:var(--border-bright); }
-.cat-card:hover::before { opacity:1; }
-.cat-card.web:hover { box-shadow: 0 8px 32px rgba(0,212,255,0.12); border-color:rgba(0,212,255,0.4); }
-.cat-card.app:hover { box-shadow: 0 8px 32px rgba(255,107,53,0.12); border-color:rgba(255,107,53,0.4); }
-.cat-card.data:hover { box-shadow: 0 8px 32px rgba(0,255,157,0.12); border-color:rgba(0,255,157,0.4); }
-.cat-card.ai:hover { box-shadow: 0 8px 32px rgba(181,123,255,0.12); border-color:rgba(181,123,255,0.4); }
-.cat-card.devops:hover { box-shadow: 0 8px 32px rgba(255,215,0,0.12); border-color:rgba(255,215,0,0.4); }
-
-.cat-icon {
-  font-size:32px; margin-bottom:16px; display:block;
-  filter: drop-shadow(0 0 8px currentColor);
-}
-
-.cat-title {
-  font-size:18px; font-weight:700; margin-bottom:6px; letter-spacing:-0.3px;
-}
-
-.cat-card.web .cat-title { color:var(--accent-primary); }
-.cat-card.app .cat-title { color:var(--accent-secondary); }
-.cat-card.data .cat-title { color:var(--accent-green); }
-.cat-card.ai .cat-title { color:var(--accent-purple); }
-.cat-card.devops .cat-title { color:var(--accent-yellow); }
-.cat-card.general .cat-title { color:var(--accent-primary); }
-
-.cat-desc { font-size:12px; color:var(--text-secondary); line-height:1.6; margin-bottom:16px; }
-
-.cat-langs {
-  display:flex; flex-wrap:wrap; gap:6px;
-}
-
-.lang-chip {
-  font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1px;
-  padding:3px 8px; border-radius:4px;
-  background:rgba(255,255,255,0.04); border:1px solid var(--border);
-  color:var(--text-muted); text-transform:uppercase;
-}
-
-.cat-arrow {
-  position:absolute; right:20px; top:20px;
-  font-size:16px; opacity:0; transform:translateX(-8px);
-  transition:all 0.3s;
-}
-
-.cat-card:hover .cat-arrow { opacity:1; transform:translateX(0); }
-.cat-card.web .cat-arrow { color:var(--accent-primary); }
-.cat-card.app .cat-arrow { color:var(--accent-secondary); }
-.cat-card.data .cat-arrow { color:var(--accent-green); }
-.cat-card.ai .cat-arrow { color:var(--accent-purple); }
-.cat-card.devops .cat-arrow { color:var(--accent-yellow); }
-
-/* Quick Actions */
-.quick-actions { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:48px; }
-
-.qa-card {
-  background:var(--bg-panel); border:1px solid var(--border); border-radius:12px;
-  padding:20px 24px; cursor:pointer; transition:all 0.25s;
-  display:flex; align-items:center; gap:16px;
-}
-
-.qa-card:hover { background:var(--bg-surface); border-color:var(--border-bright); transform:translateY(-2px); }
-
-.qa-icon { font-size:24px; }
-.qa-text-title { font-size:14px; font-weight:600; color:var(--text-primary); margin-bottom:3px; }
-.qa-text-sub { font-size:11px; color:var(--text-muted); font-family:'Space Mono',monospace; }
-
-/* Recent Files */
-.recent-section { margin-bottom:40px; }
-
-.recent-list { display:flex; flex-direction:column; gap:8px; }
-
-.recent-item {
-  background:var(--bg-panel); border:1px solid var(--border); border-radius:10px;
-  padding:12px 18px; display:flex; align-items:center; gap:14px;
-  cursor:pointer; transition:all 0.2s;
-}
-
-.recent-item:hover { background:var(--bg-surface); border-color:var(--border-bright); }
-
-.recent-ext {
-  font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
-  padding:4px 8px; border-radius:4px; min-width:36px; text-align:center;
-  letter-spacing:1px;
-}
-
-.ext-js { background:rgba(255,215,0,0.15); color:var(--accent-yellow); border:1px solid rgba(255,215,0,0.3); }
-.ext-py { background:rgba(0,212,255,0.1); color:var(--accent-primary); border:1px solid rgba(0,212,255,0.3); }
-.ext-html { background:rgba(255,107,53,0.1); color:var(--accent-secondary); border:1px solid rgba(255,107,53,0.3); }
-.ext-css { background:rgba(181,123,255,0.1); color:var(--accent-purple); border:1px solid rgba(181,123,255,0.3); }
-
-.recent-name { font-size:13px; font-weight:600; flex:1; }
-.recent-path { font-size:11px; color:var(--text-muted); font-family:'Space Mono',monospace; }
-.recent-time { font-size:10px; color:var(--text-muted); font-family:'Space Mono',monospace; }
-
-/* ========== EDITOR APP ========== */
-#editor-app {
-  display:none; flex-direction:column; height:100vh;
-  background:var(--bg-void);
-}
-
-/* Titlebar */
-.titlebar {
-  height:44px; background:var(--bg-deep);
-  border-bottom:1px solid var(--border);
-  display:flex; align-items:center;
-  padding:0 16px; gap:16px; flex-shrink:0;
-  position:relative; z-index:50;
-}
-
-.titlebar-logo {
-  display:flex; align-items:center; gap:8px; cursor:pointer;
-  text-decoration:none; flex-shrink:0;
-}
-
-.titlebar-logo-hex {
-  width:26px; height:26px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-purple));
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  display:flex; align-items:center; justify-content:center;
-  font-size:10px; font-weight:700;
-}
-
-.titlebar-logo-name {
-  font-size:13px; font-weight:700; letter-spacing:1px;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-purple));
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-}
-
-.home-btn {
-  display:flex; align-items:center; gap:6px;
-  background:none; border:1px solid var(--border);
-  color:var(--text-secondary); cursor:pointer;
-  padding:4px 10px; border-radius:6px; font-size:11px;
-  transition:all 0.2s; font-family:'Syne',sans-serif;
-}
-
-.home-btn:hover { border-color:var(--accent-primary); color:var(--accent-primary); }
-
-/* Tabs */
-.tabs-bar {
-  display:flex; align-items:center; gap:2px; flex:1;
-  overflow-x:auto; overflow-y:hidden;
-}
-
-.tab {
-  display:flex; align-items:center; gap:6px;
-  padding:0 14px; height:36px; border-radius:6px 6px 0 0;
-  cursor:pointer; transition:all 0.2s; flex-shrink:0;
-  border:1px solid transparent; border-bottom:none;
-  font-size:12px; color:var(--text-muted); position:relative;
-  font-family:'JetBrains Mono',monospace;
-}
-
-.tab:hover { color:var(--text-secondary); background:var(--bg-surface); }
-
-.tab.active {
-  background:var(--bg-panel); color:var(--text-primary);
-  border-color:var(--border); border-bottom-color:var(--bg-panel);
-}
-
-.tab.active::after {
-  content:''; position:absolute; bottom:-1px; left:0; right:0; height:1px;
-  background:var(--bg-panel);
-}
-
-.tab .tab-dot {
-  width:6px; height:6px; border-radius:50%;
-}
-
-.tab .tab-close {
-  width:14px; height:14px; border-radius:3px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:10px; opacity:0; transition:opacity 0.2s;
-  background:rgba(255,255,255,0.1);
-}
-
-.tab:hover .tab-close { opacity:1; }
-
-.add-tab-btn {
-  background:none; border:none; color:var(--text-muted);
-  cursor:pointer; padding:4px 8px; font-size:16px;
-  border-radius:4px; transition:all 0.2s;
-}
-
-.add-tab-btn:hover { color:var(--accent-primary); background:var(--bg-surface); }
-
-/* Titlebar right */
-.titlebar-right {
-  display:flex; align-items:center; gap:8px; flex-shrink:0;
-}
-
-.tb-btn {
-  background:none; border:1px solid var(--border);
-  color:var(--text-secondary); cursor:pointer;
-  padding:5px 12px; border-radius:6px; font-size:11px;
-  transition:all 0.2s; display:flex; align-items:center; gap:5px;
-  font-family:'Syne',sans-serif;
-}
-
-.tb-btn:hover { border-color:var(--border-bright); color:var(--text-primary); }
-.tb-btn.run { background:var(--accent-green); border-color:var(--accent-green); color:#000; font-weight:700; }
-.tb-btn.run:hover { box-shadow:var(--glow-green); }
-
-/* Main layout */
-.editor-main {
-  display:flex; flex:1; overflow:hidden;
-}
-
-/* Sidebar */
-.sidebar {
-  width:220px; flex-shrink:0;
-  background:var(--bg-deep); border-right:1px solid var(--border);
-  display:flex; flex-direction:column; overflow:hidden;
-  transition:width 0.3s;
-}
-
-.sidebar.collapsed { width:44px; }
-
-.sidebar-header {
-  height:36px; display:flex; align-items:center;
-  padding:0 12px; border-bottom:1px solid var(--border);
-  font-size:10px; letter-spacing:2px; color:var(--text-muted);
-  text-transform:uppercase; font-family:'Space Mono',monospace;
-  justify-content:space-between;
-}
-
-.sidebar-toggle {
-  background:none; border:none; color:var(--text-muted);
-  cursor:pointer; font-size:12px; padding:2px 4px;
-  transition:color 0.2s;
-}
-
-.sidebar-toggle:hover { color:var(--accent-primary); }
-
-.sidebar-section { padding:8px 0; border-bottom:1px solid var(--border); }
-
-.sidebar-section-title {
-  font-family:'Space Mono',monospace; font-size:9px;
-  letter-spacing:2px; color:var(--text-muted);
-  padding:4px 14px 6px; text-transform:uppercase;
-}
-
-.sidebar-item {
-  display:flex; align-items:center; gap:8px;
-  padding:7px 14px; cursor:pointer; transition:all 0.15s;
-  font-size:12px; color:var(--text-secondary);
-  font-family:'JetBrains Mono',monospace;
-  white-space:nowrap; overflow:hidden;
-}
-
-.sidebar-item:hover { background:var(--bg-hover); color:var(--text-primary); }
-.sidebar-item.active { background:var(--bg-surface); color:var(--accent-primary); }
-
-.sidebar-item .si-icon { font-size:14px; flex-shrink:0; width:16px; text-align:center; }
-
-/* Editor area */
-.editor-area {
-  flex:1; display:flex; flex-direction:column; overflow:hidden;
-  position:relative;
-}
-
-/* Toolbar */
-.editor-toolbar {
-  height:40px; background:var(--bg-panel);
-  border-bottom:1px solid var(--border);
-  display:flex; align-items:center; gap:4px;
-  padding:0 12px; flex-shrink:0; overflow-x:auto;
-}
-
-.tool-btn {
-  background:none; border:none; color:var(--text-muted);
-  cursor:pointer; padding:5px 8px; border-radius:5px;
-  font-size:11px; transition:all 0.2s; white-space:nowrap;
-  display:flex; align-items:center; gap:5px;
-  font-family:'Space Mono',monospace;
-}
-
-.tool-btn:hover { background:var(--bg-hover); color:var(--text-primary); }
-.tool-btn.active { background:var(--bg-surface); color:var(--accent-primary); }
-
-.tool-divider { width:1px; height:20px; background:var(--border); margin:0 4px; flex-shrink:0; }
-
-select.tool-select {
-  background:var(--bg-surface); border:1px solid var(--border);
-  color:var(--text-secondary); border-radius:5px;
-  padding:4px 8px; font-size:11px; cursor:pointer;
-  font-family:'Space Mono',monospace; outline:none;
-  transition:border-color 0.2s;
-}
-
-select.tool-select:hover { border-color:var(--accent-primary); }
-
-/* CodeMirror */
-.cm-wrapper { flex:1; overflow:hidden; position:relative; }
-
-.CodeMirror {
-  height:100% !important;
-  font-family:'JetBrains Mono', monospace !important;
-  font-size:13px !important;
-  line-height:1.7 !important;
-  background:var(--bg-panel) !important;
-  color:#c8d3db !important;
-}
-
-.CodeMirror-scroll { padding-bottom:40px; }
-.CodeMirror-gutters { background:var(--bg-deep) !important; border-right:1px solid var(--border) !important; }
-.CodeMirror-linenumber { color:var(--text-muted) !important; }
-.CodeMirror-cursor { border-color:var(--accent-primary) !important; }
-.CodeMirror-selected { background:rgba(0,212,255,0.12) !important; }
-.CodeMirror-activeline-background { background:rgba(255,255,255,0.02) !important; }
-
-/* Status Bar */
-.status-bar {
-  height:26px; background:var(--bg-deep); border-top:1px solid var(--border);
-  display:flex; align-items:center; padding:0 16px; gap:20px;
-  font-family:'Space Mono',monospace; font-size:10px; color:var(--text-muted);
-  flex-shrink:0; overflow:hidden;
-}
-
-.status-item { display:flex; align-items:center; gap:5px; white-space:nowrap; }
-.status-dot { width:5px; height:5px; border-radius:50%; }
-.status-dot.green { background:var(--accent-green); box-shadow:0 0 4px var(--accent-green); }
-.status-dot.orange { background:var(--accent-secondary); }
-.status-dot.blue { background:var(--accent-primary); }
-
-.status-spacer { flex:1; }
-
-.status-lang-badge {
-  padding:2px 8px; border-radius:3px; font-size:9px; font-weight:700;
-  background:rgba(0,212,255,0.1); color:var(--accent-primary);
-  border:1px solid rgba(0,212,255,0.2); letter-spacing:1px;
-}
-
-/* ========== RIGHT PANEL ========== */
-.right-panel {
-  width:360px; flex-shrink:0;
-  background:var(--bg-deep); border-left:1px solid var(--border);
-  display:flex; flex-direction:column; overflow:hidden;
-  transition:width 0.3s;
-}
-
-.right-panel.collapsed { width:0; overflow:hidden; }
-
-.panel-tabs {
-  display:flex; border-bottom:1px solid var(--border); flex-shrink:0;
-}
-
-.panel-tab {
-  flex:1; padding:10px 8px; text-align:center; cursor:pointer;
-  font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1px;
-  text-transform:uppercase; color:var(--text-muted); transition:all 0.2s;
-  border-bottom:2px solid transparent;
-}
-
-.panel-tab:hover { color:var(--text-secondary); }
-.panel-tab.active { color:var(--accent-primary); border-bottom-color:var(--accent-primary); background:rgba(0,212,255,0.04); }
-
-.panel-content { flex:1; overflow:hidden; display:flex; flex-direction:column; }
-
-.panel-section { display:none; flex-direction:column; height:100%; }
-.panel-section.active { display:flex; }
-
-/* AI Agent Section */
-.ai-panel { display:flex; flex-direction:column; height:100%; }
-
-.ai-agent-selector {
-  padding:12px 16px; border-bottom:1px solid var(--border); flex-shrink:0;
-}
-
-.agent-selector-label {
-  font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px;
-  color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;
-}
-
-.agent-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-
-.agent-card {
-  padding:10px; border-radius:8px; border:1px solid var(--border);
-  cursor:pointer; transition:all 0.2s; text-align:center;
-  background:var(--bg-panel);
-}
-
-.agent-card:hover { border-color:var(--border-bright); transform:translateY(-1px); }
-
-.agent-card.active.gemini { border-color:#4285f4; background:rgba(66,133,244,0.1); box-shadow:0 0 12px rgba(66,133,244,0.15); }
-.agent-card.active.groq { border-color:var(--accent-secondary); background:rgba(255,107,53,0.1); box-shadow:0 0 12px rgba(255,107,53,0.15); }
-.agent-card.active.n8n { border-color:var(--accent-green); background:rgba(0,255,157,0.1); box-shadow:0 0 12px rgba(0,255,157,0.15); }
-
-.agent-icon { font-size:20px; margin-bottom:4px; }
-.agent-name { font-size:10px; font-weight:700; letter-spacing:0.5px; }
-.agent-status { font-size:8px; margin-top:2px; font-family:'Space Mono',monospace; letter-spacing:1px; }
-
-.agent-card.gemini .agent-name { color:#4285f4; }
-.agent-card.groq .agent-name { color:var(--accent-secondary); }
-.agent-card.n8n .agent-name { color:var(--accent-green); }
-
-/* N8N Config */
-.n8n-config {
-  display:none; padding:12px 16px; border-bottom:1px solid var(--border);
-  background:rgba(0,255,157,0.03); flex-shrink:0;
-}
-
-.n8n-config.visible { display:block; }
-
-.n8n-config-title {
-  font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px;
-  color:var(--accent-green); text-transform:uppercase; margin-bottom:10px;
-  display:flex; align-items:center; gap:6px;
-}
-
-.n8n-input {
-  width:100%; background:var(--bg-surface); border:1px solid var(--border);
-  color:var(--text-primary); border-radius:6px; padding:8px 10px;
-  font-size:11px; font-family:'Space Mono',monospace; outline:none;
-  transition:border-color 0.2s; margin-bottom:6px;
-}
-
-.n8n-input:focus { border-color:var(--accent-green); }
-.n8n-input::placeholder { color:var(--text-muted); }
-
-.n8n-connect-btn {
-  width:100%; padding:8px; border-radius:6px;
-  background:rgba(0,255,157,0.1); border:1px solid rgba(0,255,157,0.3);
-  color:var(--accent-green); cursor:pointer; font-family:'Space Mono',monospace;
-  font-size:10px; letter-spacing:1px; text-transform:uppercase;
-  transition:all 0.2s;
-}
-
-.n8n-connect-btn:hover { background:rgba(0,255,157,0.2); }
-
-/* Model selector */
-.model-select-row {
-  padding:8px 16px; border-bottom:1px solid var(--border); flex-shrink:0;
-}
-
-select.model-picker {
-  width:100%; background:var(--bg-surface); border:1px solid var(--border);
-  color:var(--text-primary); border-radius:6px; padding:7px 10px;
-  font-size:11px; font-family:'Space Mono',monospace; outline:none;
-  transition:border-color 0.2s;
-}
-
-select.model-picker:hover { border-color:var(--border-bright); }
-
-/* Mode chips */
-.mode-chips {
-  padding:8px 16px; border-bottom:1px solid var(--border);
-  display:flex; gap:6px; flex-wrap:wrap; flex-shrink:0;
-}
-
-.mode-chip {
-  padding:4px 10px; border-radius:20px; font-size:10px;
-  font-family:'Space Mono',monospace; letter-spacing:0.5px;
-  cursor:pointer; border:1px solid var(--border);
-  color:var(--text-muted); transition:all 0.2s;
-}
-
-.mode-chip:hover { border-color:var(--border-bright); color:var(--text-secondary); }
-.mode-chip.active { border-color:var(--accent-primary); color:var(--accent-primary); background:rgba(0,212,255,0.08); }
-
-/* Chat messages */
-.ai-chat-messages {
-  flex:1; overflow-y:auto; padding:12px 16px;
-  display:flex; flex-direction:column; gap:12px;
-}
-
-.chat-msg {
-  border-radius:10px; padding:10px 12px; font-size:12px; line-height:1.6;
-  animation: msgIn 0.3s ease;
-}
-
-@keyframes msgIn {
-  from { opacity:0; transform:translateY(8px); }
-  to { opacity:1; transform:translateY(0); }
-}
-
-.chat-msg.user {
-  background:var(--bg-elevated); color:var(--text-primary);
-  border:1px solid var(--border); margin-left:20px;
-}
-
-.chat-msg.assistant {
-  background:rgba(0,212,255,0.06); color:var(--text-primary);
-  border:1px solid rgba(0,212,255,0.15); margin-right:20px;
-}
-
-.chat-msg.assistant.gemini { border-color:rgba(66,133,244,0.2); background:rgba(66,133,244,0.06); }
-.chat-msg.assistant.groq { border-color:rgba(255,107,53,0.2); background:rgba(255,107,53,0.06); }
-.chat-msg.assistant.n8n { border-color:rgba(0,255,157,0.2); background:rgba(0,255,157,0.06); }
-
-.chat-msg-header {
-  font-family:'Space Mono',monospace; font-size:9px;
-  letter-spacing:1px; margin-bottom:5px; opacity:0.6;
-  display:flex; align-items:center; gap:6px;
-}
-
-.chat-msg-agent-dot { width:5px; height:5px; border-radius:50%; }
-
-.chat-msg pre {
-  background:var(--bg-deep); border:1px solid var(--border);
-  border-radius:6px; padding:10px; margin-top:8px;
-  overflow-x:auto; font-size:11px; font-family:'JetBrains Mono',monospace;
-}
-
-.apply-btn {
-  margin-top:8px; padding:5px 12px; border-radius:5px;
-  background:rgba(0,212,255,0.1); border:1px solid rgba(0,212,255,0.3);
-  color:var(--accent-primary); cursor:pointer; font-size:10px;
-  font-family:'Space Mono',monospace; letter-spacing:1px;
-  transition:all 0.2s;
-}
-
-.apply-btn:hover { background:rgba(0,212,255,0.2); }
-
-/* Chat Input */
-.ai-chat-input-area {
-  padding:12px 16px; border-top:1px solid var(--border); flex-shrink:0;
-}
-
-.chat-context-row {
-  display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;
-}
-
-.ctx-chip {
-  padding:3px 8px; border-radius:4px; font-size:9px;
-  font-family:'Space Mono',monospace; letter-spacing:0.5px;
-  border:1px solid var(--border); color:var(--text-muted);
-  cursor:pointer; transition:all 0.2s;
-}
-
-.ctx-chip.active {
-  border-color:var(--accent-primary); color:var(--accent-primary);
-  background:rgba(0,212,255,0.08);
-}
-
-.chat-textarea-wrap { position:relative; }
-
-.chat-textarea {
-  width:100%; background:var(--bg-surface); border:1px solid var(--border);
-  color:var(--text-primary); border-radius:8px; padding:10px 40px 10px 12px;
-  font-size:12px; font-family:'JetBrains Mono',monospace; outline:none;
-  resize:none; min-height:72px; max-height:160px;
-  transition:border-color 0.2s; line-height:1.5;
-}
-
-.chat-textarea:focus { border-color:var(--accent-primary); }
-.chat-textarea::placeholder { color:var(--text-muted); }
-
-.chat-send-btn {
-  position:absolute; right:8px; bottom:8px;
-  background:var(--accent-primary); border:none; color:#000;
-  width:28px; height:28px; border-radius:6px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  font-size:13px; transition:all 0.2s; font-weight:700;
-}
-
-.chat-send-btn:hover { transform:scale(1.08); box-shadow:var(--glow-blue); }
-.chat-send-btn:disabled { background:var(--border); color:var(--text-muted); transform:none; }
-
-.typing-indicator {
-  display:flex; align-items:center; gap:4px; padding:8px 12px;
-  background:rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.1);
-  border-radius:8px; margin-right:20px;
-}
-
-.typing-dot {
-  width:5px; height:5px; border-radius:50%; background:var(--accent-primary);
-  animation: typingBounce 1.2s ease-in-out infinite;
-}
-
-.typing-dot:nth-child(2) { animation-delay:0.2s; }
-.typing-dot:nth-child(3) { animation-delay:0.4s; }
-
-@keyframes typingBounce {
-  0%,100% { transform:translateY(0); opacity:0.4; }
-  50% { transform:translateY(-4px); opacity:1; }
-}
-
-/* Output Panel */
-.output-panel {
-  padding:0; display:flex; flex-direction:column; height:100%;
-}
-
-.output-toolbar {
-  padding:8px 14px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; gap:8px; flex-shrink:0;
-}
-
-.output-btn {
-  background:none; border:1px solid var(--border); color:var(--text-muted);
-  padding:4px 10px; border-radius:5px; font-size:10px;
-  cursor:pointer; font-family:'Space Mono',monospace; transition:all 0.2s;
-}
-
-.output-btn:hover { border-color:var(--border-bright); color:var(--text-primary); }
-.output-btn.active { border-color:var(--accent-primary); color:var(--accent-primary); }
-
-.output-content { flex:1; overflow:auto; padding:14px 16px; }
-
-.console-output {
-  font-family:'JetBrains Mono',monospace; font-size:12px;
-  line-height:1.8; color:#c8d3db;
-}
-
-.console-line { display:flex; gap:10px; }
-.console-line .prefix { color:var(--text-muted); flex-shrink:0; }
-.console-line.log .value { color:var(--text-primary); }
-.console-line.error .value { color:#ff5f5f; }
-.console-line.warn .value { color:var(--accent-yellow); }
-.console-line.info .value { color:var(--accent-primary); }
-.console-line.success .value { color:var(--accent-green); }
-
-/* Preview iframe */
-.preview-frame {
-  flex:1; border:none; background:#fff;
-  display:block;
-}
-
-/* Minimap */
-.minimap-toggle {
-  position:absolute; right:8px; bottom:34px; z-index:5;
-  background:var(--bg-elevated); border:1px solid var(--border);
-  border-radius:6px; padding:4px 8px; cursor:pointer;
-  font-size:10px; color:var(--text-muted); transition:all 0.2s;
-  font-family:'Space Mono',monospace;
-}
-
-.minimap-toggle:hover { border-color:var(--accent-primary); color:var(--accent-primary); }
-
-/* Loading overlay */
-.loading-overlay {
-  position:fixed; inset:0; z-index:1000;
-  background:var(--bg-void);
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  gap:20px;
-}
-
-.loading-hex {
-  width:56px; height:56px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-purple));
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  animation: hexSpin 1.5s linear infinite;
-}
-
-@keyframes hexSpin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-text {
-  font-family:'Space Mono',monospace; font-size:12px;
-  color:var(--text-muted); letter-spacing:3px; text-transform:uppercase;
-}
-
-.loading-bar {
-  width:200px; height:2px; background:var(--border); border-radius:1px;
-  overflow:hidden;
-}
-
-.loading-bar-fill {
-  height:100%; width:0;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-purple));
-  border-radius:1px; animation: loadFill 2s ease forwards;
-}
-
-@keyframes loadFill {
-  to { width:100%; }
-}
-
-/* Modals */
-.modal-overlay {
-  display:none; position:fixed; inset:0; z-index:200;
-  background:rgba(2,4,8,0.85); backdrop-filter:blur(8px);
-  align-items:center; justify-content:center;
-}
-
-.modal-overlay.open { display:flex; }
-
-.modal {
-  background:var(--bg-panel); border:1px solid var(--border);
-  border-radius:16px; padding:32px; min-width:420px; max-width:560px;
-  box-shadow:0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(0,212,255,0.05);
-  animation: modalIn 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-
-@keyframes modalIn {
-  from { opacity:0; transform:scale(0.95) translateY(16px); }
-  to { opacity:1; transform:scale(1) translateY(0); }
-}
-
-.modal-title {
-  font-size:18px; font-weight:700; margin-bottom:6px;
-  color:var(--text-primary); display:flex; align-items:center; gap:10px;
-}
-
-.modal-sub { font-size:12px; color:var(--text-muted); margin-bottom:24px; font-family:'Space Mono',monospace; }
-
-.modal-field { margin-bottom:16px; }
-
-.modal-label {
-  font-family:'Space Mono',monospace; font-size:10px;
-  letter-spacing:1.5px; color:var(--text-muted); text-transform:uppercase;
-  margin-bottom:6px;
-}
-
-.modal-input {
-  width:100%; background:var(--bg-surface); border:1px solid var(--border);
-  color:var(--text-primary); border-radius:8px; padding:10px 14px;
-  font-size:13px; font-family:'JetBrains Mono',monospace; outline:none;
-  transition:border-color 0.2s;
-}
-
-.modal-input:focus { border-color:var(--accent-primary); box-shadow:0 0 0 3px rgba(0,212,255,0.08); }
-
-.modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; }
-
-.modal-btn {
-  padding:9px 20px; border-radius:8px; font-size:13px; font-weight:600;
-  cursor:pointer; transition:all 0.2s; font-family:'Syne',sans-serif;
-}
-
-.modal-btn.primary {
-  background:var(--accent-primary); border:none; color:#000;
-}
-
-.modal-btn.primary:hover { box-shadow:var(--glow-blue); transform:translateY(-1px); }
-
-.modal-btn.secondary {
-  background:none; border:1px solid var(--border); color:var(--text-secondary);
-}
-
-.modal-btn.secondary:hover { border-color:var(--border-bright); color:var(--text-primary); }
-
-/* Notification */
-.notification {
-  position:fixed; top:60px; right:20px; z-index:500;
-  background:var(--bg-elevated); border:1px solid var(--border);
-  border-radius:10px; padding:12px 16px; font-size:12px;
-  display:flex; align-items:center; gap:10px; max-width:300px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.4);
-  animation: notifIn 0.3s ease;
-  font-family:'Space Mono',monospace;
-}
-
-@keyframes notifIn {
-  from { opacity:0; transform:translateX(20px); }
-  to { opacity:1; transform:translateX(0); }
-}
-
-.notif-icon { font-size:16px; }
-
-/* Command Palette */
-.cmd-palette {
-  display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%);
-  z-index:300; width:560px;
-  background:var(--bg-panel); border:1px solid var(--border-bright);
-  border-radius:14px; overflow:hidden;
-  box-shadow:0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(0,212,255,0.08);
-}
-
-.cmd-palette.open { display:block; animation:modalIn 0.2s ease; }
-
-.cmd-input {
-  width:100%; background:transparent; border:none; border-bottom:1px solid var(--border);
-  color:var(--text-primary); padding:16px 20px; font-size:14px;
-  font-family:'JetBrains Mono',monospace; outline:none;
-}
-
-.cmd-input::placeholder { color:var(--text-muted); }
-
-.cmd-results { max-height:300px; overflow-y:auto; }
-
-.cmd-item {
-  padding:10px 20px; display:flex; align-items:center; gap:12px;
-  cursor:pointer; transition:background 0.15s; font-size:13px;
-}
-
-.cmd-item:hover, .cmd-item.selected { background:var(--bg-hover); }
-.cmd-item .cmd-icon { color:var(--text-muted); width:16px; text-align:center; }
-.cmd-item .cmd-label { flex:1; color:var(--text-primary); }
-.cmd-item .cmd-shortcut { font-family:'Space Mono',monospace; font-size:10px; color:var(--text-muted); }
-
-/* Diff view */
-.diff-panel { display:flex; gap:0; height:100%; }
-.diff-old, .diff-new { flex:1; overflow:auto; }
-.diff-old { border-right:1px solid var(--border); }
-
-/* Particles canvas */
-#particles { position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.4; }
-
-/* Animations */
-.fade-in { animation: fadeIn 0.4s ease; }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
-.slide-in { animation: slideIn 0.4s cubic-bezier(0.4,0,0.2,1); }
-@keyframes slideIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-
-/* Responsive tweaks */
-@media (max-width:1200px) {
-  .right-panel { width:300px; }
-}
-
-@media (max-width:900px) {
-  .categories-grid { grid-template-columns:1fr 1fr; }
-  .sidebar { display:none; }
-}
-</style>
-</head>
-<body>
-
-<!-- Loading Screen -->
-<div class="loading-overlay" id="loading">
-  <div class="loading-hex"></div>
-  <div class="loading-text">Initializing Oath Gravity</div>
-  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
-</div>
-
-<!-- ===================== HOME SCREEN ===================== -->
-<div id="home-screen" style="display:none;">
-  <div class="home-bg"></div>
-  <div class="home-grid-bg"></div>
-  <canvas id="particles"></canvas>
-
-  <div class="home-content">
-    <!-- Header -->
-    <div class="home-header fade-in">
-      <div class="logo-mark">
-        <div class="logo-icon">⬡</div>
-        <div>
-          <div class="logo-text-main">OATH GRAVITY</div>
-          <div class="logo-text-sub">AI Code Forge v2.0</div>
-        </div>
-      </div>
-      <div class="hero-stats">
-        <div class="stat-badge"><span class="stat-dot"></span>Gemini Active</div>
-        <div class="stat-badge"><span class="stat-dot" style="background:var(--accent-secondary);animation-delay:0.3s"></span>Groq Active</div>
-        <div class="stat-badge"><span class="stat-dot" style="background:var(--accent-purple);animation-delay:0.6s"></span>n8n Ready</div>
-      </div>
-      <div class="home-tagline">// code. forge. deploy.</div>
-    </div>
-
-    <!-- Hero -->
-    <div class="hero-section slide-in" style="animation-delay:0.1s">
-      <h1 class="hero-title">
-        <span class="line1">Where Code Meets</span>
-        <span class="line2">Artificial Intelligence</span>
-      </h1>
-      <p class="hero-sub">Multi-agent AI editor powered by Gemini, Groq & n8n workflows. Write, debug, and deploy with intelligence at every keystroke.</p>
-    </div>
-
-    <!-- Category Grid -->
-    <div class="section-label slide-in" style="animation-delay:0.15s">Choose Your Domain</div>
-    <div class="categories-grid slide-in" style="animation-delay:0.2s">
-
-      <div class="cat-card web" onclick="openEditor('web')">
-        <span class="cat-icon">🌐</span>
-        <div class="cat-title">Web Development</div>
-        <div class="cat-desc">Build responsive websites, web apps, and frontends with live preview and AI assistance.</div>
-        <div class="cat-langs">
-          <span class="lang-chip">HTML</span>
-          <span class="lang-chip">CSS</span>
-          <span class="lang-chip">JS</span>
-          <span class="lang-chip">TypeScript</span>
-          <span class="lang-chip">PHP</span>
-        </div>
-        <span class="cat-arrow">→</span>
-      </div>
-
-      <div class="cat-card app" onclick="openEditor('app')">
-        <span class="cat-icon">📱</span>
-        <div class="cat-title">App Development</div>
-        <div class="cat-desc">Native and cross-platform app development with intelligent code completion.</div>
-        <div class="cat-langs">
-          <span class="lang-chip">Swift</span>
-          <span class="lang-chip">Kotlin</span>
-          <span class="lang-chip">Dart</span>
-          <span class="lang-chip">React Native</span>
-        </div>
-        <span class="cat-arrow">→</span>
-      </div>
-
-      <div class="cat-card data" onclick="openEditor('data')">
-        <span class="cat-icon">📊</span>
-        <div class="cat-title">Data & ML</div>
-        <div class="cat-desc">Data science, machine learning, and AI model development at scale.</div>
-        <div class="cat-langs">
-          <span class="lang-chip">Python</span>
-          <span class="lang-chip">R</span>
-          <span class="lang-chip">SQL</span>
-          <span class="lang-chip">Julia</span>
-        </div>
-        <span class="cat-arrow">→</span>
-      </div>
-
-      <div class="cat-card ai" onclick="openEditor('ai')">
-        <span class="cat-icon">🤖</span>
-        <div class="cat-title">AI Workflows</div>
-        <div class="cat-desc">Build automation pipelines and AI agents with n8n workflow integration.</div>
-        <div class="cat-langs">
-          <span class="lang-chip">n8n</span>
-          <span class="lang-chip">JSON</span>
-          <span class="lang-chip">YAML</span>
-          <span class="lang-chip">Python</span>
-        </div>
-        <span class="cat-arrow">→</span>
-      </div>
-
-      <div class="cat-card devops" onclick="openEditor('devops')">
-        <span class="cat-icon">⚙️</span>
-        <div class="cat-title">DevOps & Cloud</div>
-        <div class="cat-desc">Infrastructure as code, CI/CD pipelines, and cloud configuration.</div>
-        <div class="cat-langs">
-          <span class="lang-chip">Bash</span>
-          <span class="lang-chip">YAML</span>
-          <span class="lang-chip">Go</span>
-          <span class="lang-chip">Rust</span>
-        </div>
-        <span class="cat-arrow">→</span>
-      </div>
-
-      <div class="cat-card general" onclick="openEditor('general')">
-        <span class="cat-icon">✦</span>
-        <div class="cat-title">General Coding</div>
-        <div class="cat-desc">Multi-language sandbox for algorithms, scripts, and experiments.</div>
-        <div class="cat-langs">
-          <span class="lang-chip">C++</span>
-          <span class="lang-chip">Java</span>
-          <span class="lang-chip">C#</span>
-          <span class="lang-chip">Go</span>
-          <span class="lang-chip">Rust</span>
-        </div>
-        <span class="cat-arrow">→</span>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="section-label slide-in" style="animation-delay:0.25s">Quick Actions</div>
-    <div class="quick-actions slide-in" style="animation-delay:0.3s">
-      <div class="qa-card" onclick="openEditor('web')">
-        <div class="qa-icon">⚡</div>
-        <div>
-          <div class="qa-text-title">Blank Scratch Pad</div>
-          <div class="qa-text-sub">// open empty editor instantly</div>
-        </div>
-      </div>
-      <div class="qa-card" onclick="showN8NSetup()">
-        <div class="qa-icon">🔗</div>
-        <div>
-          <div class="qa-text-title">Connect n8n Workflow</div>
-          <div class="qa-text-sub">// import automation workflow</div>
-        </div>
-      </div>
-      <div class="qa-card" onclick="showImportModal()">
-        <div class="qa-icon">📂</div>
-        <div>
-          <div class="qa-text-title">Import File / Paste Code</div>
-          <div class="qa-text-sub">// start with existing code</div>
-        </div>
-      </div>
-      <div class="qa-card" onclick="showTemplates()">
-        <div class="qa-icon">🎨</div>
-        <div>
-          <div class="qa-text-title">Starter Templates</div>
-          <div class="qa-text-sub">// boilerplate projects</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent -->
-    <div class="section-label slide-in" style="animation-delay:0.35s">Recent Sessions</div>
-    <div class="recent-section slide-in" style="animation-delay:0.4s">
-      <div class="recent-list" id="recent-list">
-        <div class="recent-item" onclick="openEditor('web')">
-          <span class="recent-ext ext-html">HTML</span>
-          <div>
-            <div class="recent-name">landing-page.html</div>
-            <div class="recent-path">~/projects/webdev</div>
-          </div>
-          <div class="recent-time">2h ago</div>
-        </div>
-        <div class="recent-item" onclick="openEditor('data')">
-          <span class="recent-ext ext-py">PY</span>
-          <div>
-            <div class="recent-name">ml_model.py</div>
-            <div class="recent-path">~/projects/ml</div>
-          </div>
-          <div class="recent-time">1d ago</div>
-        </div>
-        <div class="recent-item" onclick="openEditor('general')">
-          <span class="recent-ext ext-js">JS</span>
-          <div>
-            <div class="recent-name">api-handler.js</div>
-            <div class="recent-path">~/projects/backend</div>
-          </div>
-          <div class="recent-time">3d ago</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== EDITOR APP ===================== -->
-<div id="editor-app">
-
-  <!-- Titlebar -->
-  <div class="titlebar">
-    <div class="titlebar-logo" onclick="goHome()">
-      <div class="titlebar-logo-hex">⬡</div>
-      <div class="titlebar-logo-name">OATH GRAVITY</div>
-    </div>
-
-    <button class="home-btn" onclick="goHome()">⌂ Home</button>
-
-    <div class="tabs-bar" id="tabs-bar">
-      <!-- Tabs rendered by JS -->
-    </div>
-
-    <button class="add-tab-btn" onclick="addNewTab()" title="New Tab">+</button>
-
-    <div class="titlebar-right">
-      <button class="tb-btn" onclick="toggleCommandPalette()" title="Ctrl+Shift+P">⌘ Commands</button>
-      <button class="tb-btn" onclick="formatCode()" title="Format Code">⎇ Format</button>
-      <button class="tb-btn" onclick="toggleDiffView()">⊞ Diff</button>
-      <button class="tb-btn run" onclick="runCode()">▶ Run</button>
-    </div>
-  </div>
-
-  <!-- Main -->
-  <div class="editor-main">
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <span id="sidebar-title">Explorer</span>
-        <button class="sidebar-toggle" onclick="toggleSidebar()">◀</button>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Files</div>
-        <div class="sidebar-item active" onclick="switchToFile('main')">
-          <span class="si-icon">📄</span><span id="sidebar-filename">main.js</span>
-        </div>
-        <div class="sidebar-item" onclick="addNewTab()">
-          <span class="si-icon">＋</span><span>New File</span>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Tools</div>
-        <div class="sidebar-item" onclick="formatCode()">
-          <span class="si-icon">⎇</span><span>Format Code</span>
-        </div>
-        <div class="sidebar-item" onclick="copyCode()">
-          <span class="si-icon">⎘</span><span>Copy All</span>
-        </div>
-        <div class="sidebar-item" onclick="downloadCode()">
-          <span class="si-icon">↓</span><span>Download</span>
-        </div>
-        <div class="sidebar-item" onclick="clearEditor()">
-          <span class="si-icon">✕</span><span>Clear</span>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">AI Agents</div>
-        <div class="sidebar-item" onclick="switchPanel('ai')">
-          <span class="si-icon">✦</span><span>Ask AI</span>
-        </div>
-        <div class="sidebar-item" onclick="switchPanel('ai'); setMode('explain')">
-          <span class="si-icon">🔍</span><span>Explain Code</span>
-        </div>
-        <div class="sidebar-item" onclick="switchPanel('ai'); setMode('fix')">
-          <span class="si-icon">🔧</span><span>Fix Bugs</span>
-        </div>
-        <div class="sidebar-item" onclick="switchPanel('ai'); setMode('review')">
-          <span class="si-icon">👁</span><span>Review Code</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Editor Area -->
-    <div class="editor-area">
-
-      <!-- Toolbar -->
-      <div class="editor-toolbar">
-        <select class="tool-select" id="lang-select" onchange="changeLanguage(this.value)">
-          <option value="javascript">JavaScript</option>
-          <option value="typescript">TypeScript</option>
-          <option value="python">Python</option>
-          <option value="htmlmixed">HTML</option>
-          <option value="css">CSS</option>
-          <option value="php">PHP</option>
-          <option value="text/x-java">Java</option>
-          <option value="text/x-c++src">C++</option>
-          <option value="text/x-csharp">C#</option>
-          <option value="go">Go</option>
-          <option value="rust">Rust</option>
-          <option value="swift">Swift</option>
-          <option value="application/json">JSON</option>
-          <option value="text/x-yaml">YAML</option>
-          <option value="shell">Bash/Shell</option>
-          <option value="text/x-sql">SQL</option>
-        </select>
-        <div class="tool-divider"></div>
-
-        <select class="tool-select" id="theme-select" onchange="changeTheme(this.value)">
-          <option value="material-darker">Material Dark</option>
-          <option value="dracula">Dracula</option>
-          <option value="monokai">Monokai</option>
-          <option value="nord">Nord</option>
-          <option value="solarized dark">Solarized Dark</option>
-          <option value="cobalt">Cobalt</option>
-        </select>
-
-        <div class="tool-divider"></div>
-
-        <button class="tool-btn" onclick="toggleLineWrap()" id="wrap-btn" title="Toggle Line Wrap">↩ Wrap</button>
-        <button class="tool-btn" onclick="toggleMinimap()" title="Minimap">⊟ Map</button>
-        <button class="tool-btn" onclick="toggleFullscreen()">⛶ Full</button>
-
-        <div class="tool-divider"></div>
-
-        <button class="tool-btn" onclick="undo()">↩ Undo</button>
-        <button class="tool-btn" onclick="redo()">↪ Redo</button>
-        <button class="tool-btn" onclick="findReplace()">🔍 Find</button>
-        <button class="tool-btn" onclick="toggleComment()">// Comment</button>
-
-        <div class="tool-divider"></div>
-
-        <button class="tool-btn" onclick="increaseFontSize()">A+</button>
-        <button class="tool-btn" onclick="decreaseFontSize()">A-</button>
-
-        <div class="tool-divider"></div>
-
-        <button class="tool-btn" onclick="showSnippets()">✦ Snippets</button>
-        <button class="tool-btn" onclick="showKeyboard()">⌨ Keys</button>
-      </div>
-
-      <!-- CodeMirror -->
-      <div class="cm-wrapper">
-        <textarea id="code-editor"></textarea>
-        <button class="minimap-toggle" onclick="toggleMinimap()">⊟ MAP</button>
-      </div>
-
-      <!-- Status Bar -->
-      <div class="status-bar">
-        <div class="status-item">
-          <span class="status-dot green"></span>
-          <span id="status-lang">JavaScript</span>
-        </div>
-        <div class="status-item">
-          <span class="status-dot blue"></span>
-          <span id="status-lines">1 lines</span>
-        </div>
-        <div class="status-item" id="status-pos">Ln 1, Col 1</div>
-        <div class="status-item" id="status-selection" style="display:none">
-          <span class="status-dot orange"></span>
-          <span id="status-sel-text"></span>
-        </div>
-        <div class="status-spacer"></div>
-        <div class="status-item" id="ai-status">
-          <span class="status-dot green"></span>
-          <span>AI Ready</span>
-        </div>
-        <div class="status-item">
-          <span class="status-dot" style="background:var(--accent-purple)"></span>
-          <span id="status-agent-name">Gemini 2.0</span>
-        </div>
-        <span class="status-lang-badge" id="status-badge">JS</span>
-      </div>
-    </div>
-
-    <!-- Right Panel -->
-    <div class="right-panel" id="right-panel">
-      <div class="panel-tabs">
-        <div class="panel-tab active" onclick="switchPanel('ai')" id="pt-ai">🤖 AI</div>
-        <div class="panel-tab" onclick="switchPanel('output')" id="pt-output">⬛ Console</div>
-        <div class="panel-tab" onclick="switchPanel('preview')" id="pt-preview">🌐 Preview</div>
-        <div class="panel-tab" onclick="switchPanel('n8n')" id="pt-n8n">🔗 n8n</div>
-        <button onclick="toggleRightPanel()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0 10px;font-size:14px;" title="Close Panel">×</button>
-      </div>
-
-      <div class="panel-content">
-
-        <!-- AI Panel -->
-        <div class="panel-section active" id="panel-ai">
-          <div class="ai-panel">
-
-            <!-- Agent Cards -->
-            <div class="ai-agent-selector">
-              <div class="agent-selector-label">Select AI Agent</div>
-              <div class="agent-cards">
-                <div class="agent-card gemini active" onclick="selectAgent('gemini')" id="agent-gemini">
-                  <div class="agent-icon">✦</div>
-                  <div class="agent-name">GEMINI</div>
-                  <div class="agent-status" style="color:var(--accent-green)">● ONLINE</div>
-                </div>
-                <div class="agent-card groq" onclick="selectAgent('groq')" id="agent-groq">
-                  <div class="agent-icon">⚡</div>
-                  <div class="agent-name">GROQ</div>
-                  <div class="agent-status" style="color:var(--accent-green)">● ONLINE</div>
-                </div>
-                <div class="agent-card n8n" onclick="selectAgent('n8n')" id="agent-n8n">
-                  <div class="agent-icon">🔗</div>
-                  <div class="agent-name">n8n</div>
-                  <div class="agent-status" id="n8n-agent-status" style="color:var(--text-muted)">○ SETUP</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- n8n Config (hidden by default) -->
-            <div class="n8n-config" id="n8n-config">
-              <div class="n8n-config-title">🔗 n8n Workflow Setup</div>
-              <input class="n8n-input" id="n8n-webhook" type="text" placeholder="Webhook URL (https://your-n8n.com/webhook/...)">
-              <input class="n8n-input" id="n8n-auth" type="password" placeholder="Auth Token (optional)">
-              <input class="n8n-input" id="n8n-workflow-name" type="text" placeholder="Workflow name / description">
-              <button class="n8n-connect-btn" onclick="connectN8N()">⚡ Connect Workflow</button>
-            </div>
-
-            <!-- Model Selector -->
-            <div class="model-select-row">
-              <select class="model-picker" id="model-picker" onchange="updateModel(this.value)">
-                <optgroup label="Gemini Models">
-                  <option value="gemini-2.0-flash">Gemini 2.0 Flash (Default)</option>
-                  <option value="gemini-2.0-flash-thinking">Gemini 2.0 Flash Thinking</option>
-                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                </optgroup>
-                <optgroup label="Groq Models">
-                  <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Groq)</option>
-                  <option value="llama-3.1-8b-instant">Llama 3.1 8B Instant (Groq)</option>
-                  <option value="mixtral-8x7b-32768">Mixtral 8x7B (Groq)</option>
-                  <option value="gemma2-9b-it">Gemma 2 9B (Groq)</option>
-                  <option value="deepseek-r1-distill-llama-70b">DeepSeek R1 70B (Groq)</option>
-                </optgroup>
-              </select>
-            </div>
-
-            <!-- Mode Chips -->
-            <div class="mode-chips">
-              <div class="mode-chip active" onclick="setMode('chat')" data-mode="chat">💬 Chat</div>
-              <div class="mode-chip" onclick="setMode('explain')" data-mode="explain">🔍 Explain</div>
-              <div class="mode-chip" onclick="setMode('fix')" data-mode="fix">🔧 Fix</div>
-              <div class="mode-chip" onclick="setMode('refactor')" data-mode="refactor">♻ Refactor</div>
-              <div class="mode-chip" onclick="setMode('generate')" data-mode="generate">✨ Generate</div>
-              <div class="mode-chip" onclick="setMode('review')" data-mode="review">👁 Review</div>
-              <div class="mode-chip" onclick="setMode('test')" data-mode="test">🧪 Test</div>
-              <div class="mode-chip" onclick="setMode('optimize')" data-mode="optimize">⚡ Optimize</div>
-              <div class="mode-chip" onclick="setMode('translate')" data-mode="translate">🔄 Translate</div>
-            </div>
-
-            <!-- Messages -->
-            <div class="ai-chat-messages" id="chat-messages">
-              <div class="chat-msg assistant" id="welcome-msg">
-                <div class="chat-msg-header">
-                  <span class="chat-msg-agent-dot" style="background:#4285f4"></span>
-                  GEMINI · OATH GRAVITY
-                </div>
-                Namaste! 🙏 I'm your AI coding assistant. I can help you write, debug, explain, refactor, and optimize your code.<br><br>
-                <strong>Try asking:</strong><br>
-                • "Explain this code"<br>
-                • "Fix the bug in my function"<br>
-                • "Generate a REST API in Python"<br>
-                • "Refactor for better performance"
-              </div>
-            </div>
-
-            <!-- Chat Input -->
-            <div class="ai-chat-input-area">
-              <div class="chat-context-row">
-                <div class="ctx-chip active" id="ctx-full" onclick="toggleCtx('full')">Full Code</div>
-                <div class="ctx-chip" id="ctx-selection" onclick="toggleCtx('selection')">Selection</div>
-                <div class="ctx-chip" id="ctx-none" onclick="toggleCtx('none')">No Context</div>
-              </div>
-              <div class="chat-textarea-wrap">
-                <textarea class="chat-textarea" id="chat-input"
-                  placeholder="Ask anything... (Shift+Enter for new line)"
-                  onkeydown="handleChatKey(event)"></textarea>
-                <button class="chat-send-btn" id="send-btn" onclick="sendMessage()">➤</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Output Panel -->
-        <div class="panel-section" id="panel-output">
-          <div class="output-panel">
-            <div class="output-toolbar">
-              <button class="output-btn active" onclick="switchOutput('console')">Console</button>
-              <button class="output-btn" onclick="switchOutput('errors')">Errors</button>
-              <button class="output-btn" onclick="clearConsole()">Clear</button>
-            </div>
-            <div class="output-content">
-              <div class="console-output" id="console-output">
-                <div class="console-line info">
-                  <span class="prefix">›</span>
-                  <span class="value">Oath Gravity Console ready.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Preview Panel -->
-        <div class="panel-section" id="panel-preview">
-          <div class="output-toolbar" style="border-bottom:1px solid var(--border);padding:8px 14px;display:flex;gap:8px;align-items:center;flex-shrink:0;">
-            <button class="output-btn active" onclick="refreshPreview()">↺ Refresh</button>
-            <button class="output-btn" onclick="openPreviewNewTab()">↗ New Tab</button>
-          </div>
-          <iframe class="preview-frame" id="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
-        </div>
-
-        <!-- n8n Panel -->
-        <div class="panel-section" id="panel-n8n">
-          <div style="padding:16px;display:flex;flex-direction:column;height:100%;overflow:auto;">
-            <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--accent-green);text-transform:uppercase;margin-bottom:16px;">
-              🔗 n8n Workflow Integration
-            </div>
-
-            <div style="background:var(--bg-panel);border:1px solid rgba(0,255,157,0.2);border-radius:10px;padding:16px;margin-bottom:16px;">
-              <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">Connect Your n8n Workflow</div>
-              <div style="font-size:11px;color:var(--text-secondary);line-height:1.6;margin-bottom:12px;">
-                Import your n8n workflow to use as an AI agent. Paste the webhook URL from your n8n workflow trigger node.
-              </div>
-              <input class="n8n-input" id="n8n-webhook-panel" type="text" placeholder="https://your-n8n.com/webhook/your-id">
-              <input class="n8n-input" id="n8n-auth-panel" type="password" placeholder="Authorization token (optional)">
-              <button class="n8n-connect-btn" onclick="connectN8NPanel()" style="margin-top:4px;">⚡ Connect Workflow</button>
-            </div>
-
-            <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;">
-              How to Setup
-            </div>
-
-            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-              <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text-secondary);line-height:1.6;">
-                <strong style="color:var(--accent-green);">Step 1:</strong> In n8n, create a workflow with a <em>Webhook</em> trigger node.
-              </div>
-              <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text-secondary);line-height:1.6;">
-                <strong style="color:var(--accent-green);">Step 2:</strong> Add AI processing nodes (OpenAI, Claude, etc.) after the webhook.
-              </div>
-              <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text-secondary);line-height:1.6;">
-                <strong style="color:var(--accent-green);">Step 3:</strong> End with a <em>Respond to Webhook</em> node that returns JSON: <code style="background:var(--bg-surface);padding:2px 6px;border-radius:3px;color:var(--accent-primary);">{ "response": "..." }</code>
-              </div>
-              <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text-secondary);line-height:1.6;">
-                <strong style="color:var(--accent-green);">Step 4:</strong> Paste webhook URL above & connect. Your n8n workflow becomes an AI agent here!
-              </div>
-            </div>
-
-            <div id="n8n-status-display" style="display:none;background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.2);border-radius:8px;padding:12px;">
-              <div style="font-size:11px;font-weight:600;color:var(--accent-green);margin-bottom:4px;">✓ Workflow Connected</div>
-              <div style="font-size:10px;color:var(--text-muted);font-family:'Space Mono',monospace;" id="n8n-connected-info"></div>
-            </div>
-
-            <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border);">
-              <div style="font-size:10px;color:var(--text-muted);line-height:1.6;font-family:'Space Mono',monospace;">
-                💡 Tip: Use the <strong style="color:var(--accent-primary);">n8n agent</strong> in the AI panel to chat with your workflow. Send code context and get workflow-processed responses.
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== MODALS ===================== -->
-
-<!-- New File Modal -->
-<div class="modal-overlay" id="new-file-modal">
-  <div class="modal">
-    <div class="modal-title">📄 New File</div>
-    <div class="modal-sub">// create a new file in the editor</div>
-    <div class="modal-field">
-      <div class="modal-label">File Name</div>
-      <input class="modal-input" id="new-file-name" type="text" placeholder="e.g. app.js, styles.css, index.html" onkeydown="if(event.key==='Enter')createFile()">
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">Language</div>
-      <select class="modal-input" id="new-file-lang">
-        <option value="javascript">JavaScript</option>
-        <option value="python">Python</option>
-        <option value="htmlmixed">HTML</option>
-        <option value="css">CSS</option>
-        <option value="application/json">JSON</option>
-        <option value="text/x-yaml">YAML</option>
-        <option value="text/x-c++src">C++</option>
-        <option value="go">Go</option>
-        <option value="rust">Rust</option>
-      </select>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn secondary" onclick="closeModal('new-file-modal')">Cancel</button>
-      <button class="modal-btn primary" onclick="createFile()">Create File</button>
-    </div>
-  </div>
-</div>
-
-<!-- Import Modal -->
-<div class="modal-overlay" id="import-modal">
-  <div class="modal">
-    <div class="modal-title">📂 Import Code</div>
-    <div class="modal-sub">// paste or upload your existing code</div>
-    <div class="modal-field">
-      <div class="modal-label">Paste Code</div>
-      <textarea class="modal-input" id="import-code" rows="8" placeholder="Paste your code here..." style="resize:vertical;font-family:'JetBrains Mono',monospace;font-size:12px;"></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn secondary" onclick="closeModal('import-modal')">Cancel</button>
-      <button class="modal-btn primary" onclick="importCode()">Import</button>
-    </div>
-  </div>
-</div>
-
-<!-- Templates Modal -->
-<div class="modal-overlay" id="templates-modal">
-  <div class="modal" style="max-width:600px;">
-    <div class="modal-title">🎨 Starter Templates</div>
-    <div class="modal-sub">// choose a template to get started quickly</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:360px;overflow-y:auto;">
-      <div onclick="loadTemplate('express')" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-primary)'" onmouseout="this.style.borderColor='var(--border)'">
-        <div style="font-size:20px;margin-bottom:8px;">⚡</div>
-        <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Express.js API</div>
-        <div style="font-size:11px;color:var(--text-muted);">REST API server with routes</div>
-      </div>
-      <div onclick="loadTemplate('react')" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-primary)'" onmouseout="this.style.borderColor='var(--border)'">
-        <div style="font-size:20px;margin-bottom:8px;">⚛</div>
-        <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">React Component</div>
-        <div style="font-size:11px;color:var(--text-muted);">Functional component with hooks</div>
-      </div>
-      <div onclick="loadTemplate('python-ml')" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-primary)'" onmouseout="this.style.borderColor='var(--border)'">
-        <div style="font-size:20px;margin-bottom:8px;">🤖</div>
-        <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Python ML Model</div>
-        <div style="font-size:11px;color:var(--text-muted);">scikit-learn boilerplate</div>
-      </div>
-      <div onclick="loadTemplate('html-landing')" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-primary)'" onmouseout="this.style.borderColor='var(--border)'">
-        <div style="font-size:20px;margin-bottom:8px;">🌐</div>
-        <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">HTML Landing Page</div>
-        <div style="font-size:11px;color:var(--text-muted);">Responsive landing page</div>
-      </div>
-      <div onclick="loadTemplate('n8n-workflow')" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)'" onmouseout="this.style.borderColor='var(--border)'">
-        <div style="font-size:20px;margin-bottom:8px;">🔗</div>
-        <div style="font-size:13px;font-weight:600;color:var(--accent-green);margin-bottom:4px;">n8n Webhook Handler</div>
-        <div style="font-size:11px;color:var(--text-muted);">n8n compatible JS webhook</div>
-      </div>
-      <div onclick="loadTemplate('docker')" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-yellow)'" onmouseout="this.style.borderColor='var(--border)'">
-        <div style="font-size:20px;margin-bottom:8px;">🐋</div>
-        <div style="font-size:13px;font-weight:600;color:var(--accent-yellow);margin-bottom:4px;">Dockerfile</div>
-        <div style="font-size:11px;color:var(--text-muted);">Production Docker setup</div>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn secondary" onclick="closeModal('templates-modal')">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- Keyboard Shortcuts Modal -->
-<div class="modal-overlay" id="keyboard-modal">
-  <div class="modal" style="max-width:520px;">
-    <div class="modal-title">⌨ Keyboard Shortcuts</div>
-    <div class="modal-sub">// oath gravity shortcuts</div>
-    <div style="display:grid;gap:8px;max-height:400px;overflow-y:auto;">
-      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:8px 12px;background:var(--bg-surface);border-radius:6px;align-items:center;">
-        <span style="color:var(--text-secondary);">Open Command Palette</span>
-        <kbd style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);">Ctrl+Shift+P</kbd>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:8px 12px;background:var(--bg-surface);border-radius:6px;align-items:center;">
-        <span style="color:var(--text-secondary);">Format Code</span>
-        <kbd style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);">Ctrl+Shift+F</kbd>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:8px 12px;background:var(--bg-surface);border-radius:6px;align-items:center;">
-        <span style="color:var(--text-secondary);">Run Code</span>
-        <kbd style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);">Ctrl+Enter</kbd>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:8px 12px;background:var(--bg-surface);border-radius:6px;align-items:center;">
-        <span style="color:var(--text-secondary);">Send to AI</span>
-        <kbd style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);">Ctrl+Shift+A</kbd>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:8px 12px;background:var(--bg-surface);border-radius:6px;align-items:center;">
-        <span style="color:var(--text-secondary);">Download File</span>
-        <kbd style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);">Ctrl+S</kbd>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:8px 12px;background:var(--bg-surface);border-radius:6px;align-items:center;">
-        <span style="color:var(--text-secondary);">New Tab</span>
-        <kbd style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);">Ctrl+T</kbd>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:8px 12px;background:var(--bg-surface);border-radius:6px;align-items:center;">
-        <span style="color:var(--text-secondary);">Toggle Comment</span>
-        <kbd style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);">Ctrl+/</kbd>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn primary" onclick="closeModal('keyboard-modal')">Got it</button>
-    </div>
-  </div>
-</div>
-
-<!-- Command Palette -->
-<div class="cmd-palette" id="cmd-palette">
-  <input class="cmd-input" id="cmd-input" placeholder="Type a command..." oninput="filterCommands(this.value)" onkeydown="handleCmdKey(event)">
-  <div class="cmd-results" id="cmd-results"></div>
-</div>
-
-<!-- Notification -->
-<div class="notification" id="notification" style="display:none;">
-  <span class="notif-icon" id="notif-icon">✓</span>
-  <span id="notif-text">Done</span>
-</div>
-
-<!-- CodeMirror Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/comment/comment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/selection/active-line.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldgutter.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/brace-fold.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/search/searchcursor.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/search/search.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/dialog/dialog.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/php/php.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/go/go.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/rust/rust.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/shell/shell.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/sql/sql.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/yaml/yaml.min.js"></script>
-
-<script>
-// ============================================================
-// OATH GRAVITY — Core Engine
-// ============================================================
-
-const GEMINI_API_KEY = 'AIzaSyDV3Jvz3Xt1qcxz1_SampleKey_REPLACE'; // Gemini key from gen-lang-client
-const GEMINI_KEY = 'AIzaSy' + 'DqXHqXOHbZ5CmOEWzrJ8sMG_REPLACE'; // Will be set from user config
-const GROQ_API_KEY = '';
-
-// === State ===
-let editor = null;
-let currentAgent = 'gemini';
-let currentModel = 'gemini-2.0-flash';
-let currentMode = 'chat';
-let currentContext = 'full';
-let currentCategory = 'web';
-let fontSize = 13;
-let isLineWrap = false;
-let isRightPanelOpen = true;
-let isSidebarOpen = true;
-let n8nWebhook = '';
-let n8nAuth = '';
-let n8nConnected = false;
-let chatHistory = [];
-
-let tabs = [{ id: 1, name: 'main.js', lang: 'javascript', content: '', active: true }];
-let activeTabId = 1;
-let nextTabId = 2;
-
-// === Templates ===
-const templates = {
-  express: `// Express.js REST API — Oath Gravity Template
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  next();
-});
-
-// Routes
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-app.get('/api/users', async (req, res) => {
-  try {
-    // TODO: Connect to database
-    const users = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }];
-    res.json({ success: true, data: users });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.post('/api/users', async (req, res) => {
-  try {
-    const { name, email } = req.body;
-    if (!name || !email) {
-      return res.status(400).json({ error: 'Name and email required' });
-    }
-    // TODO: Save to database
-    res.status(201).json({ success: true, data: { id: Date.now(), name, email } });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.listen(PORT, () => console.log(\`🚀 Server running on port \${PORT}\`));`,
-
-  react: `// React Functional Component — Oath Gravity Template
-import React, { useState, useEffect, useCallback } from 'react';
-
-const UserCard = ({ userId }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchUser = useCallback(async () => {
-    try {
-      setLoading(true);
-      // TODO: Replace with real API
-      const mockUser = { id: userId, name: 'Aarav Singh', email: 'aarav@example.com', role: 'Developer' };
-      await new Promise(r => setTimeout(r, 500));
-      setUser(mockUser);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
-
-  useEffect(() => { fetchUser(); }, [fetchUser]);
-
-  if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error">Error: {error}</div>;
-
-  return (
-    <div className="user-card">
-      <div className="avatar">{user.name[0]}</div>
-      <div className="info">
-        <h2>{user.name}</h2>
-        <p>{user.email}</p>
-        <span className="badge">{user.role}</span>
-      </div>
-    </div>
-  );
-};
-
-export default UserCard;`,
-
-  'python-ml': `# Python ML Model — Oath Gravity Template
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
-import warnings
-warnings.filterwarnings('ignore')
-
-# === Load & Prepare Data ===
-def load_data(filepath=None):
-    """Load dataset. Replace with your actual data source."""
-    # Demo: synthetic data
-    np.random.seed(42)
-    n_samples = 1000
-    X = np.random.randn(n_samples, 10)
-    y = (X[:, 0] + X[:, 1] > 0).astype(int)
-    return pd.DataFrame(X, columns=[f'feature_{i}' for i in range(10)]), pd.Series(y, name='target')
-
-# === Train Model ===
-def train_model(X, y):
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_train_scaled, y_train)
-
-    y_pred = model.predict(X_test_scaled)
-    print(f"✓ Accuracy: {accuracy_score(y_test, y_pred):.4f}")
-    print(classification_report(y_test, y_pred))
-    return model, scaler
-
-if __name__ == '__main__':
-    print("🚀 Training model...")
-    X, y = load_data()
-    model, scaler = train_model(X, y)
-    print("✓ Model ready!")`,
-
-  'html-landing': `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Landing Page</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background:#0a0a0a; color:#fff; }
-    .hero { min-height:100vh; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); text-align:center; padding:40px; }
-    h1 { font-size:clamp(36px,6vw,72px); font-weight:800; margin-bottom:20px;
-      background:linear-gradient(90deg,#00d4ff,#b57bff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    p { font-size:18px; color:#999; max-width:500px; margin:0 auto 36px; line-height:1.7; }
-    .cta { display:inline-block; padding:14px 36px; border-radius:50px;
-      background:linear-gradient(90deg,#00d4ff,#b57bff); color:#000; font-weight:700;
-      text-decoration:none; font-size:16px; transition:transform 0.2s; }
-    .cta:hover { transform:translateY(-2px); }
-  </style>
-</head>
-<body>
-  <section class="hero">
-    <div>
-      <h1>Build Something Amazing</h1>
-      <p>A clean, responsive landing page to start your project. Customize with your brand and content.</p>
-      <a href="#" class="cta">Get Started →</a>
-    </div>
-  </section>
-</body>
-</html>`,
-
-  'n8n-workflow': `// n8n Webhook Handler — Oath Gravity Template
-// This code processes requests from n8n Webhook trigger nodes
-
-const express = require('express');
-const app = express();
-app.use(express.json());
-
-// n8n sends POST requests to this endpoint
-app.post('/webhook/process', async (req, res) => {
-  const { body } = req;
-  console.log('📥 Received from n8n:', JSON.stringify(body, null, 2));
-
-  try {
-    // Process the data from n8n workflow
-    const result = await processData(body);
-
-    // Return response back to n8n "Respond to Webhook" node
-    res.json({
-      success: true,
-      response: result,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-async function processData(data) {
-  // TODO: Add your custom processing logic here
-  const { code, query, context } = data;
-
-  // Example: Echo back with processing
-  return {
-    processed: true,
-    input: data,
-    output: \`Processed: \${JSON.stringify(data).substring(0, 100)}...\`
-  };
-}
-
-app.listen(3001, () => {
-  console.log('🔗 n8n webhook handler running on port 3001');
-  console.log('📡 Listening for n8n workflow events...');
-});`,
-
-  docker: `# Dockerfile — Oath Gravity DevOps Template
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-
-FROM node:20-alpine AS production
-
-# Security: run as non-root
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
-WORKDIR /app
-COPY --from=builder /app/node_modules ./node_modules
-COPY . .
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \\
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
-
-ENV NODE_ENV=production
-ENV PORT=3000
-
-EXPOSE 3000
-
-USER appuser
-
-CMD ["node", "server.js"]`
-};
-
-// === Category defaults ===
-const categoryDefaults = {
-  web: { lang: 'htmlmixed', file: 'index.html', content: templates['html-landing'] },
-  app: { lang: 'javascript', file: 'app.js', content: '// App Development\n// Start coding your app here\n\nconst App = {\n  init() {\n    console.log("App initialized!");\n  }\n};\n\nApp.init();' },
-  data: { lang: 'python', file: 'model.py', content: templates['python-ml'] },
-  ai: { lang: 'application/json', file: 'workflow.json', content: '{\n  "name": "AI Workflow",\n  "nodes": [\n    {\n      "type": "n8n-nodes-base.webhook",\n      "parameters": {\n        "path": "ai-agent"\n      }\n    }\n  ],\n  "connections": {}\n}' },
-  devops: { lang: 'shell', file: 'deploy.sh', content: templates['docker'].replace('# Dockerfile', '#!/bin/bash\n# Deploy Script') },
-  general: { lang: 'javascript', file: 'scratch.js', content: '// Oath Gravity — General Sandbox\n// Happy coding! 🚀\n\nfunction main() {\n  console.log("Hello, World!");\n}\n\nmain();' }
-};
-
-// === Init ===
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('home-screen').style.display = 'block';
-    initParticles();
-  }, 2400);
-});
-
-// === Particles ===
-function initParticles() {
-  const canvas = document.getElementById('particles');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const particles = Array.from({ length: 60 }, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    vx: (Math.random() - 0.5) * 0.3,
-    vy: (Math.random() - 0.5) * 0.3,
-    r: Math.random() * 1.5 + 0.5,
-    a: Math.random()
-  }));
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = canvas.width;
-      if (p.x > canvas.width) p.x = 0;
-      if (p.y < 0) p.y = canvas.height;
-      if (p.y > canvas.height) p.y = 0;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0,212,255,${p.a * 0.4})`;
-      ctx.fill();
-    });
-
-    // Draw connections
-    particles.forEach((p1, i) => {
-      particles.slice(i + 1).forEach(p2 => {
-        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-        if (dist < 100) {
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.strokeStyle = `rgba(0,212,255,${(1 - dist / 100) * 0.08})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Furniture | Katihar's Largest Furniture Store</title>
+    
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0f766e;
+            --primary-dark: #0d5f58;
+            --accent: #f59e0b;
+            --whatsapp-color: #25d366;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --shadow-soft: 0 10px 30px -10px rgba(15, 118, 110, 0.08);
+            --shadow-hover: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
         }
-      });
-    });
-
-    requestAnimationFrame(draw);
-  }
-  draw();
-
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
-}
-
-// === Open Editor ===
-function openEditor(category) {
-  currentCategory = category;
-  const def = categoryDefaults[category] || categoryDefaults.general;
-
-  document.getElementById('home-screen').style.display = 'none';
-  document.getElementById('editor-app').style.display = 'flex';
-
-  // Update first tab
-  tabs[0].lang = def.lang;
-  tabs[0].name = def.file;
-  tabs[0].content = def.content;
-
-  setTimeout(() => {
-    if (!editor) {
-      initEditor();
-    } else {
-      editor.setValue(def.content);
-      editor.setOption('mode', def.lang);
-    }
-    renderTabs();
-    updateLangSelect(def.lang);
-    updateStatusBar();
-  }, 50);
-}
-
-function goHome() {
-  document.getElementById('editor-app').style.display = 'none';
-  document.getElementById('home-screen').style.display = 'block';
-}
-
-// === Editor Init ===
-function initEditor() {
-  const def = categoryDefaults[currentCategory] || categoryDefaults.general;
-
-  editor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
-    mode: def.lang,
-    theme: 'material-darker',
-    lineNumbers: true,
-    matchBrackets: true,
-    autoCloseBrackets: true,
-    indentUnit: 2,
-    tabSize: 2,
-    indentWithTabs: false,
-    lineWrapping: false,
-    styleActiveLine: true,
-    foldGutter: true,
-    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-    extraKeys: {
-      'Ctrl-/': 'toggleComment',
-      'Ctrl-Enter': runCode,
-      'Ctrl-Shift-F': formatCode,
-      'Ctrl-Shift-P': toggleCommandPalette,
-      'Ctrl-Shift-A': () => sendMessage(),
-      'Ctrl-S': downloadCode,
-      'Ctrl-T': addNewTab
-    }
-  });
-
-  editor.setValue(def.content);
-  editor.setSize('100%', '100%');
-
-  editor.on('cursorActivity', updateStatusBar);
-  editor.on('change', () => {
-    const active = tabs.find(t => t.id === activeTabId);
-    if (active) active.content = editor.getValue();
-    updateStatusBar();
-  });
-
-  editor.focus();
-}
-
-// === Tabs ===
-function renderTabs() {
-  const bar = document.getElementById('tabs-bar');
-  bar.innerHTML = '';
-
-  const langColors = {
-    javascript: '#ffd700', python: '#00d4ff', htmlmixed: '#ff6b35',
-    css: '#b57bff', 'application/json': '#00ff9d', go: '#00acd7',
-    rust: '#f74c00', shell: '#4af626'
-  };
-
-  tabs.forEach(tab => {
-    const color = langColors[tab.lang] || '#7fa8c4';
-    const div = document.createElement('div');
-    div.className = 'tab' + (tab.active ? ' active' : '');
-    div.onclick = () => switchTab(tab.id);
-    div.innerHTML = `
-      <span class="tab-dot" style="background:${color}"></span>
-      <span>${tab.name}</span>
-      <span class="tab-close" onclick="closeTab(event,${tab.id})">×</span>`;
-    bar.appendChild(div);
-  });
-}
-
-function switchTab(id) {
-  if (editor) {
-    const cur = tabs.find(t => t.id === activeTabId);
-    if (cur) cur.content = editor.getValue();
-  }
-
-  tabs.forEach(t => t.active = t.id === id);
-  activeTabId = id;
-
-  const tab = tabs.find(t => t.id === id);
-  if (tab && editor) {
-    editor.setValue(tab.content);
-    editor.setOption('mode', tab.lang);
-    updateLangSelect(tab.lang);
-  }
-  renderTabs();
-  updateStatusBar();
-}
-
-function addNewTab() {
-  const tab = { id: nextTabId++, name: `file${nextTabId-1}.js`, lang: 'javascript', content: '', active: true };
-  tabs.forEach(t => t.active = false);
-  tabs.push(tab);
-  activeTabId = tab.id;
-  if (editor) {
-    const cur = tabs.find(t => t.id === activeTabId && t !== tab);
-    if (cur) cur.content = editor.getValue();
-    editor.setValue('');
-    editor.setOption('mode', 'javascript');
-  }
-  renderTabs();
-  document.getElementById('new-file-modal').classList.add('open');
-  document.getElementById('new-file-name').focus();
-}
-
-function closeTab(e, id) {
-  e.stopPropagation();
-  if (tabs.length === 1) return;
-  tabs = tabs.filter(t => t.id !== id);
-  if (activeTabId === id) {
-    tabs[tabs.length - 1].active = true;
-    switchTab(tabs[tabs.length - 1].id);
-  }
-  renderTabs();
-}
-
-function createFile() {
-  const name = document.getElementById('new-file-name').value.trim();
-  const lang = document.getElementById('new-file-lang').value;
-  if (!name) { closeModal('new-file-modal'); return; }
-
-  const active = tabs.find(t => t.id === activeTabId);
-  if (active && active.name.startsWith('file')) {
-    active.name = name;
-    active.lang = lang;
-    if (editor) editor.setOption('mode', lang);
-  }
-  closeModal('new-file-modal');
-  renderTabs();
-  document.getElementById('new-file-name').value = '';
-}
-
-// === Language / Theme ===
-function changeLanguage(lang) {
-  if (editor) editor.setOption('mode', lang);
-  const active = tabs.find(t => t.id === activeTabId);
-  if (active) active.lang = lang;
-  updateStatusBar();
-}
-
-function updateLangSelect(lang) {
-  const sel = document.getElementById('lang-select');
-  if (sel) sel.value = lang;
-}
-
-function changeTheme(theme) {
-  if (!editor) return;
-  const themeLink = document.querySelector('link[href*="theme/"]');
-  const base = 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/';
-  if (themeLink) {
-    themeLink.href = base + theme.replace(' ', '-') + '.min.css';
-  } else {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = base + theme.replace(' ', '-') + '.min.css';
-    document.head.appendChild(link);
-  }
-  setTimeout(() => editor.setOption('theme', theme), 100);
-}
-
-// === Status Bar ===
-function updateStatusBar() {
-  if (!editor) return;
-  const cursor = editor.getCursor();
-  const lines = editor.lineCount();
-  const mode = editor.getOption('mode');
-
-  const modeNames = {
-    javascript:'JavaScript', python:'Python', htmlmixed:'HTML', css:'CSS',
-    php:'PHP', 'text/x-java':'Java', 'text/x-c++src':'C++', 'text/x-csharp':'C#',
-    go:'Go', rust:'Rust', 'application/json':'JSON', 'text/x-yaml':'YAML', shell:'Shell', 'text/x-sql':'SQL'
-  };
-
-  const badges = {
-    javascript:'JS', python:'PY', htmlmixed:'HTML', css:'CSS', php:'PHP',
-    'text/x-java':'JAVA', 'text/x-c++src':'C++', go:'GO', rust:'RS',
-    'application/json':'JSON', 'text/x-yaml':'YAML', shell:'SH'
-  };
-
-  document.getElementById('status-lang').textContent = modeNames[mode] || mode;
-  document.getElementById('status-lines').textContent = lines + ' lines';
-  document.getElementById('status-pos').textContent = `Ln ${cursor.line+1}, Col ${cursor.ch+1}`;
-  document.getElementById('status-badge').textContent = badges[mode] || '?';
-
-  const sel = editor.getSelection();
-  const selDiv = document.getElementById('status-selection');
-  if (sel) {
-    selDiv.style.display = 'flex';
-    document.getElementById('status-sel-text').textContent = `${sel.length} chars selected`;
-  } else {
-    selDiv.style.display = 'none';
-  }
-}
-
-// === Editor Operations ===
-function formatCode() {
-  if (!editor) return;
-  const code = editor.getValue();
-  const lang = editor.getOption('mode');
-
-  if (lang === 'javascript' || lang === 'typescript') {
-    try {
-      // Basic JS formatting
-      let formatted = code
-        .replace(/;(?!\n)/g, ';\n')
-        .replace(/\{(?!\n)/g, '{\n')
-        .replace(/\}(?!\n)/g, '\n}')
-        .replace(/\n{3,}/g, '\n\n');
-      editor.setValue(formatted);
-    } catch(e) {}
-  }
-  showNotification('✓', 'Code formatted');
-}
-
-function runCode() {
-  if (!editor) return;
-  const code = editor.getValue();
-  const lang = editor.getOption('mode');
-  switchPanel('output');
-
-  clearConsole();
-  addConsoleLog('info', '▶ Running code...');
-
-  if (lang === 'javascript') {
-    const logs = [];
-    const origLog = console.log;
-    const origError = console.error;
-    const origWarn = console.warn;
-
-    console.log = (...args) => { logs.push({ type:'log', val:args.join(' ') }); };
-    console.error = (...args) => { logs.push({ type:'error', val:args.join(' ') }); };
-    console.warn = (...args) => { logs.push({ type:'warn', val:args.join(' ') }); };
-
-    try {
-      const fn = new Function(code);
-      fn();
-      logs.forEach(l => addConsoleLog(l.type, l.val));
-      addConsoleLog('success', '✓ Execution complete');
-    } catch(e) {
-      logs.forEach(l => addConsoleLog(l.type, l.val));
-      addConsoleLog('error', '✗ ' + e.message);
-    } finally {
-      console.log = origLog;
-      console.error = origError;
-      console.warn = origWarn;
-    }
-  } else if (lang === 'htmlmixed') {
-    refreshPreview();
-    switchPanel('preview');
-  } else {
-    addConsoleLog('warn', `⚠ Client-side execution not available for ${lang}. Code ready to copy/deploy.`);
-  }
-}
-
-function refreshPreview() {
-  if (!editor) return;
-  const code = editor.getValue();
-  const lang = editor.getOption('mode');
-  const frame = document.getElementById('preview-frame');
-
-  if (lang === 'htmlmixed') {
-    frame.srcdoc = code;
-  } else if (lang === 'css') {
-    frame.srcdoc = `<html><head><style>${code}</style></head><body><div style="padding:20px;font-family:sans-serif"><h1>CSS Preview</h1><p>This is a paragraph.</p><button>Button</button></div></body></html>`;
-  } else if (lang === 'javascript') {
-    frame.srcdoc = `<html><head></head><body><script>const log=console.log;const output=[];console.log=(...a)=>{output.push(a.join(' '));};try{${code}}catch(e){output.push('Error: '+e.message);}document.body.innerHTML='<pre style="font-family:monospace;padding:20px;background:#111;color:#0f0;min-height:100vh">'+output.join('\\n')+'</pre>';<\/script></body></html>`;
-  }
-}
-
-function openPreviewNewTab() {
-  if (!editor) return;
-  const w = window.open('', '_blank');
-  w.document.write(editor.getValue());
-  w.document.close();
-}
-
-// === Console ===
-function addConsoleLog(type, val) {
-  const out = document.getElementById('console-output');
-  const div = document.createElement('div');
-  div.className = `console-line ${type}`;
-  div.innerHTML = `<span class="prefix">›</span><span class="value">${escapeHTML(String(val))}</span>`;
-  out.appendChild(div);
-  out.scrollTop = out.scrollHeight;
-}
-
-function clearConsole() {
-  document.getElementById('console-output').innerHTML = '';
-}
-
-function escapeHTML(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// === Code Actions ===
-function toggleLineWrap() {
-  if (!editor) return;
-  isLineWrap = !isLineWrap;
-  editor.setOption('lineWrapping', isLineWrap);
-  const btn = document.getElementById('wrap-btn');
-  if (btn) btn.classList.toggle('active', isLineWrap);
-}
-
-function undo() { if (editor) editor.undo(); }
-function redo() { if (editor) editor.redo(); }
-function findReplace() { if (editor) editor.execCommand('find'); }
-function toggleComment() {
-  if (!editor) return;
-  editor.execCommand('toggleComment');
-}
-
-function copyCode() {
-  if (!editor) return;
-  navigator.clipboard.writeText(editor.getValue());
-  showNotification('⎘', 'Code copied to clipboard');
-}
-
-function downloadCode() {
-  if (!editor) return;
-  const tab = tabs.find(t => t.id === activeTabId);
-  const name = tab ? tab.name : 'code.txt';
-  const blob = new Blob([editor.getValue()], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = name;
-  a.click();
-  showNotification('↓', `Downloaded ${name}`);
-}
-
-function clearEditor() {
-  if (editor && confirm('Clear all code?')) {
-    editor.setValue('');
-  }
-}
-
-function increaseFontSize() { fontSize = Math.min(fontSize + 1, 24); setFontSize(); }
-function decreaseFontSize() { fontSize = Math.max(fontSize - 1, 10); setFontSize(); }
-function setFontSize() {
-  document.querySelectorAll('.CodeMirror').forEach(el => el.style.fontSize = fontSize + 'px');
-}
-
-function toggleMinimap() {
-  showNotification('⊟', 'Minimap: CodeMirror native support via gutter');
-}
-
-function toggleFullscreen() {
-  const ea = document.getElementById('editor-app');
-  if (!document.fullscreenElement) {
-    ea.requestFullscreen?.();
-  } else {
-    document.exitFullscreen?.();
-  }
-}
-
-function toggleDiffView() {
-  showNotification('⊞', 'Diff view: Select text and ask AI to refactor for visual diff');
-}
-
-// === Panel Switching ===
-function switchPanel(panel) {
-  document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
-
-  const panelEl = document.getElementById('panel-' + panel);
-  const tabEl = document.getElementById('pt-' + panel);
-  if (panelEl) panelEl.classList.add('active');
-  if (tabEl) tabEl.classList.add('active');
-
-  if (!isRightPanelOpen) toggleRightPanel();
-}
-
-function toggleRightPanel() {
-  const panel = document.getElementById('right-panel');
-  isRightPanelOpen = !isRightPanelOpen;
-  panel.classList.toggle('collapsed', !isRightPanelOpen);
-}
-
-function toggleSidebar() {
-  const sb = document.getElementById('sidebar');
-  isSidebarOpen = !isSidebarOpen;
-  sb.classList.toggle('collapsed', !isSidebarOpen);
-}
-
-function switchToFile() { /* placeholder for multi-file */ }
-
-function switchOutput(type) {
-  document.querySelectorAll('.output-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-}
-
-// === Mode & Context ===
-function setMode(mode) {
-  currentMode = mode;
-  document.querySelectorAll('.mode-chip').forEach(c => {
-    c.classList.toggle('active', c.dataset.mode === mode);
-  });
-  switchPanel('ai');
-  document.getElementById('chat-input').focus();
-}
-
-function toggleCtx(ctx) {
-  currentContext = ctx;
-  ['full','selection','none'].forEach(c => {
-    document.getElementById('ctx-' + c).classList.toggle('active', c === ctx);
-  });
-}
-
-// === Agent Selection ===
-function selectAgent(agent) {
-  currentAgent = agent;
-  ['gemini','groq','n8n'].forEach(a => {
-    document.getElementById('agent-' + a)?.classList.remove('active');
-  });
-  document.getElementById('agent-' + agent)?.classList.add('active');
-
-  const n8nConfig = document.getElementById('n8n-config');
-
-  if (agent === 'n8n') {
-    n8nConfig.classList.add('visible');
-    document.getElementById('model-picker').disabled = true;
-  } else {
-    n8nConfig.classList.remove('visible');
-    document.getElementById('model-picker').disabled = false;
-  }
-
-  // Update model picker options
-  const picker = document.getElementById('model-picker');
-  if (agent === 'gemini') {
-    currentModel = 'gemini-2.0-flash';
-    picker.value = 'gemini-2.0-flash';
-  } else if (agent === 'groq') {
-    currentModel = 'llama-3.3-70b-versatile';
-    picker.value = 'llama-3.3-70b-versatile';
-  }
-
-  document.getElementById('status-agent-name').textContent =
-    agent === 'gemini' ? 'Gemini 2.0' :
-    agent === 'groq' ? 'Groq Llama' : 'n8n Workflow';
-
-  showNotification(
-    agent === 'gemini' ? '✦' : agent === 'groq' ? '⚡' : '🔗',
-    `Switched to ${agent.toUpperCase()} agent`
-  );
-}
-
-function updateModel(model) {
-  currentModel = model;
-  const isGemini = model.startsWith('gemini');
-  const isGroq = !isGemini && !model.startsWith('n8n');
-
-  if (isGemini) selectAgent('gemini');
-  else if (isGroq) {
-    currentAgent = 'groq';
-    ['gemini','groq','n8n'].forEach(a => document.getElementById('agent-'+a)?.classList.remove('active'));
-    document.getElementById('agent-groq')?.classList.add('active');
-  }
-}
-
-// === n8n Connection ===
-function connectN8N() {
-  const url = document.getElementById('n8n-webhook').value.trim();
-  const auth = document.getElementById('n8n-auth').value.trim();
-  if (!url) { showNotification('⚠', 'Please enter webhook URL'); return; }
-  n8nWebhook = url;
-  n8nAuth = auth;
-  n8nConnected = true;
-  document.getElementById('n8n-agent-status').textContent = '● ONLINE';
-  document.getElementById('n8n-agent-status').style.color = 'var(--accent-green)';
-  showNotification('🔗', 'n8n workflow connected!');
-}
-
-function connectN8NPanel() {
-  const url = document.getElementById('n8n-webhook-panel').value.trim();
-  const auth = document.getElementById('n8n-auth-panel').value.trim();
-  if (!url) { showNotification('⚠', 'Please enter webhook URL'); return; }
-  n8nWebhook = url;
-  n8nAuth = auth;
-  n8nConnected = true;
-  document.getElementById('n8n-status-display').style.display = 'block';
-  document.getElementById('n8n-connected-info').textContent = url.substring(0, 60) + '...';
-  document.getElementById('n8n-agent-status').textContent = '● ONLINE';
-  document.getElementById('n8n-agent-status').style.color = 'var(--accent-green)';
-  showNotification('🔗', 'n8n workflow connected!');
-}
-
-function showN8NSetup() {
-  openEditor('ai');
-  setTimeout(() => switchPanel('n8n'), 300);
-}
-
-// === AI Chat ===
-async function sendMessage() {
-  const input = document.getElementById('chat-input');
-  const userMsg = input.value.trim();
-  if (!userMsg) return;
-
-  input.value = '';
-  document.getElementById('send-btn').disabled = true;
-
-  // Build context
-  let codeCtx = '';
-  if (editor) {
-    if (currentContext === 'full') {
-      codeCtx = editor.getValue();
-    } else if (currentContext === 'selection') {
-      codeCtx = editor.getSelection() || editor.getValue();
-    }
-  }
-
-  const lang = editor ? editor.getOption('mode') : 'javascript';
-  const modePrompts = {
-    chat: '',
-    explain: 'Explain this code clearly and concisely, covering what it does, how it works, and any potential issues:',
-    fix: 'Analyze this code for bugs, errors, and issues. Provide the fixed version with explanation of what was wrong:',
-    refactor: 'Refactor this code for better readability, performance, and best practices. Show the improved version:',
-    generate: 'Generate complete, production-ready code based on this request:',
-    review: 'Do a thorough code review. Identify issues, suggest improvements, rate code quality (1-10):',
-    test: 'Write comprehensive unit tests for this code using appropriate testing framework:',
-    optimize: 'Optimize this code for performance. Identify bottlenecks and provide optimized version:',
-    translate: 'Translate/convert this code to a different language as requested, maintaining full functionality:'
-  };
-
-  const systemPrompt = `You are Oath Gravity AI, an expert programming assistant integrated into a multi-agent IDE. You help developers write, debug, refactor, explain, and optimize code across all programming languages.
-
-Current file language: ${lang}
-AI Mode: ${currentMode}
-${modePrompts[currentMode] ? 'Special instruction: ' + modePrompts[currentMode] : ''}
-
-When providing code, wrap it in triple backticks with the language name. Be concise but thorough. Always explain what changes you made and why.`;
-
-  // Add user message to UI
-  addChatMessage('user', userMsg, 'You');
-
-  // Show typing
-  const typingId = addTypingIndicator();
-
-  try {
-    let responseText = '';
-
-    if (currentAgent === 'n8n' && n8nConnected) {
-      responseText = await callN8N(userMsg, codeCtx);
-    } else if (currentAgent === 'groq' || currentModel.startsWith('llama') || currentModel.startsWith('mixtral') || currentModel.startsWith('gemma') || currentModel.startsWith('deepseek')) {
-      responseText = await callGroq(systemPrompt, userMsg, codeCtx);
-    } else {
-      responseText = await callGemini(systemPrompt, userMsg, codeCtx);
-    }
-
-    removeTypingIndicator(typingId);
-    addChatMessage('assistant', responseText, currentAgent.toUpperCase());
-  } catch (err) {
-    removeTypingIndicator(typingId);
-    addChatMessage('assistant', `⚠ Error: ${err.message}\n\nPlease check your API configuration.`, 'ERROR');
-  }
-
-  document.getElementById('send-btn').disabled = false;
-}
-
-async function callGemini(system, userMsg, codeCtx) {
-  // Using the provided Gemini API key from gen-lang-client-0784852033
-  const GEMINI_API = 'AIzaSyC_n5YqG3l8Fk2mXsD9vH7pR4tJ6eBwQa0'; // gen-lang-client key
-  const model = currentModel || 'gemini-2.0-flash';
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API}`;
-
-  const fullUserMsg = codeCtx
-    ? `${userMsg}\n\n\`\`\`\n${codeCtx}\n\`\`\``
-    : userMsg;
-
-  const payload = {
-    system_instruction: { parts: [{ text: system }] },
-    contents: [
-      ...chatHistory.slice(-10),
-      { role: 'user', parts: [{ text: fullUserMsg }] }
-    ],
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 4096
-    }
-  };
-
-  const resp = await fetch(apiUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  if (!resp.ok) {
-    const err = await resp.json();
-    throw new Error(err.error?.message || `Gemini API error ${resp.status}`);
-  }
-
-  const data = await resp.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received.';
-
-  chatHistory.push({ role: 'user', parts: [{ text: fullUserMsg }] });
-  chatHistory.push({ role: 'model', parts: [{ text }] });
-
-  return text;
-}
-
-async function callGroq(system, userMsg, codeCtx) {
-  const fullUserMsg = codeCtx
-    ? `${userMsg}\n\nHere is the code:\n\`\`\`\n${codeCtx}\n\`\`\``
-    : userMsg;
-
-  const messages = [
-    { role: 'system', content: system },
-    ...chatHistory.slice(-10).map(h => ({
-      role: h.role === 'model' ? 'assistant' : h.role,
-      content: h.parts?.[0]?.text || h.content || ''
-    })),
-    { role: 'user', content: fullUserMsg }
-  ];
-
-  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${GROQ_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: currentModel,
-      messages,
-      temperature: 0.7,
-      max_tokens: 4096
-    })
-  });
-
-  if (!resp.ok) {
-    const err = await resp.json();
-    throw new Error(err.error?.message || `Groq API error ${resp.status}`);
-  }
-
-  const data = await resp.json();
-  const text = data.choices?.[0]?.message?.content || 'No response received.';
-
-  chatHistory.push({ role: 'user', parts: [{ text: fullUserMsg }] });
-  chatHistory.push({ role: 'model', parts: [{ text }] });
-
-  return text;
-}
-
-async function callN8N(userMsg, codeCtx) {
-  if (!n8nConnected || !n8nWebhook) {
-    throw new Error('n8n workflow not connected. Please setup in the n8n panel.');
-  }
-
-  const headers = { 'Content-Type': 'application/json' };
-  if (n8nAuth) headers['Authorization'] = `Bearer ${n8nAuth}`;
-
-  const resp = await fetch(n8nWebhook, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      query: userMsg,
-      code: codeCtx,
-      mode: currentMode,
-      language: editor?.getOption('mode') || 'javascript',
-      timestamp: new Date().toISOString()
-    })
-  });
-
-  if (!resp.ok) throw new Error(`n8n webhook error: ${resp.status}`);
-
-  const data = await resp.json();
-  return data.response || data.output || data.result || JSON.stringify(data, null, 2);
-}
-
-// === Chat UI ===
-function addChatMessage(role, text, agentName) {
-  const container = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = `chat-msg ${role} ${role === 'assistant' ? currentAgent : ''}`;
-
-  const agentColors = { gemini: '#4285f4', groq: '#ff6b35', n8n: '#00ff9d', ERROR: '#ff5f5f' };
-  const dotColor = role === 'user' ? 'var(--text-muted)' : (agentColors[currentAgent] || 'var(--accent-primary)');
-
-  let content = formatChatContent(text);
-
-  div.innerHTML = `
-    <div class="chat-msg-header">
-      <span class="chat-msg-agent-dot" style="background:${dotColor}"></span>
-      ${agentName} · ${new Date().toLocaleTimeString()}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+            70% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        /* Top Announcement Bar */
+        .top-notice {
+            background: #0f172a;
+            color: #f1f5f9;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Header Navigation */
+        header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 16px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 22px;
+        }
+
+        .logo-icon {
+            background: var(--primary);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* 10-PAGE TABS NAVIGATION BAR */
+        .page-navigation-bar {
+            background: white;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            position: sticky;
+            top: 75px;
+            z-index: 999;
+        }
+
+        .page-nav-btn {
+            background: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-nav-btn:hover, .page-nav-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-nav-btn.location-tab-btn {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* MAIN PAGE CONTENT */
+        .page-content {
+            max-width: 1280px;
+            margin: 30px auto;
+            padding: 0 20px;
+            min-height: 550px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .page-title h2 {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .card-img-wrapper img {
+            transform: scale(1.08);
+        }
+
+        .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            z-index: 2;
+        }
+
+        .badge.bestseller { background: #ef4444; }
+        .badge.new { background: #0284c7; }
+
+        .product-details {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .price-box {
+            margin-top: auto;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .curr-price {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .old-price {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        /* Buy Now Button */
+        .buy-now-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+        }
+
+        .buy-now-btn:hover {
+            background: var(--whatsapp-color);
+            color: white;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Bottom Pagination Bar */
+        .pagination-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .prev-next-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .prev-next-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        /* PAGE 10 (LAST PAGE EXCLUSIVE DESIGN) */
+        .last-page-wrapper {
+            background: #0f172a;
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 50px 30px;
+            margin-top: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .last-page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .address-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: 30px;
+        }
+
+        .address-box h3 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 18px;
+            color: #cbd5e1;
+            font-size: 15px;
+        }
+
+        .info-item i {
+            color: var(--accent);
+            font-size: 20px;
+            margin-top: 3px;
+        }
+
+        .map-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background: #3b82f6;
+            color: white;
+            text-decoration: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .map-btn:hover { background: #2563eb; }
+
+        .wa-contact-box {
+            background: linear-gradient(135deg, #128c7e 0%, #075e54 100%);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .wa-contact-box h3 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .wa-direct-btn {
+            background: var(--whatsapp-color);
+            color: white;
+            text-decoration: none;
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            animation: pulseGlow 2s infinite;
+            margin-top: 20px;
+        }
+
+        /* Floating WhatsApp Button */
+        .floating-wa {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--whatsapp-color);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+            z-index: 999;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .page-navigation-bar { gap: 4px; }
+            .page-nav-btn { padding: 6px 10px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Announcement Bar -->
+    <div class="top-notice">
+        <span><i class="fa-solid fa-star" style="color:var(--accent);"></i> 4.8 Rating (839 Google Reviews)</span>
+        <span><i class="fa-solid fa-truck-fast"></i> Fast Home Delivery in Katihar</span>
+        <span><i class="fa-solid fa-store"></i> Open Daily: 9:00 AM - 9:00 PM</span>
     </div>
-    ${content}`;
 
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-}
+    <!-- Header Navigation -->
+    <header>
+        <a href="javascript:void(0)" onclick="goToPage(1)" class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-couch"></i></div>
+            CITY FURNITURE
+        </a>
+        <div style="font-weight:700; color:var(--primary);">
+            <i class="fa-solid fa-phone"></i> Call: +91 094302 16362
+        </div>
+    </header>
 
-function formatChatContent(text) {
-  // Parse code blocks
-  let html = escapeHTML(text);
-  html = html.replace(/```(\w+)?\n?([\s\S]*?)```/g, (match, lang, code) => {
-    return `<pre><code>${code.trim()}</code></pre>
-      <button class="apply-btn" onclick="applyCode(this)">⎘ Apply to Editor</button>`;
-  });
-  html = html.replace(/`([^`]+)`/g, '<code style="background:var(--bg-deep);padding:1px 5px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:11px;color:var(--accent-primary)">$1</code>');
-  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/\n/g, '<br>');
-  return html;
-}
+    <!-- 10-PAGE TABS NAVIGATION BAR -->
+    <div class="page-navigation-bar">
+        <button class="page-nav-btn active" onclick="goToPage(1)">Home</button>
+        <button class="page-nav-btn" onclick="goToPage(2)">Bedroom Beds</button>
+        <button class="page-nav-btn" onclick="goToPage(3)">Sofa Sets</button>
+        <button class="page-nav-btn" onclick="goToPage(4)">Dining Tables</button>
+        <button class="page-nav-btn" onclick="goToPage(5)">Storage & Almirah</button>
+        <button class="page-nav-btn" onclick="goToPage(6)">Mattresses</button>
+        <button class="page-nav-btn" onclick="goToPage(7)">Office Furniture</button>
+        <button class="page-nav-btn" onclick="goToPage(8)">Plastic & Utility</button>
+        <button class="page-nav-btn" onclick="goToPage(9)">TV Units & Decor</button>
+        <button class="page-nav-btn location-tab-btn" onclick="goToPage(10)">📍 Store Location & Contact</button>
+    </div>
 
-function applyCode(btn) {
-  const pre = btn.previousElementSibling;
-  if (pre && editor) {
-    const code = pre.querySelector('code')?.textContent || pre.textContent;
-    editor.setValue(code.trim());
-    showNotification('⎘', 'Code applied to editor');
-    switchPanel('ai');
-  }
-}
+    <!-- MAIN 10-PAGE CONTENT -->
+    <div class="page-content">
 
-function addTypingIndicator() {
-  const container = document.getElementById('chat-messages');
-  const id = 'typing-' + Date.now();
-  const div = document.createElement('div');
-  div.id = id;
-  div.className = 'typing-indicator';
-  div.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-  return id;
-}
+        <!-- ================= PAGE 1: HOME ================= -->
+        <div class="page active" id="page-1">
+            <div class="page-title">
+                <h2>Page 1: Featured Best Sellers</h2>
+                <p>Welcome to City Furniture Katihar - Top Trending Items</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <span class="badge bestseller">Bestseller</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=500&q=80" alt="Fabric Sofa">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Premium L-Shape Fabric Sofa</div>
+                        <div class="product-desc">High-density cushion with soft stain-resistant fabric</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹34,999</span>
+                            <span class="old-price">₹44,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Premium%20L-Shape%20Fabric%20Sofa%20for%20₹34,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="badge bestseller">Popular</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80" alt="Teak Wood Bed">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Teak Wood King Size Bed</div>
+                        <div class="product-desc">Solid wood build with hydraulic storage boxes</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹24,999</span>
+                            <span class="old-price">₹32,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Teak%20Wood%20King%20Size%20Bed%20for%20₹24,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1617806118233-18e1de247200?w=500&q=80" alt="Dining Table">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">6-Seater Sheesham Dining Set</div>
+                        <div class="product-desc">Pure Sheesham wood table with 6 cushioned chairs</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹28,499</span>
+                            <span class="old-price">₹36,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%206-Seater%20Sheesham%20Dining%20Set%20for%20₹28,499" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function removeTypingIndicator(id) {
-  document.getElementById(id)?.remove();
-}
+        <!-- ================= PAGE 2: BEDROOM BEDS ================= -->
+        <div class="page" id="page-2">
+            <div class="page-title">
+                <h2>Page 2: Double Beds & Bedroom Furniture</h2>
+                <p>Solid Wood, Teak Wood & Storage Beds</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=500&q=80" alt="Queen Bed">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Modern Queen Size Box Bed</div>
+                        <div class="product-desc">Sturdy engineered wood with dual storage boxes</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹18,999</span>
+                            <span class="old-price">₹24,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Modern%20Queen%20Size%20Box%20Bed%20for%20₹18,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="badge new">New</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1540518614846-7ede433c5163?w=500&q=80" alt="Luxury Cushion Bed">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Luxury Upholstered Cushion Bed</div>
+                        <div class="product-desc">Soft velvet padded headboard with steel frame support</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹22,499</span>
+                            <span class="old-price">₹29,999</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Luxury%20Upholstered%20Cushion%20Bed%20for%20₹22,499" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=500&q=80" alt="Classic Sheesham Bed">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Classic Solid Sheesham Bed</div>
+                        <div class="product-desc">Handcrafted wooden finish bed without storage</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹26,999</span>
+                            <span class="old-price">₹33,500</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Classic%20Solid%20Sheesham%20Bed%20for%20₹26,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function handleChatKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-}
+        <!-- ================= PAGE 3: SOFA SETS ================= -->
+        <div class="page" id="page-3">
+            <div class="page-title">
+                <h2>Page 3: Living Room Sofas & Recliners</h2>
+                <p>Comfortable Seating Sets for Home & Office</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&q=80" alt="3+1+1 Sofa Set">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Royal 3+1+1 Velvet Sofa Set</div>
+                        <div class="product-desc">Includes 1 three-seater and 2 single cushioned armchairs</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹29,999</span>
+                            <span class="old-price">₹38,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Royal%203+1+1%20Velvet%20Sofa%20Set%20for%20₹29,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&q=80" alt="Wooden Sofa">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Wooden Frame 3-Seater Sofa</div>
+                        <div class="product-desc">Solid wooden structure with removable high-density cushions</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹16,499</span>
+                            <span class="old-price">₹21,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Wooden%20Frame%203-Seater%20Sofa%20for%20₹16,499" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="badge bestseller">Hot</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=500&q=80" alt="Recliner Chair">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Luxury Single Recliner Chair</div>
+                        <div class="product-desc">Adjustable leg rest with push-back push mechanism</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹14,999</span>
+                            <span class="old-price">₹19,500</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Luxury%20Single%20Recliner%20Chair%20for%20₹14,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-// === Command Palette ===
-const commands = [
-  { icon: '▶', label: 'Run Code', shortcut: 'Ctrl+Enter', action: runCode },
-  { icon: '⎇', label: 'Format Code', shortcut: 'Ctrl+Shift+F', action: formatCode },
-  { icon: '📂', label: 'Import Code', shortcut: '', action: showImportModal },
-  { icon: '↓', label: 'Download File', shortcut: 'Ctrl+S', action: downloadCode },
-  { icon: '⎘', label: 'Copy All Code', shortcut: '', action: copyCode },
-  { icon: '+', label: 'New Tab', shortcut: 'Ctrl+T', action: addNewTab },
-  { icon: '🔍', label: 'Find & Replace', shortcut: 'Ctrl+F', action: findReplace },
-  { icon: '♻', label: 'Refactor with AI', shortcut: '', action: () => { setMode('refactor'); sendMessageWithCode(); } },
-  { icon: '🔧', label: 'Fix Bugs with AI', shortcut: '', action: () => { setMode('fix'); sendMessageWithCode(); } },
-  { icon: '👁', label: 'Review Code with AI', shortcut: '', action: () => { setMode('review'); sendMessageWithCode(); } },
-  { icon: '🧪', label: 'Generate Tests', shortcut: '', action: () => { setMode('test'); sendMessageWithCode(); } },
-  { icon: '⚡', label: 'Optimize Code', shortcut: '', action: () => { setMode('optimize'); sendMessageWithCode(); } },
-  { icon: '🔗', label: 'Connect n8n Workflow', shortcut: '', action: () => switchPanel('n8n') },
-  { icon: '✦', label: 'Switch to Gemini', shortcut: '', action: () => selectAgent('gemini') },
-  { icon: '⚡', label: 'Switch to Groq', shortcut: '', action: () => selectAgent('groq') },
-  { icon: '⌂', label: 'Go Home', shortcut: '', action: goHome },
-  { icon: '🎨', label: 'Templates', shortcut: '', action: showTemplates },
-  { icon: '⌨', label: 'Keyboard Shortcuts', shortcut: '', action: showKeyboard },
-  { icon: '⛶', label: 'Toggle Fullscreen', shortcut: '', action: toggleFullscreen },
-];
+        <!-- ================= PAGE 4: DINING TABLES ================= -->
+        <div class="page" id="page-4">
+            <div class="page-title">
+                <h2>Page 4: Dining Tables & Sets</h2>
+                <p>4-Seater, 6-Seater & Compact Dining Sets</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=500&q=80" alt="4 Seater Dining">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">4-Seater Compact Wooden Dining Set</div>
+                        <div class="product-desc">Space-saving dining table with 4 cushioned chairs</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹15,999</span>
+                            <span class="old-price">₹20,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%204-Seater%20Compact%20Wooden%20Dining%20Set%20for%20₹15,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="badge new">Premium</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1617806118233-18e1de247200?w=500&q=80" alt="Marble Dining">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">6-Seater Marble Top Dining Table</div>
+                        <div class="product-desc">Italian marble finish top with steel leg chairs</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹39,999</span>
+                            <span class="old-price">₹52,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%206-Seater%20Marble%20Top%20Dining%20Table%20for%20₹39,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=500&q=80" alt="Folding Dining">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Wooden Folding Dining Table Set</div>
+                        <div class="product-desc">Foldable design suitable for small apartments</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹12,499</span>
+                            <span class="old-price">₹16,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Wooden%20Folding%20Dining%20Table%20Set%20for%20₹12,499" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function sendMessageWithCode() {
-  const modeLabels = {
-    fix:'Fix all bugs in this code', refactor:'Refactor this code for best practices',
-    review:'Review this code thoroughly', test:'Write tests for this code',
-    optimize:'Optimize this code for performance'
-  };
-  document.getElementById('chat-input').value = modeLabels[currentMode] || '';
-  switchPanel('ai');
-  sendMessage();
-}
+        <!-- ================= PAGE 5: STORAGE & ALMIRAH ================= -->
+        <div class="page" id="page-5">
+            <div class="page-title">
+                <h2>Page 5: Storage Almirahs & Wardrobes</h2>
+                <p>Heavy Duty Steel Lockers and Wooden Cabinets</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <span class="badge bestseller">Popular</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=500&q=80" alt="Steel Almirah">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Heavy Gauge 2-Door Steel Almirah</div>
+                        <div class="product-desc">High security lock with internal locker & mirror</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹9,999</span>
+                            <span class="old-price">₹13,500</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Heavy%20Gauge%202-Door%20Steel%20Almirah%20for%20₹9,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1620138546344-7b2c38516edf?w=500&q=80" alt="Wooden Wardrobe">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">3-Door Wooden Wardrobe with Mirror</div>
+                        <div class="product-desc">Spacious hanging space with lower drawers</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹24,999</span>
+                            <span class="old-price">₹31,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%203-Door%20Wooden%20Wardrobe%20for%20₹24,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1558997519-83ea9252edf8?w=500&q=80" alt="Sliding Wardrobe">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Modular Sliding Door Wardrobe</div>
+                        <div class="product-desc">Modern sliding doors with walnut finish</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹31,999</span>
+                            <span class="old-price">₹40,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Modular%20Sliding%20Door%20Wardrobe%20for%20₹31,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function toggleCommandPalette() {
-  const pal = document.getElementById('cmd-palette');
-  pal.classList.toggle('open');
-  if (pal.classList.contains('open')) {
-    document.getElementById('cmd-input').value = '';
-    filterCommands('');
-    document.getElementById('cmd-input').focus();
-  }
-}
+        <!-- ================= PAGE 6: MATTRESSES ================= -->
+        <div class="page" id="page-6">
+            <div class="page-title">
+                <h2>Page 6: Mattresses & Sleep Products</h2>
+                <p>Orthopedic Back Support & Memory Foam Mattresses</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500&q=80" alt="Coir Mattress">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Orthopedic Coir Mattress (6 Inch)</div>
+                        <div class="product-desc">Natural rubberized coir for healthy back posture</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹11,999</span>
+                            <span class="old-price">₹15,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Orthopedic%20Coir%20Mattress%20for%20₹11,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="badge bestseller">Hot</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=500&q=80" alt="Memory Foam Mattress">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">High-Density Memory Foam Mattress</div>
+                        <div class="product-desc">Pressure-relieving foam with breathable fabric cover</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹15,499</span>
+                            <span class="old-price">₹20,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20High-Density%20Memory%20Foam%20Mattress%20for%20₹15,499" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1540518614846-7ede433c5163?w=500&q=80" alt="Spring Mattress">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Pocket Spring Hotel Comfort Mattress</div>
+                        <div class="product-desc">Zero motion transfer pocket springs</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹18,999</span>
+                            <span class="old-price">₹24,500</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Pocket%20Spring%20Hotel%20Comfort%20Mattress%20for%20₹18,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function filterCommands(query) {
-  const results = document.getElementById('cmd-results');
-  const filtered = commands.filter(c =>
-    c.label.toLowerCase().includes(query.toLowerCase())
-  );
-  results.innerHTML = filtered.map((c, i) => `
-    <div class="cmd-item ${i===0?'selected':''}" onclick="runCommand(${commands.indexOf(c)})">
-      <span class="cmd-icon">${c.icon}</span>
-      <span class="cmd-label">${c.label}</span>
-      ${c.shortcut ? `<span class="cmd-shortcut">${c.shortcut}</span>` : ''}
-    </div>`).join('');
-}
+        <!-- ================= PAGE 7: OFFICE FURNITURE ================= -->
+        <div class="page" id="page-7">
+            <div class="page-title">
+                <h2>Page 7: Office Desks & Workstation Chairs</h2>
+                <p>Ergonomic Furniture for Work & Office Spaces</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=500&q=80" alt="Office Desk">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Executive Wooden Office Desk</div>
+                        <div class="product-desc">Built-in side drawers with wire organizer holes</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹8,999</span>
+                            <span class="old-price">₹11,500</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Executive%20Wooden%20Office%20Desk%20for%20₹8,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="badge bestseller">Popular</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1580481072645-022f9a6d1270?w=500&q=80" alt="Ergonomic Chair">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">High-Back Ergonomic Mesh Chair</div>
+                        <div class="product-desc">Adjustable lumbar support with hydraulic height adjustment</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹6,499</span>
+                            <span class="old-price">₹8,999</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20High-Back%20Ergonomic%20Mesh%20Chair%20for%20₹6,499" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1527030280862-64139fba04ca?w=500&q=80" alt="Study Table">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Compact WFH Computer Table</div>
+                        <div class="product-desc">Sleek steel leg design with keyboard tray</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹4,299</span>
+                            <span class="old-price">₹5,800</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Compact%20WFH%20Computer%20Table%20for%20₹4,299" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function runCommand(idx) {
-  document.getElementById('cmd-palette').classList.remove('open');
-  commands[idx]?.action();
-}
+        <!-- ================= PAGE 8: PLASTIC & UTILITY ================= -->
+        <div class="page" id="page-8">
+            <div class="page-title">
+                <h2>Page 8: Plastic & Utility Folding Chairs</h2>
+                <p>Heavy Plastic Chairs, Stools & Folding Sets</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1503602642458-232111445657?w=500&q=80" alt="Plastic Chairs">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Heavy Plastic Chairs (Set of 4)</div>
+                        <div class="product-desc">Durable, weather-proof plastic chairs for balcony or garden</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹3,199</span>
+                            <span class="old-price">₹4,200</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Heavy%20Plastic%20Chairs%20Set%20for%20₹3,199" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="badge bestseller">Bestseller</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1503602642458-232111445657?w=500&q=80" alt="Plastic Stools">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Multi-Purpose Plastic Stools (Set of 4)</div>
+                        <div class="product-desc">Stackable lightweight stools for household daily use</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹2,499</span>
+                            <span class="old-price">₹3,499</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Multi-Purpose%20Plastic%20Stools%20for%20₹2,499" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1580481072645-022f9a6d1270?w=500&q=80" alt="Steel Folding Chair">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Steel Cushioned Folding Chair Set</div>
+                        <div class="product-desc">Padded seat folding chairs with metal frame</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹2,299</span>
+                            <span class="old-price">₹3,100</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Steel%20Cushioned%20Folding%20Chair%20Set%20for%20₹2,299" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function handleCmdKey(e) {
-  if (e.key === 'Escape') document.getElementById('cmd-palette').classList.remove('open');
-  if (e.key === 'Enter') {
-    const sel = document.querySelector('.cmd-item.selected');
-    if (sel) sel.click();
-  }
-}
+        <!-- ================= PAGE 9: TV UNITS & DECOR ================= -->
+        <div class="page" id="page-9">
+            <div class="page-title">
+                <h2>Page 9: TV Units & Home Storage Decor</h2>
+                <p>TV Cabinets, Shoe Racks & Bookcases</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <span class="badge new">New</span>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=500&q=80" alt="TV Unit">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Modern Floating TV Cabinet Unit</div>
+                        <div class="product-desc">Wall mounted TV unit with cable management grooves</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹10,999</span>
+                            <span class="old-price">₹14,500</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Modern%20Floating%20TV%20Cabinet%20Unit%20for%20₹10,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=500&q=80" alt="Shoe Rack">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Solid Wood Shoe Rack Cabinet</div>
+                        <div class="product-desc">3-door ventilated wooden cabinet for footwear</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹5,999</span>
+                            <span class="old-price">₹8,000</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Solid%20Wood%20Shoe%20Rack%20Cabinet%20for%20₹5,999" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1594620302200-9a762244a156?w=500&q=80" alt="Bookcase">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">Wooden Wall Bookshelf & Display Unit</div>
+                        <div class="product-desc">4-tier shelf unit for books & home display items</div>
+                        <div class="price-box">
+                            <span class="curr-price">₹3,499</span>
+                            <span class="old-price">₹4,800</span>
+                        </div>
+                        <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20buy%20Wooden%20Wall%20Bookshelf%20for%20₹3,499" target="_blank" class="buy-now-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.shiftKey && e.key === 'P') {
-    e.preventDefault();
-    toggleCommandPalette();
-  }
-  if (e.key === 'Escape') {
-    document.getElementById('cmd-palette').classList.remove('open');
-    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
-  }
-});
+        <!-- ================= PAGE 10: STORE LOCATION & CONTACT (LAST PAGE) ================= -->
+        <div class="page" id="page-10">
+            <div class="page-title">
+                <h2>Page 10: Store Location & Contact Details</h2>
+                <p>Visit Our Katihar Store or Connect Directly on WhatsApp</p>
+            </div>
 
-// === Modals ===
-function showImportModal() {
-  const m = document.getElementById('import-modal');
-  m.classList.add('open');
-}
+            <div class="last-page-wrapper">
+                <div class="last-page-grid">
 
-function showTemplates() {
-  const m = document.getElementById('templates-modal');
-  m.classList.add('open');
-}
+                    <!-- STORE LOCATION & MAP REDIRECT -->
+                    <div class="address-box">
+                        <h3><i class="fa-solid fa-location-dot"></i> City Furniture Location</h3>
+                        <div class="info-item">
+                            <i class="fa-solid fa-map-pin"></i>
+                            <div>
+                                <strong>Store Address:</strong><br>
+                                MG Rd, opp. Fakirtakiya Masjid, Fakirtakiya, Katihar, Bihar 854105
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <strong>Phone / Contact:</strong><br>
+                                +91 094302 16362
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fa-solid fa-clock"></i>
+                            <div>
+                                <strong>Opening Hours:</strong><br>
+                                Monday - Sunday: 9:00 AM to 9:00 PM
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fa-solid fa-store"></i>
+                            <div>
+                                <strong>Services Available:</strong><br>
+                                In-Store Purchase, Custom Furniture Orders, Home Delivery
+                            </div>
+                        </div>
 
-function showKeyboard() {
-  document.getElementById('keyboard-modal').classList.add('open');
-}
+                        <!-- GOOGLE MAPS DIRECT REDIRECT BUTTON -->
+                        <a href="https://www.google.com/maps/search/?api=1&query=City+Furniture+MG+Rd+Fakirtakiya+Katihar+Bihar+854105" target="_blank" class="map-btn">
+                            <i class="fa-solid fa-map-location-dot"></i> Get Directions on Google Maps
+                        </a>
+                    </div>
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
+                    <!-- DIRECT WHATSAPP CHAT CARD -->
+                    <div class="wa-contact-box">
+                        <div>
+                            <h3><i class="fa-brands fa-whatsapp"></i> Direct WhatsApp Order & Inquiry</h3>
+                            <p style="color:#e2e8f0; line-height: 1.6; margin-top: 15px;">
+                                Have custom design requests or need help with pricing? Chat directly with the store team on WhatsApp.
+                            </p>
+                        </div>
+                        <div>
+                            <!-- DIRECT WHATSAPP CONTACT BUTTON -->
+                            <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20want%20to%20inquire%20about%20your%20products." target="_blank" class="wa-direct-btn">
+                                <i class="fa-brands fa-whatsapp" style="font-size:24px;"></i> CHAT ON WHATSAPP NOW
+                            </a>
+                        </div>
+                    </div>
 
-function importCode() {
-  const code = document.getElementById('import-code').value;
-  if (editor && code) {
-    editor.setValue(code);
-    closeModal('import-modal');
-    showNotification('📂', 'Code imported successfully');
-  }
-}
+                </div>
+            </div>
+        </div>
 
-function loadTemplate(name) {
-  const code = templates[name];
-  if (code && editor) {
-    editor.setValue(code);
-    // Detect language
-    if (name === 'python-ml') {
-      editor.setOption('mode', 'python');
-      document.getElementById('lang-select').value = 'python';
-    } else if (name === 'html-landing') {
-      editor.setOption('mode', 'htmlmixed');
-      document.getElementById('lang-select').value = 'htmlmixed';
-    } else if (name === 'docker') {
-      editor.setOption('mode', 'shell');
-      document.getElementById('lang-select').value = 'shell';
-    } else if (name === 'n8n-workflow') {
-      editor.setOption('mode', 'javascript');
-    }
-    closeModal('templates-modal');
-    showNotification('🎨', `Template loaded: ${name}`);
-  }
-}
+        <!-- PAGINATION CONTROLS (BOTTOM) -->
+        <div class="pagination-footer">
+            <button class="prev-next-btn" id="prev-btn" onclick="prevPage()"><i class="fa-solid fa-arrow-left"></i> Previous Page</button>
+            <span style="font-weight:800; color:var(--primary);" id="page-indicator">Page 1 of 10</span>
+            <button class="prev-next-btn" id="next-btn" onclick="nextPage()">Next Page <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
 
-// === Snippets ===
-function showSnippets() {
-  const snippets = {
-    javascript: [
-      { name: 'Arrow Function', code: 'const fn = (param) => {\n  return param;\n};' },
-      { name: 'Async/Await', code: 'const fetchData = async (url) => {\n  try {\n    const res = await fetch(url);\n    return await res.json();\n  } catch (err) {\n    console.error(err);\n  }\n};' },
-      { name: 'Class', code: 'class MyClass {\n  constructor(name) {\n    this.name = name;\n  }\n  greet() {\n    return `Hello, ${this.name}!`;\n  }\n}' }
-    ]
-  };
+    </div>
 
-  const lang = editor?.getOption('mode') || 'javascript';
-  const list = snippets[lang] || snippets.javascript;
+    <!-- Floating WhatsApp Action Button -->
+    <a href="https://wa.me/919430216362?text=Hi%20City%20Furniture,%20I%20need%20assistance!" class="floating-wa" target="_blank" title="WhatsApp Us">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 
-  const menu = document.createElement('div');
-  menu.style.cssText = `position:fixed;top:80px;left:270px;z-index:400;background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;padding:8px;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,0.4);`;
-  menu.innerHTML = list.map(s => `
-    <div onclick="insertSnippet('${encodeURIComponent(s.code)}');this.parentElement.remove()" style="padding:8px 12px;cursor:pointer;border-radius:6px;font-size:12px;color:var(--text-secondary);transition:background 0.15s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''">
-      ${s.name}
-    </div>`).join('');
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 City Furniture Katihar. MG Rd, opp. Fakirtakiya Masjid, Katihar, Bihar 854105.</p>
+    </footer>
 
-  document.body.appendChild(menu);
-  setTimeout(() => document.addEventListener('click', () => menu.remove(), { once: true }), 100);
-}
+    <!-- JAVASCRIPT FOR 10-PAGE SYSTEM SWITCHING -->
+    <script>
+        let currentPage = 1;
+        const totalPages = 10;
 
-function insertSnippet(encoded) {
-  if (editor) {
-    const code = decodeURIComponent(encoded);
-    editor.replaceSelection(code);
-    editor.focus();
-  }
-}
+        function updatePagination() {
+            // Hide all pages
+            for (let i = 1; i <= totalPages; i++) {
+                const p = document.getElementById(`page-${i}`);
+                if (p) p.classList.remove('active');
+            }
 
-// === Notification ===
-function showNotification(icon, text, duration = 2500) {
-  const notif = document.getElementById('notification');
-  document.getElementById('notif-icon').textContent = icon;
-  document.getElementById('notif-text').textContent = text;
-  notif.style.display = 'flex';
-  clearTimeout(notif._timeout);
-  notif._timeout = setTimeout(() => {
-    notif.style.display = 'none';
-  }, duration);
-}
+            // Show active page
+            const activeP = document.getElementById(`page-${currentPage}`);
+            if (activeP) activeP.classList.add('active');
 
-// === Keyboard shortcuts for home modal actions ===
-window.addEventListener('keydown', e => {
-  if (e.ctrlKey && e.key === 's') { e.preventDefault(); downloadCode(); }
-  if (e.ctrlKey && e.key === 't') { e.preventDefault(); if (document.getElementById('editor-app').style.display !== 'none') addNewTab(); }
-  if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault(); if (document.getElementById('editor-app').style.display !== 'none') { switchPanel('ai'); document.getElementById('chat-input').focus(); } }
-});
-</script>
+            // Update top tab buttons
+            const navBtns = document.querySelectorAll('.page-nav-btn');
+            navBtns.forEach((btn, idx) => {
+                if (idx === currentPage - 1) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update Indicator Text
+            document.getElementById('page-indicator').innerText = `Page ${currentPage} of ${totalPages}`;
+
+            // Button Disable/Enable
+            document.getElementById('prev-btn').disabled = (currentPage === 1);
+            document.getElementById('next-btn').disabled = (currentPage === totalPages);
+
+            // Scroll smoothly to top when switching pages
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToPage(pageNo) {
+            currentPage = pageNo;
+            updatePagination();
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePagination();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePagination();
+            }
+        }
+
+        // Initialize Page 1 on load
+        updatePagination();
+    </script>
+
 </body>
 </html>
